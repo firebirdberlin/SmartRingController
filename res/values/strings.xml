@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Ring Controller</string>
+    <string name="tabSettings">Settings</string>
+    <string name="tabTTS">TTS</string>
+    <string name="tabTest">Test</string>
+    <string name="tvNoiseLevels">Noise levels</string>
+    <string name="setting_min_amplitude">Minimum</string>
+    <string name="setting_max_amplitude">Maximum</string>
+    <string name="setting_min_ringer_volume">Minimum ringer volume</string>
+    <string name="tvPocketVolume">Increase volume in pocket by </string>
+
+    <string name="switch_handle_vibration">  ... vibration</string>
+    <string name="switch_handle_notification"> ... notifications</string>
+    <string name="buttonAccessibilitySettings"> start accessibility service</string>
+    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
+
+    <string name="tvControllers">Control ...</string>
+    <string name="tvInCallActions">Actions</string>
+    <string name="tvFlipAction">Flip device to mute ringer.</string>
+    <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
+    <string name="tvShakeAction"> ... is shaken.</string>
+    <string name="tvPullOutAction"> ...is uncovered.</string>
+
+	<string name="tvTTSenabled">text-to-speech engine</string>
+	<string name="tvTTSalwaysON">always on</string>
+	<string name="TTS_AnnounceCall">Call from</string>
+
+    <string name="btnTest">Measure ambient noise</string>
+    <string name="btnTestNotification">Send test notification</string>
+
+	<string name="tvWelcome">
+		Smart Ring Controller adjusts the ringer volume
+		automatically according to the ambient noise level.\n\n
+
+		The service is currently NOT enabled. To enable the service
+		use the switch in the action bar.\n\n
+
+		If you like this app, please rate it. If you find errors or
+		if you are missing any feature, please contact the author
+		rather than giving a negative rating.\n\n
+
+		This software may not be free from defects. It is used on
+		your own risk. The author is not liable for
+		direct, indirect, incidential or consequential damage.\n\n
+
+		Credits:\n
+			development: Stefan Fruhner (stefan.fruhner@gmail.com)\n\n
+
+		Translations:\n
+			English, German : Stefan Fruhner\n
+			Spanish : tba
+	\n
+</string>
+
+    <string name="tvExplanationNoiseLevels">The ringer volume is set
+according to the current noise level the microphone detects. The noise levels
+ correspond to the minimum and the maximum ringer volume.</string>
+	<string name="tvExplanationMinimumLevel">
+Minimum level: Select the level of ambient noise for which the lowest
+ringer volume is suitable (default:0).</string>
+	<string name="tvExplanationMaximumLevel">
+Maximum level: Select the level of ambient noise for which the highest
+ringer volume is needed. Increase this value if your ringer is too loud
+in silent situations. Decrease it if your ringer should be louder in
+silent situations  (default:7000).</string>
+
+	<string name="tvTest">Test your settings by clicking the buttons.
+	On success the ambient noise level and the new volume is reported.
+	Cover the proximity sensor to test if the vibration is correctly working
+	(\'-\' device is covered, \'+\' device is not covered).\n\n
+	Notifications can only be detected if the accessibility service is running.
+	</string>
+	<string name="AccessibilityDescription">
+		Needed to set the volume on incoming notifications.
+	</string>
+</resources>
