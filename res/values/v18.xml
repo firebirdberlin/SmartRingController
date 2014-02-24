@@ -1,0 +1,4 @@
+<resources>
+    <bool name="use_AccessibilityService">true</bool>
+    <bool name="use_NotificationListenerService">false</bool>
+</resources>
