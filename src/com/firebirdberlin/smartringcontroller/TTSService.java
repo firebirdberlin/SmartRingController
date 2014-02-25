@@ -11,11 +11,19 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
 import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+
+import java.util.List;
 
 public class TTSService extends Service {
 
@@ -25,6 +33,11 @@ public class TTSService extends Service {
   private static final String STOP_READING_EXTRA		 = "com.firebirdberlin.smartringcontrollerpro.STOP_READING";
 
   private static final String LOG_TAG = SmartRingController.TAG +"."+TTSService.class.getSimpleName();
+
+  private static int SENSOR_DELAY 	 	= 50000; 	// us = 50 ms
+  private SensorManager sensorManager;
+  private Sensor accelerometerSensor = null;
+  private boolean accelerometerPresent;
 
   private final LocalBinder binder = new LocalBinder();
   private Queue<String> messageQueue = new LinkedList<String>();
@@ -56,7 +69,16 @@ public class TTSService extends Service {
 
   @Override
   public void onCreate() {
-	audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+	audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+	sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
+	List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+	if(sensorList.size() > 0){
+		accelerometerPresent = true;
+		accelerometerSensor = sensorList.get(0);
+	}else{
+		accelerometerPresent = false;
+	}
   }
 
   @Override
@@ -137,11 +159,12 @@ public class TTSService extends Service {
 			public void onInit(int status) {
 			  tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
 				@Override
-				public void onUtteranceCompleted(String utteranceId) {
+				public void onUtteranceCompleted(String utteranceId) { // ready reading
+				  sensorManager.unregisterListener(ShakeActions); // disable shake action
 				  restoreAudio();
 				  synchronized (messageQueue) {
-					messageQueue.poll();
-					if (messageQueue.isEmpty()) {
+					messageQueue.poll(); // retrieves and removes head of the queue
+					if (messageQueue.isEmpty()) { //another message to speak ?
 					  if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
 						// Sleep a little to give the bluetooth device a bit longer to finish.
 						try {
@@ -202,6 +225,13 @@ public class TTSService extends Service {
 
 	params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "valueNotUsed");
 	prepareAudio();
+
+	if (accelerometerPresent){
+		if (Build.VERSION.SDK_INT < 19)
+			sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY);
+		else
+			sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
+	}
 	tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
   }
 
@@ -242,6 +272,39 @@ public class TTSService extends Service {
 	}
 	audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
   }
+
+  private final SensorEventListener ShakeActions =
+	new SensorEventListener()  {
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		}
+
+		// called when sensor value have changed
+		private int shake_left = 0;
+		private int shake_right = 0;
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+
+				// if acceleration in x and y direction is too strong, device is moving
+
+				if (event.values[0] < -12.) shake_left++;
+				if (event.values[0] > 12.) shake_right++;
+
+				// shake to silence
+				if ((shake_left >= 1 && shake_right >= 2)
+						|| (shake_left >= 2 && shake_right >= 1)){
+					//do something
+					tts.stop(); // stop reading current message
+					shake_left = shake_right = 0;
+					//return;
+				}
+
+			}
+
+		}
+	};
+
 
   public static void queueMessage(String message, Context context) {
 	if (shouldRead(false, context) == false) return;
