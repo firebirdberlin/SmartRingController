@@ -176,12 +176,7 @@ public class TTSService extends Service {
   }
 
 	public static boolean shouldRead(boolean canUseSco, Context context){
-	  // todo add more stuff here
 	final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-	//return (
-				//(settings.getBoolean("TTS.enabled", false) == true )
-				//&& 	audioManager.isWiredHeadsetOn()
-	//);
 
 	if (settings.getBoolean("TTS.enabled", false) == true) {
 

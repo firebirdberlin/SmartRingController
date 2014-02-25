@@ -84,7 +84,10 @@ public class accNotificationListener extends AccessibilityService {
 		}
         startService(i2);
 
-		mNotificationListener.queueMessage(n, this);
+		if (Config.PRO == true || LicenseCheck.isLicensed(this) == true){
+			mNotificationListener.queueMessage(n, this);
+		}
+
 		}
 	}
 

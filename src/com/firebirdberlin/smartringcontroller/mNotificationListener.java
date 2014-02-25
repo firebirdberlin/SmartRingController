@@ -90,7 +90,9 @@ public class mNotificationListener extends NotificationListenerService {
 		}
 		startService(i2);
 
-		queueMessage(n, this);
+		if (Config.PRO == true || LicenseCheck.isLicensed(this) == true){
+			queueMessage(n, this);
+		}
 	}
 
 	@Override
