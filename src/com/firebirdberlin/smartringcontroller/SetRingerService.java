@@ -97,6 +97,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
 	@Override
 	public void onCreate(){
+//		Logger.setDebugging( true );
 		Logger.setDebugging( Utility.isDebuggable(this) );
 
 		IntentFilter filter = new IntentFilter();
@@ -395,7 +396,15 @@ public class SetRingerService extends Service implements SensorEventListener {
 		//audiomanager.restoreRingerMode();
 		if ( shouldRing() ){ 			// otherwise pass
 			audiomanager.unmute();		// sound is unmuted onDestroy
+		} else {
+			// mute phone until it is flipped again
+			Intent i= new Intent(this, EnjoyTheSilenceService.class);
+			i.putExtra("action", "mute");
+			i.putExtra("WAIT_UNTIL_FLIPPED", false); // TODO : add the option to the settings page
+			startService(i);
 		}
+
+
 
 		if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
 			int callState = telephone.getCallState();
