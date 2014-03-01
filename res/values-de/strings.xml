@@ -21,16 +21,26 @@
 
     <string name="tvInCallActions">Aktionen</string>
     <string name="tvFlipAction">Telefon umdrehen zum Stummschalten.</string>
+
+    <string name="tvAutoReactivateRingerMode">Automatisch wieder auf laut stellen (erhöhter Batterieverbrauch).</string>
+
     <string name="tvReduceVolume">Lautstärke reduzieren, beim </string>
     <string name="tvShakeAction"> ... Schütteln.</string>
     <string name="tvPullOutAction"> ... aus der Tasche holen.</string>
 
 	<string name="tvTTSenabled">Sprachausgabe</string>
-	<string name="tvTTSalwaysON">immer aktiv</string>
+	<string name="tvTTSmode">Aktiviere ...</string>
+	<string name="radio.TTS.headphones"> ... nur über Kopfhörer.</string>
+	<string name="radio.TTS.always"> ... immer.</string>
+
 	<string name="TTS_AnnounceCall">Anruf von</string>
 
     <string name="btnTest">Umgebungslautstärke messen</string>
     <string name="btnTestNotification">Testbenachrichtigung senden</string>
+    <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
+
+	<string name="titleSilenceMode">Lautlos Modus.</string>
+    <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>
 
 	<string name="tvWelcome">
 		Smart Ring Controller stellt die Klingeltonlautstärke

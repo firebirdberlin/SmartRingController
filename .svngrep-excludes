@@ -1,0 +1,6 @@
+./.git
+*.tags
+*.o
+*.a
+*.tag
+*.orig

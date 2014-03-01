@@ -211,7 +211,9 @@ public class TTSService extends Service {
 			return false;
 		}
 
-		if (settings.getBoolean("TTS.alwaysON", false) == true) {
+
+		if (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS){
 			return true;
 		}
 
@@ -249,7 +251,8 @@ public class TTSService extends Service {
 	audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
 	audioManager.setSpeakerphoneOn(false);
 	if ( 		settings.getBoolean("TTS.enabled", false)
-			&& 	settings.getBoolean("TTS.alwaysON", false) ) {
+			&& (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS) ) {
 		audioManager.setSpeakerphoneOn(true);
 	}
 
@@ -272,7 +275,8 @@ public class TTSService extends Service {
 
 	// restore system setting of the speakerphone
 	if ( 		settings.getBoolean("TTS.enabled", false)
-			&& 	settings.getBoolean("TTS.alwaysON", false) ) {
+			&& (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS) ) {
 		audioManager.setSpeakerphoneOn(false);
 	}
 
