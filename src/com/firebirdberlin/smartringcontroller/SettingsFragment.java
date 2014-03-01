@@ -283,6 +283,21 @@ public class SettingsFragment extends Fragment {
 				}
 			});
 
+			final CheckBox cbAutoReactivateRingerMode = (CheckBox) view.findViewById(R.id.cbAutoReactivateRingerMode);
+			cbAutoReactivateRingerMode.setChecked(
+				settings.getBoolean("Ctrl.AutoReactivateRingerMode", false)
+				);
+			cbAutoReactivateRingerMode.setOnCheckedChangeListener(new OnCheckedChangeListener()	{
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+				{
+					SharedPreferences.Editor prefEditor = settings.edit();
+					prefEditor.putBoolean("Ctrl.AutoReactivateRingerMode", isChecked);
+					prefEditor.commit();
+				}
+
+			});
+
 			final CompoundButton switchShakeAction = (CompoundButton) view.findViewById(R.id.switchShakeAction);
 			switchShakeAction.setChecked(ShakeAction);
 			switchShakeAction.setOnCheckedChangeListener(new OnCheckedChangeListener() {

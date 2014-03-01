@@ -22,7 +22,7 @@
 			android:layout_marginTop="20dp"
 			android:scrollHorizontally="false"
 			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearance"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_alignParentLeft="true"
 	/>
 
@@ -199,7 +199,7 @@
 			android:layout_weight="1"
 			android:scrollHorizontally="false"
 			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearance"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/divider1"
 			android:layout_marginBottom="10dp"
@@ -334,7 +334,7 @@
 			android:text="@string/tvInCallActions"
 			android:layout_weight="1"
 			android:scrollHorizontally="false"
-			android:textAppearance="?android:attr/textAppearance"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/divider2"
 			android:layout_marginBottom="10dp"
@@ -372,6 +372,38 @@
 		/>
 	</LinearLayout>
 
+	<LinearLayout
+		android:orientation="horizontal"
+		android:id="@+id/llAutoReactivateRingerMode"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:layout_marginLeft="20dp"
+		android:layout_below="@+id/llFlipAction">
+
+		<TextView
+			android:id="@+id/tvAutoReactivateRingerMode"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/tvAutoReactivateRingerMode"
+			android:layout_weight="1"
+			android:scrollHorizontally="false"
+			android:textAppearance="?android:attr/textAppearance"
+			android:layout_alignParentLeft="true"
+		/>
+
+		<CheckBox
+			android:id="@+id/cbAutoReactivateRingerMode"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text=""
+			android:checked="false"
+			android:enabled="true"
+			android:textAppearance="?android:attr/textAppearance"
+			android:layout_alignParentRight="true"
+		/>
+	</LinearLayout>
+
 	<TextView
 			android:id="@+id/tvReduceVolume"
 			android:layout_width="wrap_content"
@@ -381,7 +413,7 @@
 			android:scrollHorizontally="false"
 			android:textAppearance="?android:attr/textAppearance"
 			android:layout_alignParentLeft="true"
-			android:layout_below="@+id/llFlipAction"
+			android:layout_below="@+id/llReactivateRingerMode"
 			android:layout_marginTop="10dp"
 			android:layout_marginLeft="10dp"
 	/>

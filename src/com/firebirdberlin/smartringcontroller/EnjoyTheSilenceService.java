@@ -140,38 +140,29 @@ public class EnjoyTheSilenceService extends Service implements SensorEventListen
 		IntentUnmute.putExtra("systemMobileDataOn", systemMobileDataSetting);
 		PendingIntent pIntentUnmute = PendingIntent.getService(this, 0, IntentUnmute, 0);
 
-		Intent i=new Intent(this, SmartRingController.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
-				 Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent pi=PendingIntent.getActivity(this, 0, i, 0);
-
-
-//		Notification note=new Notification(R.drawable.ic_launcher,
-//		                                          "Silence mode",
-//		                                          System.currentTimeMillis());
-
+//		Intent i=new Intent(this, SmartRingController.class);
+//		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+//				 Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//		PendingIntent pi=PendingIntent.getActivity(this, 0, i, 0);
 
 		// build notification using Notification Builder
 		Notification note  = new Notification.Builder(this)
-        .setContentTitle("Silence mode")
-        .setContentText("Click to unmute ...")
-        .setSmallIcon(R.drawable.ic_launcher)
-        .setContentIntent(pIntentUnmute)
-        .setAutoCancel(true).build();
+			.setContentTitle(this.getString(R.string.titleSilenceMode))
+			.setContentText(this.getString(R.string.msgRestoreRingerMode))
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(pIntentUnmute)
+			.setAutoCancel(true).build();
 //        .addAction(R.drawable.ic_launcher, "unmute", pIntentUnmute).build();
 ////        .addAction(R.drawable.icon, "More", pIntent)
 ////        .addAction(R.drawable.icon, "And more", pIntent).build();
-
+		note.flags|=Notification.FLAG_NO_CLEAR;
 
 		if (WAIT_UNTIL_FLIPPED){
 			note.setLatestEventInfo(this, "Smart Ring Controller",
-								"Flip or click to unmute ...",
+								this.getString(R.string.msgRestoreRingerMode),
 								pIntentUnmute);
-			note.flags|=Notification.FLAG_NO_CLEAR;
 			note.flags|=Notification.FLAG_FOREGROUND_SERVICE;
-
 			startForeground(1337, note);
-
 			handler.postDelayed(registerListener,5000);
 		} else {
 			NotificationManager notificationManager =
@@ -212,11 +203,6 @@ public class EnjoyTheSilenceService extends Service implements SensorEventListen
 	// called when sensor value have changed
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		// The Proximity sensor returns a single value either 0 or 5 (also 1 depends on Sensor manufacturer).
-//		if (event.sensor.getType()==Sensor.TYPE_LIGHT){
-//			event.values[0];
-//		} else
-
 		if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
 			isOnTable = NOT_ON_TABLE;
 			// if acceleration in x and y direction is too strong, device is moving
@@ -250,7 +236,7 @@ public class EnjoyTheSilenceService extends Service implements SensorEventListen
 			}
 
 			sensorManager.unregisterListener(this);
-			handler.postDelayed(registerListener, 5000);
+			handler.postDelayed(registerListener, 20000); // 20 s seem to be fairly enough
 		}
 	}
 
