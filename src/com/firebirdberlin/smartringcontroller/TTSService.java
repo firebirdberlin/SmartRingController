@@ -18,6 +18,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import android.media.AudioManager;
+
+import android.telephony.TelephonyManager;
+
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -48,7 +51,6 @@ public class TTSService extends Service {
 
   private AudioManager audioManager;
   private int systemVolume;
-  private boolean systemIsSpeakerphoneOn;
 
   // settings
   public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
@@ -160,7 +162,6 @@ public class TTSService extends Service {
 			  tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
 				@Override
 				public void onUtteranceCompleted(String utteranceId) { // ready reading
-				  sensorManager.unregisterListener(ShakeActions); // disable shake action
 				  restoreAudio();
 				  synchronized (messageQueue) {
 					messageQueue.poll(); // retrieves and removes head of the queue
@@ -201,7 +202,14 @@ public class TTSService extends Service {
 	public static boolean shouldRead(boolean canUseSco, Context context){
 	final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
-	if (settings.getBoolean("TTS.enabled", false) == true) {
+	if ( settings.getBoolean("enabled", false) == true &&
+			settings.getBoolean("TTS.enabled", false) == true) {
+
+		// don't speak, when in call
+		TelephonyManager telephone = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+		if (telephone.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK){
+			return false;
+		}
 
 		if (settings.getBoolean("TTS.alwaysON", false) == true) {
 			return true;
@@ -236,15 +244,12 @@ public class TTSService extends Service {
   }
 
   private void prepareAudio() {
-
 	final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
 	audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
-
-	systemIsSpeakerphoneOn = audioManager.isSpeakerphoneOn();
+	audioManager.setSpeakerphoneOn(false);
 	if ( 		settings.getBoolean("TTS.enabled", false)
-			&& 	settings.getBoolean("TTS.alwaysON", false)
-			&& systemIsSpeakerphoneOn == false) {
+			&& 	settings.getBoolean("TTS.alwaysON", false) ) {
 		audioManager.setSpeakerphoneOn(true);
 	}
 
@@ -263,8 +268,13 @@ public class TTSService extends Service {
   }
 
   private void restoreAudio() {
+	 sensorManager.unregisterListener(ShakeActions); // disable shake action
+
 	// restore system setting of the speakerphone
-	audioManager.setSpeakerphoneOn(systemIsSpeakerphoneOn);
+	if ( 		settings.getBoolean("TTS.enabled", false)
+			&& 	settings.getBoolean("TTS.alwaysON", false) ) {
+		audioManager.setSpeakerphoneOn(false);
+	}
 
 	if (systemVolume != -1) {
 	  Logger.i(LOG_TAG, "Resetting volume to " + systemVolume);

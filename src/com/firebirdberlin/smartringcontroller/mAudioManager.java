@@ -28,6 +28,12 @@ public class mAudioManager{
     }
 
 	public int getMaxRingerVolume() {return maxRingerVolume;}
+
+	public void setRingerMode(int mode){
+		audiomanage.setRingerMode(mode);
+		currentRingerMode = mode;
+	}
+
 	public void setRingerModeSilent(){
 		currentRingerMode = audiomanage.getRingerMode(); // ringer mode to restore
 		audiomanage.setRingerMode(AudioManager.RINGER_MODE_SILENT);
@@ -55,8 +61,13 @@ public class mAudioManager{
 		if (value > maxRingerVolume) value = maxRingerVolume;
 		else
 		if (value < 0 ) value = 0;
-		audiomanage.setStreamVolume(AudioManager.STREAM_RING, value, 0);
+		audiomanage.setStreamVolume(AudioManager.STREAM_RING, value,  0);
+//		audiomanage.setStreamVolume(AudioManager.STREAM_RING, value,  AudioManager.FLAG_SHOW_UI);
 		Logger.i(TAG,"new ringer volume : " + String.valueOf(value));
+	}
+
+	public int getRingerMode(){
+		return audiomanage.getRingerMode();
 	}
 
 	public int getRingerVolume(){
