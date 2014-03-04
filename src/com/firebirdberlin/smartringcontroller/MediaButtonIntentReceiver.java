@@ -11,15 +11,19 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import android.util.Log;
+
 public class MediaButtonIntentReceiver extends BroadcastReceiver {
     private static String TAG = "MediaButtonIntentReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-		Logger.d(TAG, "onReceive()");
+		Log.d(TAG, "onReceive()");
         String intentAction = intent.getAction(); // I never get to this point in debugger (breakpoint set here)
 		KeyEvent key = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-		Logger.d(TAG, "key code = " + key.toString());
+		Log.d(TAG, "key code = " + key.toString());
         // Code to actually handle button press ...
+
     }
 }
+
