@@ -61,7 +61,7 @@
 		android:id="@+id/rgTTSon"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal"
+		android:orientation="vertical"
 		android:layout_marginTop="5dp"
 		android:layout_marginLeft="20dp"
 		android:layout_below="@+id/tvTTSmode">

@@ -30,7 +30,7 @@
 	<string name="tvTTSenabled">text-to-speech engine</string>
 	<string name="tvTTSmode">Enable TTS ...</string>
 	<string name="radio.TTS.headphones"> ... with headphones.</string>
-	<string name="radio.TTS.always"> ... always.</string>
+	<string name="radio.TTS.always"> ... always via speakerphone.</string>
 
 	<string name="TTS_AnnounceCall">Call from</string>
 
@@ -61,7 +61,7 @@
 
 		Translations:\n
 			English, German : Stefan Fruhner\n
-			Spanish : tba
+			Spanish, Catalan : Jaume Hernandez\n
 	\n
 </string>
 

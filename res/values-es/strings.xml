@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Ring Controller</string>
+    <string name="tabSettings">Configuración</string>
+    <string name="tabTest">Prueba</string>
+    <string name="tvNoiseLevels">Niveles de Ruido</string>
+    <string name="setting_min_amplitude">Mínimo</string>
+    <string name="setting_max_amplitude">Máximo</string>
+    <string name="setting_min_ringer_volume">Volumen mínimo del tono de llamada</string>
+    <string name="switch_handle_vibration">  ... vibración</string>
+    <string name="switch_handle_notification"> ... notificaciones</string>
+    <string name="buttonAccessibilitySettings"> Inicia el Servicio de Accesibilidad</string>
+    <string name="tvControllers">Control ...</string>
+    <string name="tvInCallActions">Acciones</string>
+    <string name="tvFlipAction">Dar la vuelta al telefono para silenciar la llamada</string>
+    <string name="tvReduceVolume">Reduce el volumen del tono de llamada cuando el dispositivo...</string>
+    <string name="tvShakeAction"> ... se agita.</string>
+    <string name="tvPullOutAction"> ...se destapa.</string>
+    <string name="btnTest">Mide el ruido ambiente</string>
+    <string name="btnTestNotification">Envia una notificación de prueba</string>
+
+	<string name="tvWelcome">
+		Smart Ring Controller ajusta el volumen del tono de llamada
+		automaticamente de acuerdo con el ruido ambiente.\n\n
+
+		El servicio esta DESACTIVADO. Para activarlo
+		usa el botón de la barra de acciones.\n\n
+
+		Si te gusta esta app, por favor, puntúala. Si encuentras errores
+		o echas en falta alguna funcionalidad, por favor, contacta al autor
+		en lugar de dejar un mal comentario o una mala puntuación.\n\n
+
+		Esta aplicación puede contener algun error y el usuario entiende y asume
+		los	riesgos que conlleva su uso. El autor no es responsable 
+		de los daños directos, indirectos, accidentales o de sus consecuencias.\n\n
+
+		Creditos:\n
+			desarrollo: Stefan Fruhner (stefan.fruhner@gmail.com)\n\n
+
+		Traducciones:\n
+			Inglés, Alemán : Stefan Fruhner\n
+			Español, Catalán : Jaume Hernandez\n
+	\n
+</string>
+
+    <string name="tvExplanationNoiseLevels">El nivel del timbre se ajusta
+de acuerdo con el nivel actual de ruido ambiente que detecta el microfono. Los niveles de ruido
+corresponden al volumen mínimo y máximo del tono de llamada.</string>
+	<string name="tvExplanationMinimumLevel">
+Nivel mínimo: Selecciona el nivel de ruido ambiente en el que se debe usar el 
+volumen mínimo del tono de llamada (por defecto:0).</string>
+	<string name="tvExplanationMaximumLevel">
+Nivel máximo: Selecciona el nivel de ruido ambiente en el que se debe usar el 
+volumen máximo del tono de llamada (por defecto:7000). Tienes que aumentar este valor
+si el dispositivo suena demasiado fuerte. Disminuye este valor si el dispositivo no 
+se oye lo suficiente.</string>
+
+	<string name="tvTest">Prueba la configuración haciendo clic en los botones.
+	Te informamos del ruido ambiente y del nuevo volumen del tono si todo funciona correctamente.
+	Cubre el sensor de proximidad para probar si la vibracion funciona correctamente.
+	(\'-\' dispositivo cubierto, \'+\' dispositivo NO cubierto).\n\n
+	Las notificaciones solo pueden ser detectadas si el Servicio de Accesibilidad esta en funcionamiento.
+	</string>
+</resources>

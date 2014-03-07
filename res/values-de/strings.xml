@@ -31,7 +31,7 @@
 	<string name="tvTTSenabled">Sprachausgabe</string>
 	<string name="tvTTSmode">Aktiviere ...</string>
 	<string name="radio.TTS.headphones"> ... nur über Kopfhörer.</string>
-	<string name="radio.TTS.always"> ... immer.</string>
+	<string name="radio.TTS.always"> ... immer über Lautsprecher.</string>
 
 	<string name="TTS_AnnounceCall">Anruf von</string>
 
@@ -62,7 +62,7 @@
 
 		Sprachen:\n
 			Englisch, Deutsch : Stefan Fruhner\n
-			Spanish : (bald)
+			Spanish, Katalanisch : Jaume Hernandez\n
 	\n
 </string>
 
