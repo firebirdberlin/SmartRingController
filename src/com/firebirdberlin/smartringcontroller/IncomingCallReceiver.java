@@ -29,17 +29,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         String msg = "Phone state changed to " + state;
         if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
 
-			if (am.isMusicActive()){
-				SharedPreferences.Editor prefEditor = settings.edit();
-				int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-				Logger.d(TAG, "media volume " + String.valueOf(vol));
-
-				if (vol > 0){
-					prefEditor.putInt("lastMusicVolume", vol);
-					prefEditor.commit();
-				}
-			}
-
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);  // 5
             msg += ". Incoming number is " + incomingNumber;
 
@@ -48,29 +37,33 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			context.startService(i);
 
-			TTSService.stopReading(context);
-			String from = getContactNameFromNumber(incomingNumber, context.getContentResolver());
 
-			String text = context.getString(R.string.TTS_AnnounceCall) +
-							" " + from + ".";
-			TTSService.queueMessage(text, context);
+			// activate tts
+			if (am.isBluetoothA2dpOn() == false){
+				TTSService.stopReading(context);
+				String from = getContactNameFromNumber(incomingNumber, context.getContentResolver());
+
+				String text = context.getString(R.string.TTS_AnnounceCall) +
+								" " + from + ".";
+				TTSService.queueMessage(text, context);
+			}
 
         } else{ // OFFHOOK or IDLE
 			TTSService.stopReading(context);
         }
 
-		if (am.isMusicActive()){
-		 if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
+
+		if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
 			// Using a bluetooth headset the media volume reminas muted.
 			// It seems to be a bug in android 4.3. The problem appears
 			// also when Smart Ring Controller is disabled.
 			// So we reset thhe volume manually ...
 			int vol	= settings.getInt("lastMusicVolume", 7);
-			if ( vol == 0 ) vol = 7;
+//			if ( vol == 0 ) vol = 7;
 			am.setStreamVolume(AudioManager.STREAM_MUSIC, vol, AudioManager.FLAG_SHOW_UI);
 			Logger.d(TAG, "setting media volume " + String.valueOf(vol));
-		 }
 		}
+
 
 		//Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
 

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.media.AudioManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.os.Build;
@@ -26,7 +28,7 @@ public class mNotificationListener extends NotificationListenerService {
 	private String TAG = SmartRingController.TAG +"." + this.getClass().getSimpleName();
 	private long last_notification_posted = 0;
 	private final int min_notification_interval = 3000; // ms to be silent between notifications
-
+	private SharedPreferences settings;
 
 	private NLServiceReceiver nlservicereciver;
 	@Override
@@ -36,6 +38,7 @@ public class mNotificationListener extends NotificationListenerService {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER_SERVICE_EXAMPLE");
 		registerReceiver(nlservicereciver,filter);
+		settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 	}
 
 	@Override
@@ -47,6 +50,8 @@ public class mNotificationListener extends NotificationListenerService {
 	@Override
 	public void onNotificationPosted(StatusBarNotification sbn) {
 
+
+		if (settings.getBoolean("enabled", false) == false) return;
 		// phone call is handled elsewhere
 		if (sbn.getPackageName().equals("com.android.phone")) return;
 		Notification n = sbn.getNotification();
@@ -59,7 +64,21 @@ public class mNotificationListener extends NotificationListenerService {
 			// do something--it was set
 			// this is a notification with default sound
 		} else {
-			if (n.sound == null) return;
+			if (n.sound == null) {
+				// determine music volume
+				AudioManager am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+				if (am.isMusicActive()){
+					SharedPreferences.Editor prefEditor = settings.edit();
+					int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+					Logger.d(TAG, "media volume " + String.valueOf(vol));
+
+					if (vol > 0){
+						prefEditor.putInt("lastMusicVolume", vol);
+						prefEditor.commit();
+					}
+				}
+				return;
+			}
 		}
 
 		//mAudioManager.muteNotificationSounds(true, this);
@@ -68,7 +87,9 @@ public class mNotificationListener extends NotificationListenerService {
         if ((System.currentTimeMillis()-last_notification_posted)
                 < min_notification_interval){
             //n.sound = null; // remove the sound, to be more pleasent
-            queueMessage(n, this);
+			if (Config.PRO == true || LicenseCheck.isLicensed(this) == true){
+				queueMessage(n, this);
+			}
             return;
         }
 

@@ -120,9 +120,9 @@ public class TTSService extends Service {
 		// We still want to stick around long enough for onUtteranceCompleted to get called, so let
 		// it call stopSelf();
 		// If no TTS service was running, we stop here
-		if (stop == false) {
-			TTSService.this.stopSelf();
-		}
+//		if (stop == false) { // au backe .. das geht doch nicht
+//			TTSService.this.stopSelf();
+//		}
 	  } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
 		String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
 		messageQueue.add(message);

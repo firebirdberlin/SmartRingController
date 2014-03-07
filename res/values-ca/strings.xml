@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Smart Ring Controller</string>
+    <string name="tabSettings">Configuració</string>
+    <string name="tabTest">Prova</string>
+    <string name="tvNoiseLevels">Nivells de Soroll</string>
+    <string name="setting_min_amplitude">Mínim</string>
+    <string name="setting_max_amplitude">Màxim</string>
+    <string name="setting_min_ringer_volume">Volum mínim del to de trucada</string>
+    <string name="switch_handle_vibration">  ... vibració</string>
+    <string name="switch_handle_notification"> ... notificacions</string>
+    <string name="buttonAccessibilitySettings"> Inicia el Servei d\'Accesibilitat</string>
+    <string name="tvControllers">Control ...</string>
+    <string name="tvInCallActions">Accions</string>
+    <string name="tvFlipAction">Gira el telèfon per a silenciar la trucada</string>
+    <string name="tvReduceVolume">Redueix el volum del to de la trucada quan el dispositiu...</string>
+    <string name="tvShakeAction"> ... s\'agita.</string>
+    <string name="tvPullOutAction"> ...es destapa.</string>
+    <string name="btnTest">Mesura el soroll ambiental</string>
+    <string name="btnTestNotification">Envia una notificació de prova</string>
+
+	<string name="tvWelcome">
+		Smart Ring Controller ajusta el volum del to de la trucada
+		automàticament d\'acord amb el soroll ambiental.\n\n
+
+		El servei està DESACTIVAT. Per a activar-lo
+		fes servir el botó de la barra d\'accions.\n\n
+
+		Si t\'agrada aquesta aplicació, si us plau, puntua-la. Si trobes errades
+		o trobes a faltar alguna funcionalitat, si us plau, contacta amb l\'autor
+		en lloc de deixar una mala puntuació o un mal comentari.\n\n
+
+		Aquesta aplicació pot contenir alguna errada i l\'usuari entén i assumeix
+		els riscos que comporta el seu us. L\'autor no es fa responsable dels dayns
+		directes, indirectes, accidentals ni de les seves conseqüències.\n\n
+
+		Credits:\n
+			Desenvolupament: Stefan Fruhner (stefan.fruhner@gmail.com)\n\n
+
+		Traduccions:\n
+			Anglès, Alemany : Stefan Fruhner\n
+			Espanyol, Català : Jaume Hernandez\n
+
+	\n
+</string>
+
+    <string name="tvExplanationNoiseLevels">El volum del to de trucada s\'ajusta
+d\'acord amb el nivell actual de soroll ambiental que detecta el micròfon. Els nivells de soroll
+corresponen al volum mínim i màxim del to de trucada.</string>
+	<string name="tvExplanationMinimumLevel">
+Nivell mínim: Selecciona el nivell de soroll ambiental en el que s\'ha de fer servir el
+volum mínim del to de trucada (per defecte:0).</string>
+	<string name="tvExplanationMaximumLevel">
+Nivell màxim: Selecciona el nivell de soroll ambiental en el que s\'ha de fer servir el
+volum màxim del to de trucada (per defecte:7000). Has d\'augmentar aquest valor
+si el dispositiu sona massa fort. Disminueix aquest valor si el dispositiu no
+se sent prou fort.</string>
+
+	<string name="tvTest">Prova la configuració fent clic als botons.
+	T\'informem del soroll ambiental y del nou volum del to si tot funciona correctament.
+	Cobreix el sensor de proximitat per a provar si la vibració funciona correctament.
+	(\'-\' dispositiu cobert, \'+\' dispositiu NO cobert).\n\n
+	Les notificacions només poden ser detectades si el Servei d\'Accesibilitat està funcionant.
+	</string>
+</resources>
