@@ -3,3 +3,4 @@ gen
 local.properties
 ./AndroidManifest.xml
 src_lite
+*.keystore
