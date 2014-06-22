@@ -11,11 +11,22 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
 import android.media.AudioManager;
+
+import android.telephony.TelephonyManager;
+
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+
+import java.util.List;
 
 public class TTSService extends Service {
 
@@ -26,6 +37,11 @@ public class TTSService extends Service {
 
   private static final String LOG_TAG = SmartRingController.TAG +"."+TTSService.class.getSimpleName();
 
+  private static int SENSOR_DELAY 	 	= 50000; 	// us = 50 ms
+  private SensorManager sensorManager;
+  private Sensor accelerometerSensor = null;
+  private boolean accelerometerPresent;
+
   private final LocalBinder binder = new LocalBinder();
   private Queue<String> messageQueue = new LinkedList<String>();
   private TimerTask bluetoothTimerTask;
@@ -35,7 +51,6 @@ public class TTSService extends Service {
 
   private AudioManager audioManager;
   private int systemVolume;
-  private boolean systemIsSpeakerphoneOn;
 
   // settings
   public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
@@ -56,7 +71,16 @@ public class TTSService extends Service {
 
   @Override
   public void onCreate() {
-	audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+	audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+	sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
+	List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+	if(sensorList.size() > 0){
+		accelerometerPresent = true;
+		accelerometerSensor = sensorList.get(0);
+	}else{
+		accelerometerPresent = false;
+	}
   }
 
   @Override
@@ -85,7 +109,8 @@ public class TTSService extends Service {
 		  }
 		}
 	  } else if (intent.hasExtra(STOP_READING_EXTRA)) {
-		if (tts != null) {
+		boolean stop = (tts != null);
+		if (stop == true) {
 		  // This will trigger onUtteranceCompleted, so we don't have to worry about cleaning up.
 		  tts.stop();
 		}
@@ -94,6 +119,10 @@ public class TTSService extends Service {
 
 		// We still want to stick around long enough for onUtteranceCompleted to get called, so let
 		// it call stopSelf();
+		// If no TTS service was running, we stop here
+//		if (stop == false) { // au backe .. das geht doch nicht
+//			TTSService.this.stopSelf();
+//		}
 	  } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
 		String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
 		messageQueue.add(message);
@@ -137,11 +166,11 @@ public class TTSService extends Service {
 			public void onInit(int status) {
 			  tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
 				@Override
-				public void onUtteranceCompleted(String utteranceId) {
+				public void onUtteranceCompleted(String utteranceId) { // ready reading
 				  restoreAudio();
 				  synchronized (messageQueue) {
-					messageQueue.poll();
-					if (messageQueue.isEmpty()) {
+					messageQueue.poll(); // retrieves and removes head of the queue
+					if (messageQueue.isEmpty()) { //another message to speak ?
 					  if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
 						// Sleep a little to give the bluetooth device a bit longer to finish.
 						try {
@@ -178,9 +207,18 @@ public class TTSService extends Service {
 	public static boolean shouldRead(boolean canUseSco, Context context){
 	final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
-	if (settings.getBoolean("TTS.enabled", false) == true) {
+	if ( settings.getBoolean("enabled", false) == true &&
+			settings.getBoolean("TTS.enabled", false) == true) {
 
-		if (settings.getBoolean("TTS.alwaysON", false) == true) {
+		// don't speak, when in call
+		TelephonyManager telephone = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+		if (telephone.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK){
+			return false;
+		}
+
+
+		if (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS){
 			return true;
 		}
 
@@ -202,19 +240,24 @@ public class TTSService extends Service {
 
 	params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "valueNotUsed");
 	prepareAudio();
+
+	if (accelerometerPresent){
+		if (Build.VERSION.SDK_INT < 19)
+			sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY);
+		else
+			sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
+	}
 	tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
   }
 
   private void prepareAudio() {
-
 	final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
 	audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
-
-	systemIsSpeakerphoneOn = audioManager.isSpeakerphoneOn();
+	audioManager.setSpeakerphoneOn(false);
 	if ( 		settings.getBoolean("TTS.enabled", false)
-			&& 	settings.getBoolean("TTS.alwaysON", false)
-			&& systemIsSpeakerphoneOn == false) {
+			&& (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS) ) {
 		audioManager.setSpeakerphoneOn(true);
 	}
 
@@ -233,8 +276,14 @@ public class TTSService extends Service {
   }
 
   private void restoreAudio() {
+	 sensorManager.unregisterListener(ShakeActions); // disable shake action
+
 	// restore system setting of the speakerphone
-	audioManager.setSpeakerphoneOn(systemIsSpeakerphoneOn);
+	if ( 		settings.getBoolean("TTS.enabled", false)
+			&& (settings.getInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES)
+				== TTSFragment.TTS_MODE_ALWAYS) ) {
+		audioManager.setSpeakerphoneOn(false);
+	}
 
 	if (systemVolume != -1) {
 	  Logger.i(LOG_TAG, "Resetting volume to " + systemVolume);
@@ -242,6 +291,39 @@ public class TTSService extends Service {
 	}
 	audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
   }
+
+  private final SensorEventListener ShakeActions =
+	new SensorEventListener()  {
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		}
+
+		// called when sensor value have changed
+		private int shake_left = 0;
+		private int shake_right = 0;
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+
+				// if acceleration in x and y direction is too strong, device is moving
+
+				if (event.values[0] < -12.) shake_left++;
+				if (event.values[0] > 12.) shake_right++;
+
+				// shake to silence
+				if ((shake_left >= 1 && shake_right >= 2)
+						|| (shake_left >= 2 && shake_right >= 1)){
+					//do something
+					tts.stop(); // stop reading current message
+					shake_left = shake_right = 0;
+					//return;
+				}
+
+			}
+
+		}
+	};
+
 
   public static void queueMessage(String message, Context context) {
 	if (shouldRead(false, context) == false) return;

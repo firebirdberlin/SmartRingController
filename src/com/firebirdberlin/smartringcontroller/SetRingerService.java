@@ -49,6 +49,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 	private Handler handler;
 	private SoundMeter soundmeter;
 	private mAudioManager audiomanager;
+
 	private BatteryStats battery;
 
 	private SensorManager sensorManager;
@@ -97,7 +98,8 @@ public class SetRingerService extends Service implements SensorEventListener {
 
 	@Override
 	public void onCreate(){
-		Logger.setDebugging( Utility.isDebuggable(this) );
+//		Logger.setDebugging( true );
+//		Logger.setDebugging( Utility.isDebuggable(this) );
 
 		IntentFilter filter = new IntentFilter();
 		//filter.addAction("android.provider.Telephony.SMS_RECEIVED");
@@ -108,9 +110,8 @@ public class SetRingerService extends Service implements SensorEventListener {
 		handler 	 = new Handler();
 		soundmeter 	 = new SoundMeter();
 		audiomanager = new mAudioManager(this);
-		vibrator  = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
-
-		sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		vibrator  		= (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+		sensorManager 	= (SensorManager)getSystemService(SENSOR_SERVICE);
 
 		List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 		if(sensorList.size() > 0){
@@ -156,7 +157,6 @@ public class SetRingerService extends Service implements SensorEventListener {
 
 		// store the initial call state for later use
 		initialPhoneState = telephone.getCallState();
-
 		DeviceIsCovered = false;
 		PhoneState = "None";
 		Bundle extras = intent.getExtras();
@@ -263,12 +263,6 @@ public class SetRingerService extends Service implements SensorEventListener {
 			soundmeter = null;
 		}
 
-		vibrator.cancel();
-		// to be sure we unmute the streams
-		audiomanager.unmute();
-		// and restore a silent setting, so that burst are not too loud
-		audiomanager.setRingerVolume(minRingerVolume);
-
 		if (wakelock != null && wakelock.isHeld()){
 			wakelock.release();
 		}
@@ -329,6 +323,12 @@ public class SetRingerService extends Service implements SensorEventListener {
 		public void run() {
 			// don't stop when ringing => vibration may be handled
 			if (telephone.getCallState() != TelephonyManager.CALL_STATE_RINGING){
+				vibrator.cancel();
+				// to be sure we unmute the streams
+				audiomanager.unmute();
+				// and restore a silent setting, so that bursts are not too loud
+				audiomanager.setRingerVolume(minRingerVolume);
+
 				stopSelf();
 			}
 		}
@@ -395,13 +395,24 @@ public class SetRingerService extends Service implements SensorEventListener {
 		//audiomanager.restoreRingerMode();
 		if ( shouldRing() ){ 			// otherwise pass
 			audiomanager.unmute();		// sound is unmuted onDestroy
+		} else {
+			// mute phone until it is flipped again
+			Intent i= new Intent(this, EnjoyTheSilenceService.class);
+			final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+			boolean keepalive = settings.getBoolean("Ctrl.AutoReactivateRingerMode", false);
+
+			i.putExtra("action", "mute");
+			i.putExtra("WAIT_UNTIL_FLIPPED", keepalive);
+			startService(i);
 		}
+
+
 
 		if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
 			int callState = telephone.getCallState();
 			// call has stopped, while we were waiting for measurements
 			if (callState != TelephonyManager.CALL_STATE_RINGING){
-				stopSelf();
+				handler.post(stopService);
 				return;
 			}
 		}
@@ -583,6 +594,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 				}
 			} else { // OFFHOOK or IDLE
 				vibrator.cancel();
+//				handler.post(stopService);
 				handler.postDelayed(stopService, 200);
 			}
 		}

@@ -29,7 +29,7 @@
 			android:layout_weight="1"
 			android:scrollHorizontally="false"
 			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearance"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_alignParentRight="true"
 		/>
 
@@ -44,38 +44,38 @@
 		/>
 	</LinearLayout>
 
-	<LinearLayout
-		android:orientation="horizontal"
-		android:id="@+id/llTTSalwaysON"
+	<TextView
+		android:id="@+id/tvTTSmode"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/tvTTSmode"
+		android:layout_weight="1"
+		android:scrollHorizontally="false"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_marginTop="20dp"
+		android:layout_marginLeft="10dp"
+		android:layout_below="@+id/llTTS"
+	/>
+
+	<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/rgTTSon"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="20dp"
+		android:orientation="vertical"
+		android:layout_marginTop="5dp"
 		android:layout_marginLeft="20dp"
-		android:layout_below="@+id/llTTS">
-
-		<TextView
-			android:id="@+id/tvTTSalwaysO"
+		android:layout_below="@+id/tvTTSmode">
+		<RadioButton android:id="@+id/radio_TTS_headphones"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/tvTTSalwaysON"
-			android:layout_weight="1"
-			android:scrollHorizontally="false"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearance"
-			android:layout_alignParentLeft="true"
-		/>
-
-		<CheckBox
-			android:id="@+id/cbTTSalwaysON"
+			android:text="@string/radio.TTS.headphones"
+			android:onClick="onRadioButtonClicked"/>
+		<RadioButton android:id="@+id/radio_TTS_always"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text=""
-			android:checked="false"
-			android:enabled="true"
-			android:textAppearance="?android:attr/textAppearance"
-			android:layout_alignParentRight="true"
-		/>
-	</LinearLayout>
+			android:text="@string/radio.TTS.always"
+			android:onClick="onRadioButtonClicked"/>
+	</RadioGroup>
 
 	</RelativeLayout>
 </ScrollView>

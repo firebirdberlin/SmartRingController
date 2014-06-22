@@ -64,7 +64,9 @@ public class accNotificationListener extends AccessibilityService {
         // if the last notification was within the last 10s
         if ((System.currentTimeMillis()-last_notification_posted)
                 < min_notification_interval){
-			mNotificationListener.queueMessage(n, this);
+			if (Config.PRO == true || LicenseCheck.isLicensed(this) == true){
+				mNotificationListener.queueMessage(n, this);
+			}
             return;
         }
         last_notification_posted = System.currentTimeMillis();

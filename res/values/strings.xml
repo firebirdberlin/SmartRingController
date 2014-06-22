@@ -18,16 +18,28 @@
     <string name="tvControllers">Control ...</string>
     <string name="tvInCallActions">Actions</string>
     <string name="tvFlipAction">Flip device to mute ringer.</string>
+
+    <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>
+
     <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
     <string name="tvShakeAction"> ... is shaken.</string>
     <string name="tvPullOutAction"> ...is uncovered.</string>
 
+
+
 	<string name="tvTTSenabled">text-to-speech engine</string>
-	<string name="tvTTSalwaysON">always on</string>
+	<string name="tvTTSmode">Enable TTS ...</string>
+	<string name="radio.TTS.headphones"> ... with headphones.</string>
+	<string name="radio.TTS.always"> ... always via speakerphone.</string>
+
 	<string name="TTS_AnnounceCall">Call from</string>
 
     <string name="btnTest">Measure ambient noise</string>
     <string name="btnTestNotification">Send test notification</string>
+    <string name="msgTestNotification">This is a test notification.</string>
+
+    <string name="titleSilenceMode">Silence mode.</string>
+    <string name="msgRestoreRingerMode">Click to restore normal mode.</string>
 
 	<string name="tvWelcome">
 		Smart Ring Controller adjusts the ringer volume
@@ -49,7 +61,7 @@
 
 		Translations:\n
 			English, German : Stefan Fruhner\n
-			Spanish : tba
+			Spanish, Catalan : Jaume Hernandez\n
 	\n
 </string>
 

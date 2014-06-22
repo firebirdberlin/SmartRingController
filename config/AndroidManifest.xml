@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="@CONFIG.PACKAGENAME@"
-	android:versionCode="10"
-	android:versionName="1.0.9" >
+	android:versionCode="12"
+	android:versionName="1.1.1" >
 
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -28,6 +28,18 @@
 
 	<uses-permission android:name="android.permission.BROADCAST_STICKY" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
+
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
+	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+<!--
+	<uses-permission android:name="android.permission.MODIFY_PHONE_STATE"/>
+-->
 
 	<uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
 	<uses-feature android:name="android.hardware.sensor.light" android:required="true" />
@@ -85,6 +97,7 @@
 		</service>
 
 
+		<service android:enabled="true" android:name=".EnjoyTheSilenceService" />
 
 		<receiver android:name=".IncomingCallReceiver" android:priority="1000">
 			<intent-filter android:priority="1000">
@@ -99,6 +112,15 @@
 			</intent-filter>
 		</receiver>
 	</application>
+
+<!--
+	<receiver android:name=".MediaButtonIntentReceiver" android:enabled="true">
+		<intent-filter>
+			<action android:name="android.intent.action.MEDIA_BUTTON" />
+		</intent-filter>
+	</receiver>
+-->
+
 
 </manifest>
 

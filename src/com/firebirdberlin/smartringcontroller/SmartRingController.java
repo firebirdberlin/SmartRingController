@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -188,8 +189,8 @@ public class SmartRingController extends Activity {
 		// the addAction re-use the same intent to keep the example short
 		Notification n  = new Notification.Builder(this)
 		.setContentTitle("Smart Ring Controller")
-		.setContentText("This is a test notification.")
-		.setSmallIcon(R.drawable.ic_launcher)
+		.setContentText(getString(R.string.msgTestNotification))
+		.setSmallIcon(R.drawable.ic_launcher_gray)
 		.setContentIntent(pIntent)
 		.setAutoCancel(true)
 		//.addAction(R.drawable.icon, "Call", pIntent)
@@ -204,6 +205,27 @@ public class SmartRingController extends Activity {
 
 		notificationManager.notify(0, n);
 	}
+	}
+
+	public void onRadioButtonClicked(View view) {
+		// Is the button now checked?
+		boolean checked = ((RadioButton) view).isChecked();
+		final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+		SharedPreferences.Editor prefEditor = settings.edit();
+		// Check which radio button was clicked
+		switch(view.getId()) {
+			case R.id.radio_TTS_headphones:
+				if (checked){
+					prefEditor.putInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES);
+				}
+				break;
+			case R.id.radio_TTS_always:
+				if (checked){
+					prefEditor.putInt("TTS.mode", TTSFragment.TTS_MODE_ALWAYS);
+				}
+				break;
+		}
+		prefEditor.commit();
 	}
 
 }
