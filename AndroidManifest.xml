@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.firebirdberlin.smartringcontrollerlite"
+	package="com.firebirdberlin.smartringcontrollerpro"
 	android:versionCode="12"
 	android:versionName="1.1.1" >
 
@@ -49,12 +49,12 @@
 	<application
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"
-		android:label="SmartRingControllerLite"
+		android:label="SmartRingController"
 		android:theme="@android:style/Theme.Holo"
 		>
 		<activity
 			android:name=".SmartRingController"
-			android:label="SmartRingControllerLite"
+			android:label="SmartRingController"
 			android:configChanges="orientation|keyboard|screenSize"
 			android:screenOrientation="portrait">
 			<intent-filter>
@@ -71,7 +71,7 @@
 -->
 		<service android:name=".mNotificationListener"
 				 android:priority="10000"
-				 android:label="SmartRingControllerLite"
+				 android:label="SmartRingController"
 				 android:enabled="@bool/use_NotificationListenerService"
 				 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
 				 >

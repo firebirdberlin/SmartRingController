@@ -81,19 +81,19 @@ public class SetRingerService extends Service implements SensorEventListener {
 	private int count_acceleration_sensor = 0;
 	private int count_light_sensor = 0;
 	private boolean handleVibration 		= false;
-	private boolean handleNotification	= false;
-	private boolean brokenProximitySensor = false;
-	private boolean FlipAction			= false;
-    private boolean ShakeAction			= false;
+	private boolean handleNotification		= false;
+	private boolean brokenProximitySensor 	= false;
+	private boolean FlipAction				= false;
+    private boolean ShakeAction				= false;
 	private boolean PullOutAction			= false;
-	private boolean TTSenabled			= false;
+	private boolean TTSenabled				= false;
 	private double minAmplitude 			= 1000.;
 	private double maxAmplitude  			= 10000.;
-	private int	 minRingerVolume 		= 1;		// 0 means vibration
-	private int	 addPocketVolume 		= 0;		// increase in pocket
-	private static int waitMillis			= 3000; 	// ms to wait before measuring ambient noise
-	private static int measurementMillis 	= 300; 	// 300 ms is the minimum needed for the nexus 4
-	private static int SENSOR_DELAY 	 	= 50000; 	// us = 50 ms
+	private int	 minRingerVolume 			= 1;	   // 0 means vibration
+	private int	 addPocketVolume 			= 0;	   // increase in pocket
+	private static int waitMillis			= 3000;    // ms to wait before measuring ambient noise
+	private static int measurementMillis 	= 800; 	   // 800 ms is the minimum needed for Android 4.4.4
+	private static int SENSOR_DELAY 	 	= 50000;   // us = 50 ms
 	private static float MAX_POCKET_BRIGHTNESS = 10.f; // proximity sensor fix
 
 	@Override
@@ -114,10 +114,10 @@ public class SetRingerService extends Service implements SensorEventListener {
 		sensorManager 	= (SensorManager)getSystemService(SENSOR_SERVICE);
 
 		List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-		if(sensorList.size() > 0){
+		if( sensorList.size() > 0 ){
 			accelerometerPresent = true;
 			accelerometerSensor = sensorList.get(0);
-		}else{
+		} else {
 			accelerometerPresent = false;
 		}
 
@@ -127,7 +127,6 @@ public class SetRingerService extends Service implements SensorEventListener {
 		wakelock.acquire();
 
 		telephone = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-
 	}
 
 	@Override
