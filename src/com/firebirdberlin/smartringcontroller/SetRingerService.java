@@ -76,6 +76,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private double minAmplitude = 1000.;
     private double maxAmplitude = 10000.;
     private int minRingerVolume = 1; // 0 means vibration
+    private int controlRingerVolume = 1; // set the ringer volume based on ambient noise
     private int addPocketVolume = 0; // increase in pocket
     private static int waitMillis = 3000; // ms to wait before measuring ambient noise
     private static int measurementMillis = 800; // 800 ms is the minimum needed for Android 4.4.4
@@ -156,7 +157,6 @@ public class SetRingerService extends Service implements SensorEventListener {
            //Toast.makeText(this,"No Proximity Sensor Found! ",Toast.LENGTH_LONG).show();
         } else {
             //ProximityMaximumRange = proximitySensor.getMaximumRange();
-            // register this class as a listener for the Proximity Sensor
             if (Build.VERSION.SDK_INT < 19) {
                 sensorManager.registerListener(this, proximitySensor, SENSOR_DELAY);
             } else {
@@ -185,6 +185,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         minAmplitude = (double) settings.getInt("minAmplitude", 500);
         maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
         minRingerVolume = settings.getInt("minRingerVolume", 1);
+        controlRingerVolume = settings.getInt("Ctrl.RingerVolume", 1);
         addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
         handleVibration = settings.getBoolean("handle_vibration", false);
         handleNotification = settings.getBoolean("handle_notification", false);
@@ -244,6 +245,10 @@ public class SetRingerService extends Service implements SensorEventListener {
     private Runnable startListening = new Runnable() {
         @Override
         public void run() {
+            if (controlRingerVolume == 0) {
+                handler.post(stopListening);
+                return;
+            }
 
             boolean success = false;
             try {
@@ -265,7 +270,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         @Override
         public void run() {
 
-            if (error_on_microphone) {
+            if (error_on_microphone || controlRingerVolume == 0) {
                 setVolume(0.);
             } else {
                 setVolume(soundmeter.getAmplitude());
@@ -345,7 +350,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         return false;
     }
 
-    private void setVolume(double currentAmplitude) {
+    private void setVolume(double currentAmbientNoiseAmplitude) {
 
         sensorManager.unregisterListener(this);
         ambient_light /= (float) count_light_sensor; // mean value
@@ -376,11 +381,12 @@ public class SetRingerService extends Service implements SensorEventListener {
         boolean vibratorON = handleVibration();
 
         int value = audiomanager.getRingerVolume();
-        if (currentAmplitude > 0.) { // could not detect ambient noise
+        if (currentAmbientNoiseAmplitude > 0.) { // could not detect ambient noise
 
             int max = audiomanager.getMaxRingerVolume();
 
-            value = minRingerVolume + (int) ( (currentAmplitude / maxAmplitude) * (double) (max - minRingerVolume));
+            value = minRingerVolume + (int) ((currentAmbientNoiseAmplitude / maxAmplitude)
+                                             * (double) (max - minRingerVolume));
 
             if (isCovered()) value += addPocketVolume;
 
@@ -389,7 +395,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         }
 
-        String msg = String.valueOf(currentAmplitude) + " => " + String.valueOf(value);
+        String msg = String.valueOf(currentAmbientNoiseAmplitude) + " => " + String.valueOf(value);
         msg += (DeviceIsCovered) ? " -" : " +";
         msg += (vibratorON) ? " | vibrate" : "";
 
@@ -413,9 +419,8 @@ public class SetRingerService extends Service implements SensorEventListener {
         } else if ( PhoneState.equals("RINGING") ){
             // The service will be stopped on change of the in-call state
             registerInCallSensorListeners();
-        } else{
+        } else {
             // could be a test of the service
-
             if (vibratorON){
                 handler.postDelayed(stopService, 600);
             }else{
