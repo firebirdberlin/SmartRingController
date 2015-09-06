@@ -19,9 +19,6 @@ import android.widget.TextView;
 
 
 public class SettingsFragment extends Fragment {
-
-
-    private RelativeLayout main_layout;
     SharedPreferences settings;
     private TextView tvMinAmplitude;
     private TextView tvMaxAmplitude;
@@ -48,11 +45,6 @@ public class SettingsFragment extends Fragment {
         maxAmplitude = settings.getInt("maxAmplitude", 7000);
         int minRingerVolume = settings.getInt("minRingerVolume", 1);
         int addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
-        boolean FlipAction = settings.getBoolean("FlipAction", false);
-        boolean ShakeAction = settings.getBoolean("ShakeAction", false);
-        boolean PullOutAction = settings.getBoolean("PullOutAction", false);
-
-        main_layout = (RelativeLayout) view.findViewById(R.id.main_layout);
 
         tvMinAmplitude = (TextView) view.findViewById(R.id.tvMinAmplitude);
         tvMaxAmplitude = (TextView) view.findViewById(R.id.tvMaxAmplitude);
@@ -189,118 +181,54 @@ public class SettingsFragment extends Fragment {
         });
 
 
-        if (LicenseCheck.isLicensed(getActivity()) == true){
-            boolean handleVibration    = settings.getBoolean("handle_vibration", false);
-            boolean handleNotification = settings.getBoolean("handle_notification", false);
+        boolean handleVibration    = settings.getBoolean("handle_vibration", false);
+        boolean handleNotification = settings.getBoolean("handle_notification", false);
 
-            switch_handle_vibration     = (CompoundButton) view.findViewById(R.id.SwitchHandleVibration);
+        switch_handle_vibration     = (CompoundButton) view.findViewById(R.id.SwitchHandleVibration);
 
-            switch_handle_vibration.setChecked(handleVibration);
-            switch_handle_vibration.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("handle_vibration", isChecked);
-                    prefEditor.commit();
+        switch_handle_vibration.setChecked(handleVibration);
+        switch_handle_vibration.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("handle_vibration", isChecked);
+                prefEditor.commit();
 
-                    if (isChecked){
-                        Settings.System.putInt(
-                            getActivity().getContentResolver(),
-                            "vibrate_when_ringing", false ? 1 : 0);
-                    }
+                if (isChecked){
+                    Settings.System.putInt(
+                        getActivity().getContentResolver(),
+                        "vibrate_when_ringing", false ? 1 : 0);
                 }
-            });
+            }
+        });
 
-            switch_handle_notification     = (CompoundButton) view.findViewById(R.id.SwitchHandleNotification);
-            switch_handle_notification.setChecked(handleNotification);
-            switch_handle_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("handle_notification", isChecked);
-                    prefEditor.commit();
-                }
-            });
+        switch_handle_notification     = (CompoundButton) view.findViewById(R.id.SwitchHandleNotification);
+        switch_handle_notification.setChecked(handleNotification);
+        switch_handle_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("handle_notification", isChecked);
+                prefEditor.commit();
+            }
+        });
 
-            final CheckBox cbBrokenProximitySensor = (CheckBox) view.findViewById(R.id.cbBrokenProximitySensor);
-            cbBrokenProximitySensor.setChecked(
+        final CheckBox cbBrokenProximitySensor = (CheckBox) view.findViewById(R.id.cbBrokenProximitySensor);
+        cbBrokenProximitySensor.setChecked(
                 settings.getBoolean("Ctrl.BrokenProximitySensor", true)
                 );
-            cbBrokenProximitySensor.setOnCheckedChangeListener(new OnCheckedChangeListener()    {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("Ctrl.BrokenProximitySensor", isChecked);
-                    prefEditor.commit();
-                }
-
-            });
-
-
-            final CompoundButton switchFlipAction = (CompoundButton) view.findViewById(R.id.switchFlipAction);
-            switchFlipAction.setChecked(FlipAction);
-            switchFlipAction.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("FlipAction", isChecked);
-                    prefEditor.commit();
-                }
-            });
-
-            final CheckBox cbAutoReactivateRingerMode = (CheckBox) view.findViewById(R.id.cbAutoReactivateRingerMode);
-            cbAutoReactivateRingerMode.setChecked(
-                settings.getBoolean("Ctrl.AutoReactivateRingerMode", false)
-                );
-            cbAutoReactivateRingerMode.setOnCheckedChangeListener(new OnCheckedChangeListener()    {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("Ctrl.AutoReactivateRingerMode", isChecked);
-                    prefEditor.commit();
-                }
-
-            });
-
-            final CompoundButton switchShakeAction = (CompoundButton) view.findViewById(R.id.switchShakeAction);
-            switchShakeAction.setChecked(ShakeAction);
-            switchShakeAction.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("ShakeAction", isChecked);
-                    prefEditor.commit();
-                }
-            });
-
-            final CompoundButton switchPullOutAction     = (CompoundButton) view.findViewById(R.id.switchPullOutAction);
-            switchPullOutAction.setChecked(PullOutAction);
-            switchPullOutAction.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
-                    SharedPreferences.Editor prefEditor = settings.edit();
-                    prefEditor.putBoolean("PullOutAction", isChecked);
-                    prefEditor.commit();
-                }
-            });
-
-
-        } else { // lite version
-            View llpro     = (View) view.findViewById(R.id.llProFeatures);
-            llpro.setVisibility(View.GONE);
-            //View llv     = (View) view.findViewById(R.id.llHandleVibration);
-            //View lln     = (View) view.findViewById(R.id.llHandleNotification);
-            //llv.setVisibility(View.GONE);
-            //lln.setVisibility(View.GONE);
+        cbBrokenProximitySensor.setOnCheckedChangeListener(new OnCheckedChangeListener()    {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+        {
+            SharedPreferences.Editor prefEditor = settings.edit();
+            prefEditor.putBoolean("Ctrl.BrokenProximitySensor", isChecked);
+            prefEditor.commit();
         }
 
+        });
         return view;
     }
 

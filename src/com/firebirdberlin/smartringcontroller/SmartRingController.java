@@ -43,6 +43,7 @@ public class SmartRingController extends Activity {
     public static final String PREFS_KEY = "SmartRingController preferences";
 
     private Fragment mSettingsFragment;
+    private Fragment mInCallActionsFragment;
     private Fragment mTTSFragment;
     private Fragment mTestFragment;
     private LinearLayout tabs;
@@ -69,21 +70,25 @@ public class SmartRingController extends Activity {
         actionbar.setDisplayShowHomeEnabled(true);
         //actionBar.setTitle("");
 
+        ActionBar.Tab TabActions = actionbar.newTab().setText(getString(R.string.tabActions));
         ActionBar.Tab TabSettings = actionbar.newTab().setText(getString(R.string.tabSettings));
         ActionBar.Tab TabTTS = actionbar.newTab().setText(getString(R.string.tabTTS));
         ActionBar.Tab TabTest = actionbar.newTab().setText(getString(R.string.tabTest));
 
         //create the two fragments we want to use for display content
         mSettingsFragment = new SettingsFragment();
+        mInCallActionsFragment = new InCallActionsFragment();
         mTTSFragment = new TTSFragment();
         mTestFragment = new TestFragment();
 
         //set the Tab listener. Now we can listen for clicks.
+        TabActions.setTabListener(new TabsListener(mInCallActionsFragment));
         TabSettings.setTabListener(new TabsListener(mSettingsFragment));
         TabTTS.setTabListener(new TabsListener(mTTSFragment));
         TabTest.setTabListener(new TabsListener(mTestFragment));
 
         //add the two tabs to the actionbar
+        actionbar.addTab(TabActions);
         actionbar.addTab(TabSettings);
         actionbar.addTab(TabTTS);
         actionbar.addTab(TabTest);

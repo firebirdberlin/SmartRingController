@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smart Ring Controller</string>
+    <string name="tabActions">Actions</string>
     <string name="tabSettings">Settings</string>
     <string name="tabTTS">TTS</string>
     <string name="tabTest">Test</string>
