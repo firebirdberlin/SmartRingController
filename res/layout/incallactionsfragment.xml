@@ -22,7 +22,6 @@
             android:scrollHorizontally="false"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/divider2"
             android:layout_marginBottom="10dp"/>
 
     <LinearLayout
@@ -156,5 +155,143 @@
             android:layout_alignParentRight="true"
         />
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_margin="20dp"
+        android:background="#C2C2C2"
+        />
+
+    <TextView
+            android:id="@+id/tvControllers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvControllers"
+            android:layout_weight="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/divider1"
+            android:layout_marginBottom="10dp"
+    />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/llHandleVibration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvControllers"
+        android:layout_marginLeft="20dp">
+
+        <TextView
+            android:id="@+id/tvHandleVibration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_handle_vibration"
+            android:layout_weight="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentLeft="true"
+        />
+
+        <Switch
+            android:id="@+id/SwitchHandleVibration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:enabled="true"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentRight="true"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/llHandleNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llHandleVibration"
+        android:layout_marginLeft="20dp">
+
+
+        <TextView
+            android:id="@+id/tvHandleNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_handle_notification"
+            android:layout_weight="1"
+            android:scrollHorizontally="false"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentLeft="true"
+        />
+
+        <Switch
+            android:id="@+id/SwitchHandleNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:enabled="true"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentRight="true"
+        />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:id="@+id/llAccessibilityButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llHandleNotification"
+        >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonAccessibilitySettings"
+            android:text="@string/buttonAccessibilitySettings"
+            android:onClick="buttonClicked"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/llBrokenProximitySensor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/llAccessibilityButton"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/tvBrokenProximitySensor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvBrokenProximitySensor"
+            android:layout_weight="1"
+            android:scrollHorizontally="false"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentLeft="true"
+        />
+
+        <CheckBox
+            android:id="@+id/cbBrokenProximitySensor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:checked="false"
+            android:enabled="true"
+            android:textAppearance="?android:attr/textAppearance"
+            android:layout_alignParentRight="true"
+        />
+    </LinearLayout>
+
 </LinearLayout>
 </ScrollView>

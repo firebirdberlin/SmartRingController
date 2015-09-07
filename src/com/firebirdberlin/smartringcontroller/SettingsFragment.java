@@ -9,10 +9,8 @@ import android.provider.Settings.System;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -31,8 +29,7 @@ public class SettingsFragment extends Fragment {
     private SeekBar SeekBarMin;
     private SeekBar SeekBarMax;
 
-    private CompoundButton switch_handle_notification;
-    private CompoundButton switch_handle_vibration;
+    private CompoundButton switch_handle_ambient_noise;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +41,20 @@ public class SettingsFragment extends Fragment {
         minAmplitude = settings.getInt("minAmplitude", 0);
         maxAmplitude = settings.getInt("maxAmplitude", 7000);
         int minRingerVolume = settings.getInt("minRingerVolume", 1);
+        boolean handleRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         int addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
+
+        switch_handle_ambient_noise = (CompoundButton) view.findViewById(R.id.SwitchHandleAmbientNoise);
+        switch_handle_ambient_noise.setChecked(handleRingerVolume);
+        switch_handle_ambient_noise.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("Ctrl.RingerVolume", isChecked);
+                prefEditor.commit();
+            }
+        });
 
         tvMinAmplitude = (TextView) view.findViewById(R.id.tvMinAmplitude);
         tvMaxAmplitude = (TextView) view.findViewById(R.id.tvMaxAmplitude);
@@ -180,55 +190,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-
-        boolean handleVibration    = settings.getBoolean("handle_vibration", false);
-        boolean handleNotification = settings.getBoolean("handle_notification", false);
-
-        switch_handle_vibration     = (CompoundButton) view.findViewById(R.id.SwitchHandleVibration);
-
-        switch_handle_vibration.setChecked(handleVibration);
-        switch_handle_vibration.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView,
-                final boolean isChecked) {
-                SharedPreferences.Editor prefEditor = settings.edit();
-                prefEditor.putBoolean("handle_vibration", isChecked);
-                prefEditor.commit();
-
-                if (isChecked){
-                    Settings.System.putInt(
-                        getActivity().getContentResolver(),
-                        "vibrate_when_ringing", false ? 1 : 0);
-                }
-            }
-        });
-
-        switch_handle_notification     = (CompoundButton) view.findViewById(R.id.SwitchHandleNotification);
-        switch_handle_notification.setChecked(handleNotification);
-        switch_handle_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView,
-                final boolean isChecked) {
-                SharedPreferences.Editor prefEditor = settings.edit();
-                prefEditor.putBoolean("handle_notification", isChecked);
-                prefEditor.commit();
-            }
-        });
-
-        final CheckBox cbBrokenProximitySensor = (CheckBox) view.findViewById(R.id.cbBrokenProximitySensor);
-        cbBrokenProximitySensor.setChecked(
-                settings.getBoolean("Ctrl.BrokenProximitySensor", true)
-                );
-        cbBrokenProximitySensor.setOnCheckedChangeListener(new OnCheckedChangeListener()    {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-        {
-            SharedPreferences.Editor prefEditor = settings.edit();
-            prefEditor.putBoolean("Ctrl.BrokenProximitySensor", isChecked);
-            prefEditor.commit();
-        }
-
-        });
         return view;
     }
 

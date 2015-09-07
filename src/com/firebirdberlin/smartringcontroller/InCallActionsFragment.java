@@ -21,6 +21,10 @@ import android.widget.TextView;
 public class InCallActionsFragment extends Fragment {
     SharedPreferences settings;
 
+    private CompoundButton switch_handle_notification;
+    private CompoundButton switch_handle_vibration;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.incallactionsfragment, container, false);
@@ -79,6 +83,52 @@ public class InCallActionsFragment extends Fragment {
                 prefEditor.putBoolean("PullOutAction", isChecked);
                 prefEditor.commit();
             }
+        });
+
+        boolean handleVibration = settings.getBoolean("handle_vibration", false);
+        boolean handleNotification = settings.getBoolean("handle_notification", false);
+
+        switch_handle_vibration = (CompoundButton) view.findViewById(R.id.SwitchHandleVibration);
+
+        switch_handle_vibration.setChecked(handleVibration);
+        switch_handle_vibration.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("handle_vibration", isChecked);
+                prefEditor.commit();
+
+                if (isChecked){
+                    Settings.System.putInt(
+                        getActivity().getContentResolver(),
+                        "vibrate_when_ringing", false ? 1 : 0);
+                }
+            }
+        });
+
+        switch_handle_notification = (CompoundButton) view.findViewById(R.id.SwitchHandleNotification);
+        switch_handle_notification.setChecked(handleNotification);
+        switch_handle_notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("handle_notification", isChecked);
+                prefEditor.commit();
+            }
+        });
+
+        final CheckBox cbBrokenProximitySensor = (CheckBox) view.findViewById(R.id.cbBrokenProximitySensor);
+        cbBrokenProximitySensor.setChecked(settings.getBoolean("Ctrl.BrokenProximitySensor", true));
+        cbBrokenProximitySensor.setOnCheckedChangeListener(new OnCheckedChangeListener()    {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("Ctrl.BrokenProximitySensor", isChecked);
+                prefEditor.commit();
+            }
+
         });
 
         return view;

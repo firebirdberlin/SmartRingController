@@ -10,316 +10,186 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    >
-
-    <TextView
-            android:id="@+id/tvNoiseLevels"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvNoiseLevels"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_alignParentLeft="true"
-    />
-
-    <TextView
-            android:id="@+id/tvExplanationNoiseLevels"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvExplanationNoiseLevels"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tvNoiseLevels"
-    />
-
-
-    <TextView
-            android:id="@+id/tvMinAmplitude"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_min_amplitude"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_below="@+id/tvExplanationNoiseLevels"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            />
-
-    <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="min. Volume"
-            android:max="10000"
-            android:progress="1000"
-            android:id="@+id/SeekBarMin"
-            android:layout_below="@+id/tvMinAmplitude"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-    />
-
-    <TextView
-            android:id="@+id/tvExplanationMinimumLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvExplanationMinimumLevel"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/SeekBarMin"
-    />
-
-
-    <TextView
-            android:id="@+id/tvMaxAmplitude"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_max_amplitude"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_below="@+id/tvExplanationMinimumLevel"
-            android:layout_marginTop ="10dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            />
-
-    <SeekBar
-           android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="max. Volume"
-            android:max="50000"
-            android:progress="10000"
-            android:id="@+id/SeekBarMax"
-            android:layout_below="@+id/tvMaxAmplitude"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-    />
-
-    <TextView
-            android:id="@+id/tvExplanationMaximumLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvExplanationMaximumLevel"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/SeekBarMax"
-    />
-
-    <TextView
-            android:id="@+id/tvMinRingerVolume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_min_ringer_volume"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_below="@+id/tvExplanationMaximumLevel"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="20dp"
-            />
-
-    <SeekBar
-            android:id="@+id/SeekBarMinRingerVolume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="6"
-            android:progress="1"
-            android:layout_below="@+id/tvMinRingerVolume"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-    />
-
-    <TextView
-            android:id="@+id/tvPocketVolume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/tvPocketVolume"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_below="@+id/SeekBarMinRingerVolume"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="20dp"
-            />
-
-    <SeekBar
-            android:id="@+id/SeekBarPocketVolume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="6"
-            android:progress="1"
-            android:layout_below="@+id/tvPocketVolume"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-    />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/llProFeatures"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/SeekBarPocketVolume"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        >
-
-    <View
-        android:id="@+id/divider1"
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:layout_margin="20dp"
-        android:background="#C2C2C2"
-        />
-
-    <TextView
-            android:id="@+id/tvControllers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvControllers"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/divider1"
-            android:layout_marginBottom="10dp"
-    />
+    android:layout_margin="5dp">
 
     <LinearLayout
         android:orientation="horizontal"
-        android:id="@+id/llHandleVibration"
+        android:id="@+id/llHandleAmbientNoise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvControllers"
-        android:layout_marginLeft="20dp">
+        android:layout_marginTop="20dp">
 
         <TextView
             android:id="@+id/tvHandleVibration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/switch_handle_vibration"
+            android:text="@string/switch_handle_ambient_noise"
             android:layout_weight="1"
             android:scrollHorizontally="false"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-        />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignParentLeft="true"/>
 
         <Switch
-            android:id="@+id/SwitchHandleVibration"
+            android:id="@+id/SwitchHandleAmbientNoise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
+            android:checked="true"
             android:enabled="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentRight="true"
-        />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/llHandleNotification"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/llHandleVibration"
-        android:layout_marginLeft="20dp">
-
-
-        <TextView
-            android:id="@+id/tvHandleNotification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_handle_notification"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-        />
-
-        <Switch
-            android:id="@+id/SwitchHandleNotification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:enabled="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentRight="true"
-        />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:id="@+id/llAccessibilityButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/llHandleNotification"
-        >
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonAccessibilitySettings"
-            android:text="@string/buttonAccessibilitySettings"
-            android:onClick="buttonClicked"
             android:textAppearance="?android:attr/textAppearance"
             android:layout_alignParentRight="true"/>
+    </LinearLayout>
 
-    </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/llBrokenProximitySensor"
+    <TextView
+        android:id="@+id/tvNoiseLevels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvNoiseLevels"
+        android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/llHandleAmbientNoise"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/tvExplanationNoiseLevels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvExplanationNoiseLevels"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvNoiseLevels"/>
+
+
+    <TextView
+        android:id="@+id/tvMinAmplitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_below="@+id/llAccessibilityButton"
-        android:layout_marginBottom="20dp">
+        android:text="@string/setting_min_amplitude"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_below="@+id/tvExplanationNoiseLevels"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"/>
 
-        <TextView
-            android:id="@+id/tvBrokenProximitySensor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tvBrokenProximitySensor"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentLeft="true"
-        />
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="min. Volume"
+        android:max="10000"
+        android:progress="1000"
+        android:id="@+id/SeekBarMin"
+        android:layout_below="@+id/tvMinAmplitude"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
 
-        <CheckBox
-            android:id="@+id/cbBrokenProximitySensor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:checked="false"
-            android:enabled="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentRight="true"
-        />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/tvExplanationMinimumLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvExplanationMinimumLevel"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/SeekBarMin"/>
 
-    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvMaxAmplitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_max_amplitude"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_below="@+id/tvExplanationMinimumLevel"
+        android:layout_marginTop ="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="max. Volume"
+        android:max="50000"
+        android:progress="10000"
+        android:id="@+id/SeekBarMax"
+        android:layout_below="@+id/tvMaxAmplitude"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/tvExplanationMaximumLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tvExplanationMaximumLevel"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/SeekBarMax"/>
+
+    <TextView
+        android:id="@+id/tvMinRingerVolume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_min_ringer_volume"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_below="@+id/tvExplanationMaximumLevel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"/>
+
+    <SeekBar
+        android:id="@+id/SeekBarMinRingerVolume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:progress="1"
+        android:layout_below="@+id/tvMinRingerVolume"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/tvPocketVolume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tvPocketVolume"
+        android:layout_weight="1"
+        android:scrollHorizontally="false"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearance"
+        android:layout_below="@+id/SeekBarMinRingerVolume"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"/>
+
+    <SeekBar
+        android:id="@+id/SeekBarPocketVolume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="6"
+        android:progress="1"
+        android:layout_below="@+id/tvPocketVolume"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"/>
+
 </RelativeLayout>
 </ScrollView>

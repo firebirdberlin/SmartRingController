@@ -76,7 +76,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private double minAmplitude = 1000.;
     private double maxAmplitude = 10000.;
     private int minRingerVolume = 1; // 0 means vibration
-    private int controlRingerVolume = 1; // set the ringer volume based on ambient noise
+    private boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
     private int addPocketVolume = 0; // increase in pocket
     private static int waitMillis = 3000; // ms to wait before measuring ambient noise
     private static int measurementMillis = 800; // 800 ms is the minimum needed for Android 4.4.4
@@ -185,7 +185,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         minAmplitude = (double) settings.getInt("minAmplitude", 500);
         maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
         minRingerVolume = settings.getInt("minRingerVolume", 1);
-        controlRingerVolume = settings.getInt("Ctrl.RingerVolume", 1);
+        controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
         handleVibration = settings.getBoolean("handle_vibration", false);
         handleNotification = settings.getBoolean("handle_notification", false);
@@ -245,7 +245,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private Runnable startListening = new Runnable() {
         @Override
         public void run() {
-            if (controlRingerVolume == 0) {
+            if (controlRingerVolume == false) {
                 handler.post(stopListening);
                 return;
             }
@@ -270,7 +270,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         @Override
         public void run() {
 
-            if (error_on_microphone || controlRingerVolume == 0) {
+            if (error_on_microphone || controlRingerVolume == false) {
                 setVolume(0.);
             } else {
                 setVolume(soundmeter.getAmplitude());
@@ -292,8 +292,10 @@ public class SetRingerService extends Service implements SensorEventListener {
                 vibrator.cancel();
                 // to be sure we unmute the streams
                 audiomanager.unmute();
-                // and restore a silent setting, so that bursts are not too loud
-                audiomanager.setRingerVolume(minRingerVolume);
+                if (controlRingerVolume) {
+                    // and restore a silent setting, so that bursts are not too loud
+                    audiomanager.setRingerVolume(minRingerVolume);
+                }
 
                 stopSelf();
             }
