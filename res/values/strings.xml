@@ -33,7 +33,6 @@
 	<string name="tvTTSmode">Enable TTS ...</string>
 	<string name="radio.TTS.headphones"> ... with headphones.</string>
 	<string name="radio.TTS.always"> ... always via speakerphone.</string>
-
 	<string name="TTS_AnnounceCall">Call from</string>
 
     <string name="btnTest">Measure ambient noise</string>

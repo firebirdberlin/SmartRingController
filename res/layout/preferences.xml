@@ -1,0 +1,78 @@
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="first_preferencescreen">
+
+    <PreferenceScreen
+            android:key="second_preferencescreen"
+            android:title="@string/tabActions">
+
+            <PreferenceCategory android:title="@string/tvReduceVolume">
+                <SwitchPreference
+                    android:key="FlipAction"
+                    android:summary="@string/tvFlipAction"
+                    android:defaultValue="false" />
+
+                <CheckBoxPreference
+                    android:key="Ctrl.AutoReactivateRingerMode"
+                    android:summary="@string/tvAutoReactivateRingerMode"
+                    android:defaultValue="false" />
+
+                <SwitchPreference
+                    android:key="ShakeAction"
+                    android:summary="@string/tvShakeAction"
+                    android:defaultValue="false" />
+
+                <SwitchPreference
+                    android:key="PullOutAction"
+                    android:summary="@string/tvPullOutAction"
+                    android:defaultValue="false" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="@string/tvControllers">
+                <SwitchPreference
+                    android:key="handle_vibration"
+                    android:summary="@string/switch_handle_vibration"
+                    android:defaultValue="false" />
+
+                <SwitchPreference
+                    android:key="handle_notification"
+                    android:summary="@string/switch_handle_notification"
+                    android:defaultValue="false" />
+
+                <Preference
+                    android:key="openNotificationListenerSettings"
+                    android:summary="@string/buttonAccessibilitySettings" >
+                </Preference>
+
+                <CheckBoxPreference
+                    android:key="Ctrl.BrokenProximitySensor"
+                    android:summary="@string/tvBrokenProximitySensor"
+                    android:defaultValue="true" />
+            </PreferenceCategory>
+
+    </PreferenceScreen>
+    <PreferenceScreen
+            android:key="third_preferencescreen"
+            android:title="@string/tabSettings">
+
+            <intent android:targetClass="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"
+            android:targetPackage="com.firebirdberlin.smartringcontrollerpro" />
+    </PreferenceScreen>
+    <PreferenceScreen
+            android:key="fourth_preferencescreen"
+            android:title="@string/tabTTS">
+
+            <SwitchPreference
+                android:key="TTS.enabled"
+                android:summary="@string/tvTTSenabled"
+                android:defaultValue="false" />
+
+            <ListPreference
+                android:key="TTSmode"
+                android:summary="@string/tvTTSmode"
+                android:defaultValue="headphones"
+                android:entries="@array/tts_modes"
+                android:entryValues="@array/tts_modes_data"/>
+
+    </PreferenceScreen>
+</PreferenceScreen>

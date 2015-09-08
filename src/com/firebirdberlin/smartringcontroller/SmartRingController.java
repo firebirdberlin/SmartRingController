@@ -14,23 +14,21 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class SmartRingController extends Activity {
     public static final String TAG = "SmartRingController";
     public static final String PREFS_KEY = "SmartRingController preferences";
+	public static final String TTS_MODE_HEADPHONES 	= "headphones";
+	public static final String TTS_MODE_ALWAYS 		= "always";
 
-    private Fragment mSettingsFragment;
-    private Fragment mInCallActionsFragment;
-    private Fragment mTTSFragment;
+    private Fragment mPreferencesFragment;
     private Fragment mTestFragment;
     private LinearLayout tabs;
     private ActionBar actionbar;
@@ -56,27 +54,19 @@ public class SmartRingController extends Activity {
         actionbar.setDisplayShowHomeEnabled(true);
         //actionBar.setTitle("");
 
-        ActionBar.Tab TabActions = actionbar.newTab().setText(getString(R.string.tabActions));
-        ActionBar.Tab TabSettings = actionbar.newTab().setText(getString(R.string.tabSettings));
-        ActionBar.Tab TabTTS = actionbar.newTab().setText(getString(R.string.tabTTS));
+        ActionBar.Tab TabActions = actionbar.newTab().setText(getString(R.string.tabSettings));
         ActionBar.Tab TabTest = actionbar.newTab().setText(getString(R.string.tabTest));
 
         //create the two fragments we want to use for display content
-        mSettingsFragment = new SettingsFragment();
-        mInCallActionsFragment = new InCallActionsFragment();
-        mTTSFragment = new TTSFragment();
+        mPreferencesFragment = new PreferencesFragment();
         mTestFragment = new TestFragment();
 
         //set the Tab listener. Now we can listen for clicks.
-        TabActions.setTabListener(new TabsListener(mInCallActionsFragment));
-        TabSettings.setTabListener(new TabsListener(mSettingsFragment));
-        TabTTS.setTabListener(new TabsListener(mTTSFragment));
+        TabActions.setTabListener(new TabsListener(mPreferencesFragment));
         TabTest.setTabListener(new TabsListener(mTestFragment));
 
         //add the two tabs to the actionbar
         actionbar.addTab(TabActions);
-        actionbar.addTab(TabSettings);
-        actionbar.addTab(TabTTS);
         actionbar.addTab(TabTest);
 
         if (enabled){
@@ -90,10 +80,7 @@ public class SmartRingController extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actions, menu);
-        //menu.findItem(R.id.action_search_view).getActionView();
-        // Get widget's instance
-        //switchEnabled = (Switch)menu.findItem(R.id.sw_enabled).getActionView();
-        //swtService.setOnCheckedChangeListener(this);
+
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", false);
         final     CompoundButton switchEnabled     = (CompoundButton) menu.findItem(R.id.sw_enabled).getActionView();
@@ -143,14 +130,6 @@ public class SmartRingController extends Activity {
             Intent i = new Intent(this, SetRingerService.class);
             i.putExtra("PHONE_STATE", "TestService");
             startService(i);
-        } else if(v.getId() == R.id.buttonAccessibilitySettings) {
-            if (Build.VERSION.SDK_INT < 18) {
-                Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                startActivityForResult(intent, 0);
-            } else {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                startActivityForResult(intent, 0);
-            }
         } else if (v.getId() == R.id.btnTestNotify) {
             Intent intent = new Intent(this, SmartRingController.class);
             PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -171,26 +150,6 @@ public class SmartRingController extends Activity {
 
             notificationManager.notify(0, n);
         }
-    }
-
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        SharedPreferences.Editor prefEditor = settings.edit();
-
-        switch(view.getId()) {
-            case R.id.radio_TTS_headphones:
-                if (checked){
-                    prefEditor.putInt("TTS.mode", TTSFragment.TTS_MODE_HEADPHONES);
-                }
-                break;
-            case R.id.radio_TTS_always:
-                if (checked){
-                    prefEditor.putInt("TTS.mode", TTSFragment.TTS_MODE_ALWAYS);
-                }
-                break;
-        }
-        prefEditor.commit();
     }
 }
 
