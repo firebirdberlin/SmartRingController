@@ -8,12 +8,14 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 
 public class SmartRingController extends Activity {
     public static final String TAG = "SmartRingController";
@@ -151,6 +154,7 @@ public class SmartRingController extends Activity {
             notificationManager.notify(0, n);
         }
     }
+
 }
 
 ////Use following code to open Notification Access setting screen
