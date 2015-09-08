@@ -8,35 +8,21 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Date;
-import java.text.DateFormat;
-
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 
 public class SmartRingController extends Activity {
     public static final String TAG = "SmartRingController";
@@ -115,10 +101,7 @@ public class SmartRingController extends Activity {
 
         switchEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(final CompoundButton buttonView,
-                    final boolean isChecked) {
-                //tabs.setEnabled(isChecked);
-
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 SharedPreferences.Editor prefEditor = settings.edit();
                 prefEditor.putBoolean("enabled", isChecked);
                 prefEditor.commit();
@@ -130,19 +113,15 @@ public class SmartRingController extends Activity {
                     actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
                     setupWelcomePage();
                 }
-
             }
         });
 
-
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     private void setupWelcomePage(){
@@ -157,67 +136,48 @@ public class SmartRingController extends Activity {
             //should never happen
             return;
         }
-
     }
 
     public void buttonClicked(View v){
+        if(v.getId() == R.id.btnClearNotify) {
+            Intent i = new Intent(this, SetRingerService.class);
+            i.putExtra("PHONE_STATE", "TestService");
+            startService(i);
+        } else if(v.getId() == R.id.buttonAccessibilitySettings) {
+            if (Build.VERSION.SDK_INT < 18) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivityForResult(intent, 0);
+            } else {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivityForResult(intent, 0);
+            }
+        } else if (v.getId() == R.id.btnTestNotify) {
+            Intent intent = new Intent(this, SmartRingController.class);
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-    if(v.getId() == R.id.btnClearNotify){
-        Intent i= new Intent(this, SetRingerService.class);
-        // potentially add data to the intent
-        //i.putExtra("KEY1", "Value to be used by the service");
+            // build notification
+            Notification n = new Notification.Builder(this)
+                .setContentTitle("Smart Ring Controller")
+                .setContentText(getString(R.string.msgTestNotification))
+                .setSmallIcon(R.drawable.ic_launcher_gray)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .build();
 
-        //TTSService.queueMessage("Dies ist ein Test.", this);
+            n.defaults |= Notification.DEFAULT_SOUND;
+            //n.defaults |= Notification.DEFAULT_ALL;
+            NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        i.putExtra("PHONE_STATE", "TestService");
-//        i.putExtra("PHONE_STATE", "RINGING");
-        startService(i);
-        //Intent i = new Intent("com.firebirdberlin.smartringcontrollerpro.NOTIFICATION_LISTENER_SERVICE_EXAMPLE");
-        //i.putExtra("command","clearall");
-        //sendBroadcast(i);
-    } else if(v.getId() == R.id.buttonAccessibilitySettings){
-        if (Build.VERSION.SDK_INT < 18)    {
-            Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            startActivityForResult(intent, 0);
-        } else {
-            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            startActivityForResult(intent, 0);
+            notificationManager.notify(0, n);
         }
-    } else if (v.getId() == R.id.btnTestNotify){
-        // prepare intent which is triggered if the
-        // notification is selected
-
-        Intent intent = new Intent(this, SmartRingController.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        // build notification
-        // the addAction re-use the same intent to keep the example short
-        Notification n  = new Notification.Builder(this)
-        .setContentTitle("Smart Ring Controller")
-        .setContentText(getString(R.string.msgTestNotification))
-        .setSmallIcon(R.drawable.ic_launcher_gray)
-        .setContentIntent(pIntent)
-        .setAutoCancel(true)
-        //.addAction(R.drawable.icon, "Call", pIntent)
-        //.addAction(R.drawable.icon, "More", pIntent)
-        //.addAction(R.drawable.icon, "And more", pIntent)
-        .build();
-
-        n.defaults |= Notification.DEFAULT_SOUND;
-        //n.defaults |= Notification.DEFAULT_ALL;
-        NotificationManager notificationManager =
-            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0, n);
-    }
     }
 
     public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         SharedPreferences.Editor prefEditor = settings.edit();
-        // Check which radio button was clicked
+
         switch(view.getId()) {
             case R.id.radio_TTS_headphones:
                 if (checked){
@@ -232,7 +192,6 @@ public class SmartRingController extends Activity {
         }
         prefEditor.commit();
     }
-
 }
 
 ////Use following code to open Notification Access setting screen
