@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.SwitchPreference;
 
 public class PreferencesFragment extends PreferenceFragment {
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";

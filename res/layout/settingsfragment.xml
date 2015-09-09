@@ -12,41 +12,12 @@
     android:layout_height="match_parent"
     android:layout_margin="20dp">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/llHandleAmbientNoise"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/tvHandleVibration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_handle_ambient_noise"
-            android:layout_weight="1"
-            android:scrollHorizontally="false"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_alignParentLeft="true"/>
-
-        <Switch
-            android:id="@+id/SwitchHandleAmbientNoise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:enabled="true"
-            android:textAppearance="?android:attr/textAppearance"
-            android:layout_alignParentRight="true"/>
-    </LinearLayout>
-
-
     <TextView
         android:id="@+id/tvNoiseLevels"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tvNoiseLevels"
         android:layout_weight="1"
-        android:layout_marginTop="20dp"
         android:scrollHorizontally="false"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium"

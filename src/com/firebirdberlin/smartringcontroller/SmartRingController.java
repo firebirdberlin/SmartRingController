@@ -28,8 +28,8 @@ import android.widget.TextView;
 public class SmartRingController extends Activity {
     public static final String TAG = "SmartRingController";
     public static final String PREFS_KEY = "SmartRingController preferences";
-	public static final String TTS_MODE_HEADPHONES 	= "headphones";
-	public static final String TTS_MODE_ALWAYS 		= "always";
+    public static final String TTS_MODE_HEADPHONES = "headphones";
+    public static final String TTS_MODE_ALWAYS = "always";
 
     private Fragment mPreferencesFragment;
     private Fragment mTestFragment;

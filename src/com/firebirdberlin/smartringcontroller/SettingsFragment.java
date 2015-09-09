@@ -9,8 +9,6 @@ import android.provider.Settings.System;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -29,8 +27,6 @@ public class SettingsFragment extends Fragment {
     private SeekBar SeekBarMin;
     private SeekBar SeekBarMax;
 
-    private CompoundButton switch_handle_ambient_noise;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -43,18 +39,6 @@ public class SettingsFragment extends Fragment {
         int minRingerVolume = settings.getInt("minRingerVolume", 1);
         boolean handleRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         int addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
-
-        switch_handle_ambient_noise = (CompoundButton) view.findViewById(R.id.SwitchHandleAmbientNoise);
-        switch_handle_ambient_noise.setChecked(handleRingerVolume);
-        switch_handle_ambient_noise.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView,
-                final boolean isChecked) {
-                SharedPreferences.Editor prefEditor = settings.edit();
-                prefEditor.putBoolean("Ctrl.RingerVolume", isChecked);
-                prefEditor.commit();
-            }
-        });
 
         tvMinAmplitude = (TextView) view.findViewById(R.id.tvMinAmplitude);
         tvMaxAmplitude = (TextView) view.findViewById(R.id.tvMaxAmplitude);

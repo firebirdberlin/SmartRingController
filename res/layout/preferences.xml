@@ -51,15 +51,15 @@
             </PreferenceCategory>
 
     </PreferenceScreen>
+
+    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+        android:key="Ctrl.RingerVolume"
+        android:summary="@string/switch_handle_ambient_noise"
+        android:defaultValue="false" />
+
+
     <PreferenceScreen
             android:key="third_preferencescreen"
-            android:title="@string/tabSettings">
-
-            <intent android:targetClass="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"
-            android:targetPackage="com.firebirdberlin.smartringcontrollerpro" />
-    </PreferenceScreen>
-    <PreferenceScreen
-            android:key="fourth_preferencescreen"
             android:title="@string/tabTTS">
 
             <SwitchPreference

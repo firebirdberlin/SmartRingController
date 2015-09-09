@@ -25,4 +25,9 @@ public class SettingsActivity extends Activity {
         super.finish();
         overridePendingTransition(0, 0);
     }
+
+     public static void open(Context context) {
+        Intent myIntent = new Intent(context, SettingsActivity.class);
+        context.startActivity(myIntent);
+    }
 }
