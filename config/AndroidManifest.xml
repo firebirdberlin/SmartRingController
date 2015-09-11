@@ -64,8 +64,8 @@
             </intent-filter>
         </activity>
         <activity android:name="SettingsActivity" android:theme="@style/noAnimTheme"></activity>
-       <service android:enabled="true" android:name=".SetRingerService" />
-       <service android:enabled="true" android:name=".TTSService" />
+        <service android:enabled="true" android:name=".SetRingerService" />
+        <service android:enabled="true" android:name=".TTSService" />
 <!--
         Notification listener Service for android 4.3 +
 -->

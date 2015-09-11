@@ -188,7 +188,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
         handleVibration = settings.getBoolean("handle_vibration", false);
-        handleNotification = settings.getBoolean("handle_notification", false);
+        handleNotification = settings.getBoolean("handle_notification", true);
         brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
         FlipAction = settings.getBoolean("FlipAction", false);
         ShakeAction = settings.getBoolean("ShakeAction", false);

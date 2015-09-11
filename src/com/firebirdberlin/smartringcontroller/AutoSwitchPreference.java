@@ -24,7 +24,10 @@ public class AutoSwitchPreference extends SwitchPreference {
 
     @Override
     protected void onClick() {
-        //super.onClick(); THIS IS THE IMPORTANT PART!
-        SettingsActivity.open(mContext);
+        Intent mIntent = getIntent();
+        if (mIntent == null) {
+            return;
+        }
+        mContext.startActivity(mIntent);
     }
 }

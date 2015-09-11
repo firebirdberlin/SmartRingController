@@ -11,9 +11,10 @@
     <string name="setting_min_ringer_volume">Minimum ringer volume</string>
     <string name="tvPocketVolume">Increase volume in pocket by </string>
 
-    <string name="switch_handle_ambient_noise">Control ringer volume</string>
+    <string name="title_handle_ambient_noise">Volume</string>
+    <string name="switch_handle_ambient_noise">of the ringer.</string>
     <string name="switch_handle_vibration">  ... vibration</string>
-    <string name="switch_handle_notification"> ... notifications</string>
+    <string name="switch_handle_notification"> Notifications</string>
     <string name="buttonAccessibilitySettings"> start accessibility service</string>
     <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
 
@@ -26,6 +27,7 @@
     <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
     <string name="tvShakeAction"> ... is shaken.</string>
     <string name="tvPullOutAction"> ...is uncovered.</string>
+    <string name="tvSilenceVolume">Mute the ringer</string>
 
 
 
