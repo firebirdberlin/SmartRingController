@@ -5,6 +5,7 @@
     <string name="tabSettings">Settings</string>
     <string name="tabTTS">TTS</string>
     <string name="tabTest">Test</string>
+    <string name="tabAbout">About</string>
     <string name="tvNoiseLevels">Noise levels</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_max_amplitude">Maximum</string>

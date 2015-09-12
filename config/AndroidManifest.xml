@@ -64,6 +64,7 @@
             </intent-filter>
         </activity>
         <activity android:name="SettingsActivity" android:theme="@style/noAnimTheme"></activity>
+        <activity android:name="TestActivity" android:theme="@style/noAnimTheme"></activity>
         <service android:enabled="true" android:name=".SetRingerService" />
         <service android:enabled="true" android:name=".TTSService" />
 <!--
