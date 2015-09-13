@@ -101,9 +101,30 @@
             android:title="@string/tabAbout">
 
             <Preference
+                android:selectable="false"
+                android:enabled="true"
+                android:key="example_key"
+                android:title="@string/tabAbout"
+                android:summary="@string/tvWelcome" />
+
+            <Preference
+                android:key="credits"
+                android:selectable="false"
+                android:enabled="true"
+                android:title="@string/titleAboutCredits"
+                android:summary="@string/summaryAboutCredits"/>
+
+            <Preference
+                android:selectable="false"
+                android:enabled="true"
+                android:title="@string/titleAboutLanguages"
+                android:summary="@string/summaryAboutLanguages"/>
+
+            <Preference
                 android:icon="@drawable/ic_icons8"
                 android:key="about_icons8"
-                android:title="icons8" >
+                android:title="Icons"
+                android:summary="icons8" >
             </Preference>
         </PreferenceScreen>
 </PreferenceScreen>

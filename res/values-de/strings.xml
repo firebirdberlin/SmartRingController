@@ -68,6 +68,29 @@
     \n
 </string>
 
+    <string name="tvAbout">
+        Wenn Sie die App mögen, geben Sie bitte eine positive Bewertung.
+        Haben Sie einen Fehler gefunden ? Fehlt Ihnen eine Funktion ?
+        Zögern Sie nicht, mich zu kontaktieren (stefan.fruhner@gmail.com). \n\n
+
+        Sie verwenden diese App auf eigenes Risiko. Der Autor haftet
+        nicht für Schäden, die durch direkten oder indirekten Gebrauch
+        entstehen.
+    </string>
+
+    <string name="titleAboutCredits">Credits</string>
+    <string name="summaryAboutCredits">
+            Stefan Fruhner (stefan.fruhner@gmail.com)
+    </string>
+
+    <string name="titleAboutLanguages">
+        Sprachen
+    </string>
+    <string name="summaryAboutLanguages">
+        Englisch, Deutsch : Stefan Fruhner\n
+        Spanish, Katalanisch : Jaume Hernandez\n
+    </string>
+
     <string name="tvExplanationNoiseLevels">Die
     Klingeltonlautstärke wird entsprechend der Umgebungslautstärke
     eingestellt. Die Schwellwerte entsprechen jeweils der

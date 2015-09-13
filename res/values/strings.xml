@@ -69,6 +69,17 @@
 	\n
 </string>
 
+    <string name="titleAboutCredits">Credits</string>
+    <string name="summaryAboutCredits">Stefan Fruhner (stefan.fruhner@gmail.com)</string>
+
+    <string name="titleAboutLanguages">
+        Languages
+    </string>
+    <string name="summaryAboutLanguages">
+        English, German : Stefan Fruhner\n
+        Spanish, Catalan : Jaume Hernandez
+    </string>
+
     <string name="tvExplanationNoiseLevels">The ringer volume is set
 according to the current noise level the microphone detects. The noise levels
  correspond to the minimum and the maximum ringer volume.</string>
