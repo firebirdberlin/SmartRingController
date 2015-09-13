@@ -45,29 +45,15 @@
     <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>
 
     <string name="tvWelcome">
-        Smart Ring Controller stellt die Klingeltonlautstärke
-        automatisch ein je nachdem wie laut es in der Umgebung ist.\n\n
+        SmartRingController regelt die Klingeltonlautstärke
+        automatisch je nachdem wie laut es in der Umgebung ist.\n\n
 
         Der Service läuft zur Zeit NICHT. Um ihn zu aktivieren,
-        betätigen Sie bitte den Schalter oben rechts,\n\n
+        betätigen Sie bitte den Schalter oben rechts,
+    </string>
 
-        Wenn Sie die App mögen, geben Sie bitte eine positive Bewertung.
-        Haben Sie einen Fehler gefunden ? Fehlt Ihnen eine Funktion ?
-        Zögern Sie nicht, mich zu kontaktieren (stefan.fruhner@gmail.com). \n\n
-
-        Sie verwenden diese App auf eigenes Risiko. Der Autor haftet
-        nicht für Schäden, die durch direkten oder indirekten Gebrauch
-        entstehen.\n\n
-
-        Credits:\n
-            Stefan Fruhner (stefan.fruhner@gmail.com)\n\n
-
-        Sprachen:\n
-            Englisch, Deutsch : Stefan Fruhner\n
-            Spanish, Katalanisch : Jaume Hernandez\n
-    \n
-</string>
-
+    <string name="titleContribute">Beitragen</string>
+    <string name="titleDonate">Spenden</string>
     <string name="tvAbout">
         Wenn Sie die App mögen, geben Sie bitte eine positive Bewertung.
         Haben Sie einen Fehler gefunden ? Fehlt Ihnen eine Funktion ?

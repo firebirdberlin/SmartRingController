@@ -27,8 +27,6 @@ public class SmartRingController extends Activity {
     public static final String TTS_MODE_HEADPHONES = "headphones";
     public static final String TTS_MODE_ALWAYS = "always";
 
-    private Fragment mPreferencesFragment;
-    private Fragment mTestFragment;
     private ActionBar actionbar;
 
     @Override
@@ -95,7 +93,6 @@ public class SmartRingController extends Activity {
             .replace(android.R.id.content, new PreferencesFragment())
             .commit();
     }
-
 }
 
 ////Use following code to open Notification Access setting screen

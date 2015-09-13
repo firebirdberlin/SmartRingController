@@ -45,6 +45,7 @@
             <PreferenceCategory android:title="@string/tvControllers">
                 <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                     android:key="handle_vibration"
+                    android:selectable="false"
                     android:icon="@drawable/ic_phone"
                     android:title="@string/switch_handle_vibration"
                     android:defaultValue="false" />
@@ -71,6 +72,7 @@
             <PreferenceCategory android:title="@string/tabTTS">
                 <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                     android:key="TTS.enabled"
+                    android:selectable="false"
                     android:icon="@drawable/ic_voice"
                     android:title="@string/tabTTS"
                     android:summary="@string/tvTTSenabled"
@@ -95,6 +97,19 @@
                 android:targetClass="com.firebirdberlin.smartringcontrollerpro.TestActivity"/>
         </PreferenceScreen>
 
+        <Preference
+            android:icon="@drawable/ic_github"
+            android:title="@string/titleContribute">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/firebirdberlin/SmartRingController"/>
+
+        </Preference>
+
+        <Preference
+            android:key="openDonationPage"
+            android:icon="@drawable/ic_paypal"
+            android:title="@string/titleDonate"/>
+
         <PreferenceScreen
             android:key="about_screen"
             android:icon="@drawable/ic_about"
@@ -105,7 +120,7 @@
                 android:enabled="true"
                 android:key="example_key"
                 android:title="@string/tabAbout"
-                android:summary="@string/tvWelcome" />
+                android:summary="@string/tvAbout" />
 
             <Preference
                 android:key="credits"

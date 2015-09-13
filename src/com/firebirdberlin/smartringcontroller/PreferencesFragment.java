@@ -1,6 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -35,5 +36,19 @@ public class PreferencesFragment extends PreferenceFragment {
                 return true;
             }
         });
+        Preference goToDonation = (Preference) findPreference("openDonationPage");
+        goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            public boolean onPreferenceClick(Preference preference) {
+                openDonationPage();
+                return true;
+            }
+        });
+    }
+
+    private void openDonationPage() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PX9XVHHE6XP8"));
+        startActivity(browserIntent);
     }
 }
