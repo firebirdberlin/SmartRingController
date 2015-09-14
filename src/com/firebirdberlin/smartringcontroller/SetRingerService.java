@@ -50,7 +50,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private boolean running = false;
     private boolean error_on_microphone = false;
     private boolean DeviceIsCovered = false;
-    private float ambient_light = 0;//SensorManager.LIGHT_SUNLIGHT_MAX;
+    private float ambientLight = 0;//SensorManager.LIGHT_SUNLIGHT_MAX;
     private String PhoneState;
     private int initialPhoneState = TelephonyManager.CALL_STATE_IDLE;
     private long vibrationEndTime = 0;
@@ -302,9 +302,14 @@ public class SetRingerService extends Service implements SensorEventListener {
         }
     };
 
+    private boolean isScreenOn() {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        return pm.isScreenOn();
+    }
+
     private boolean isCovered(){
         if ( brokenProximitySensor ){
-            return ((DeviceIsCovered == true) || (ambient_light < MAX_POCKET_BRIGHTNESS));
+            return ((DeviceIsCovered == true) || (ambientLight < MAX_POCKET_BRIGHTNESS));
         }
 
         return DeviceIsCovered;
@@ -313,6 +318,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private boolean shouldVibrate(){
         return ((handleVibration == true)
                 && isCovered()
+                && (! isScreenOn() )
                 && (isOnTable == NOT_ON_TABLE)
                 && (! battery.isCharging() )
                 && (telephone.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK));
@@ -321,7 +327,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private boolean shouldRing(){
         return (! (FlipAction == true
                    && isOnTable == DISPLAY_FACE_DOWN
-                   && ambient_light < MAX_POCKET_BRIGHTNESS));
+                   && ambientLight < MAX_POCKET_BRIGHTNESS));
     }
 
     private void vibrateForNotification(){
@@ -355,7 +361,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private void setVolume(double currentAmbientNoiseAmplitude) {
 
         sensorManager.unregisterListener(this);
-        ambient_light /= (float) count_light_sensor; // mean value
+        ambientLight /= (float) count_light_sensor; // mean value
 
         //audiomanager.restoreRingerMode();
         if ( shouldRing() ){// otherwise pass
@@ -404,7 +410,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         if (isOnTable == DISPLAY_FACE_DOWN ) msg += " | face DOWN";
         else if (isOnTable == DISPLAY_FACE_UP ) msg += " | face UP";
 
-        msg += " | " + String.valueOf(ambient_light);
+        msg += " | " + String.valueOf(ambientLight);
         broadcastEvent(msg);
 
         if ( PhoneState.equals("Notification") ){
@@ -450,10 +456,10 @@ public class SetRingerService extends Service implements SensorEventListener {
         if(event.sensor.getType() == Sensor.TYPE_PROXIMITY){
             count_proximity_sensor++;
             DeviceIsCovered = (event.values[0] == 0);
-        } else if (event.sensor.getType()==Sensor.TYPE_LIGHT) {
+        } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             count_light_sensor++;
-            ambient_light += event.values[0]; // simply log the value
-        } else if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
+            ambientLight += event.values[0]; // simply log the value
+        } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             count_acceleration_sensor++;
             isOnTable = NOT_ON_TABLE;
             // if acceleration in x and y direction is too strong, device is moving
@@ -464,11 +470,10 @@ public class SetRingerService extends Service implements SensorEventListener {
             // acceleration in z direction must be g
             if (z_value > -10.3 && z_value < -9.3 ){
                 isOnTable = DISPLAY_FACE_DOWN;
-            }else
+            } else
             if (z_value > 9.3 && z_value < 10.3 ){
                 isOnTable = DISPLAY_FACE_UP;
-            }
-            else{
+            } else{
                 isOnTable = NOT_ON_TABLE;
             }
             }
