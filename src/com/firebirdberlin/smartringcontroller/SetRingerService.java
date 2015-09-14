@@ -246,7 +246,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         @Override
         public void run() {
             if (controlRingerVolume == false) {
-                handler.post(stopListening);
+                handler.postDelayed(stopListening, measurementMillis/2);
                 return;
             }
 
