@@ -2,64 +2,92 @@
 <resources>
     <string name="app_name">Smart Ring Controller</string>
     <string name="tabSettings">Configuració</string>
+    <string name="tabTTS">TTS</string>
     <string name="tabTest">Prova</string>
+    <string name="tabAbout">Sobre</string>
     <string name="tvNoiseLevels">Nivells de Soroll</string>
     <string name="setting_min_amplitude">Mínim</string>
     <string name="setting_max_amplitude">Màxim</string>
     <string name="setting_min_ringer_volume">Volum mínim del to de trucada</string>
-    <string name="switch_handle_vibration">  ... vibració</string>
-    <string name="switch_handle_notification"> ... notificacions</string>
-    <string name="buttonAccessibilitySettings"> Inicia el Servei d\'Accesibilitat</string>
+    <string name="tvPocketVolume">Increase volume in pocket by </string>
+
+    <string name="title_handle_ambient_noise">El volum</string>
+    <string name="switch_handle_ambient_noise">del to de trucada.</string>
+    <string name="switch_handle_vibration">Vibració</string>
+    <string name="switch_handle_notification">Notificacions</string>
+    <string name="buttonAccessibilitySettings">Inicia el Servei d\'Accesibilitat</string>
+    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
+
     <string name="tvControllers">Control ...</string>
     <string name="tvInCallActions">Accions</string>
     <string name="tvFlipAction">Gira el telèfon per a silenciar la trucada</string>
+
+    <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>
+
     <string name="tvReduceVolume">Redueix el volum del to de la trucada quan el dispositiu...</string>
     <string name="tvShakeAction"> ... s\'agita.</string>
     <string name="tvPullOutAction"> ...es destapa.</string>
+    <string name="tvSilenceVolume">Silenci del timbre</string>
+
+    <string name="tvTTSenabled">text-to-speech engine</string>
+    <string name="tvTTSmode">Enable TTS ...</string>
+    <string name="radio.TTS.headphones"> ... with headphones.</string>
+    <string name="radio.TTS.always"> ... always via speakerphone.</string>
+    <string name="TTS_AnnounceCall">Call from</string>
+
     <string name="btnTest">Mesura el soroll ambiental</string>
     <string name="btnTestNotification">Envia una notificació de prova</string>
+    <string name="msgTestNotification">Aquesta és una notificació de prova.</string>
 
-	<string name="tvWelcome">
-		Smart Ring Controller ajusta el volum del to de la trucada
-		automàticament d\'acord amb el soroll ambiental.\n\n
+    <string name="titleSilenceMode">Mode silenci.</string>
+    <string name="msgRestoreRingerMode">Feu clic per restaurar la manera normal.</string>
 
-		El servei està DESACTIVAT. Per a activar-lo
-		fes servir el botó de la barra d\'accions.\n\n
+    <string name="tvWelcome">
+        SmartRingController ajusta el volum del to de la trucada
+        automàticament d\'acord amb el soroll ambiental.\n\n
 
-		Si t\'agrada aquesta aplicació, si us plau, puntua-la. Si trobes errades
-		o trobes a faltar alguna funcionalitat, si us plau, contacta amb l\'autor
-		en lloc de deixar una mala puntuació o un mal comentari.\n\n
+        El servei està DESACTIVAT. Per a activar-lo
+        fes servir el botó de la barra d\'accions.
+    </string>
 
-		Aquesta aplicació pot contenir alguna errada i l\'usuari entén i assumeix
-		els riscos que comporta el seu us. L\'autor no es fa responsable dels dayns
-		directes, indirectes, accidentals ni de les seves conseqüències.\n\n
+    <string name="titleContribute">Contribuir</string>
+    <string name="titleDonate">Donar</string>
+    <string name="tvAbout">
+        Si t\'agrada aquesta aplicació, si us plau, puntua-la. Si trobes errades
+        o trobes a faltar alguna funcionalitat, si us plau, contacta amb l\'autor
+        en lloc de deixar una mala puntuació o un mal comentari.\n\n
 
-		Credits:\n
-			Desenvolupament: Stefan Fruhner (stefan.fruhner@gmail.com)\n\n
+        Aquesta aplicació pot contenir alguna errada i l\'usuari entén i assumeix
+        els riscos que comporta el seu us. L\'autor no es fa responsable dels dayns
+        directes, indirectes, accidentals ni de les seves conseqüències.
+    </string>
 
-		Traduccions:\n
-			Anglès, Alemany : Stefan Fruhner\n
-			Espanyol, Català : Jaume Hernandez\n
+    <string name="titleAboutCredits">Credits</string>
+    <string name="summaryAboutCredits">Stefan Fruhner (stefan.fruhner@gmail.com)</string>
 
-	\n
-</string>
+    <string name="titleAboutLanguages">
+        Traduccions
+    </string>
+    <string name="summaryAboutLanguages">
+        Anglès, Alemany : Stefan Fruhner\nEspanyol, Català : Jaume Hernandez
+    </string>
 
     <string name="tvExplanationNoiseLevels">El volum del to de trucada s\'ajusta
 d\'acord amb el nivell actual de soroll ambiental que detecta el micròfon. Els nivells de soroll
 corresponen al volum mínim i màxim del to de trucada.</string>
-	<string name="tvExplanationMinimumLevel">
+    <string name="tvExplanationMinimumLevel">
 Nivell mínim: Selecciona el nivell de soroll ambiental en el que s\'ha de fer servir el
 volum mínim del to de trucada (per defecte:0).</string>
-	<string name="tvExplanationMaximumLevel">
+    <string name="tvExplanationMaximumLevel">
 Nivell màxim: Selecciona el nivell de soroll ambiental en el que s\'ha de fer servir el
 volum màxim del to de trucada (per defecte:7000). Has d\'augmentar aquest valor
 si el dispositiu sona massa fort. Disminueix aquest valor si el dispositiu no
 se sent prou fort.</string>
 
-	<string name="tvTest">Prova la configuració fent clic als botons.
-	T\'informem del soroll ambiental y del nou volum del to si tot funciona correctament.
-	Cobreix el sensor de proximitat per a provar si la vibració funciona correctament.
-	(\'-\' dispositiu cobert, \'+\' dispositiu NO cobert).\n\n
-	Les notificacions només poden ser detectades si el Servei d\'Accesibilitat està funcionant.
-	</string>
+    <string name="tvTest">Prova la configuració fent clic als botons.
+    T\'informem del soroll ambiental y del nou volum del to si tot funciona correctament.
+    Cobreix el sensor de proximitat per a provar si la vibració funciona correctament.
+    (\'-\' dispositiu cobert, \'+\' dispositiu NO cobert).\n\n
+    Les notificacions només poden ser detectades si el Servei d\'Accesibilitat està funcionant.
+    </string>
 </resources>
