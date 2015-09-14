@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smart Ring Controller</string>
-    <string name="tabActions">Actions</string>
     <string name="tabSettings">Settings</string>
     <string name="tabTTS">TTS</string>
     <string name="tabTest">Test</string>
@@ -29,8 +28,6 @@
     <string name="tvShakeAction"> ... is shaken.</string>
     <string name="tvPullOutAction"> ...is uncovered.</string>
     <string name="tvSilenceVolume">Mute the ringer</string>
-
-
 
     <string name="tvTTSenabled">text-to-speech engine</string>
     <string name="tvTTSmode">Enable TTS ...</string>
@@ -65,15 +62,14 @@
         direct, indirect, incidential or consequential damage.
     </string>
 
-    <string name="titleAboutCredits">Credits</string>
+    <string name="titleAboutCredits">Author</string>
     <string name="summaryAboutCredits">Stefan Fruhner (stefan.fruhner@gmail.com)</string>
 
     <string name="titleAboutLanguages">
         Languages
     </string>
     <string name="summaryAboutLanguages">
-        English, German : Stefan Fruhner\n
-        Spanish, Catalan : Jaume Hernandez
+        English, German : Stefan Fruhner\nSpanish, Catalan : Jaume Hernandez
     </string>
 
     <string name="tvExplanationNoiseLevels">The ringer volume is set

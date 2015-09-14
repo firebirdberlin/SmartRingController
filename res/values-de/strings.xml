@@ -4,23 +4,21 @@
     <string name="tabSettings">Einstellungen</string>
     <string name="tabTTS">TTS</string>
     <string name="tabTest">Testen</string>
+    <string name="tabAbout">Über</string>
     <string name="tvNoiseLevels">Lautstärke</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_ringer_volume">Minimale Klingeltonlautstärke</string>
     <string name="tvPocketVolume">Erhöhe Lautstärke in der Tasche um </string>
 
-    <string name="tvControllers">Steuere ...</string>
     <string name="title_handle_ambient_noise">Lautstärke</string>
     <string name="switch_handle_ambient_noise">des Klingeltons.</string>
     <string name="switch_handle_vibration">Vibration</string>
     <string name="switch_handle_notification">Benachrichtigungen</string>
     <string name="buttonAccessibilitySettings"> Benachrichtigungsüberwachung starten</string>
-    <string name="tvBrokenProximitySensor">
-        Auch den Lichtsensor verwenden, um zu erkennen, ob das Telefon
-        in der Tasche steckt.
-    </string>
+    <string name="tvBrokenProximitySensor">Auch den Lichtsensor verwenden, um zu erkennen, ob das Telefon in der Tasche steckt.</string>
 
+    <string name="tvControllers">Steuere ...</string>
     <string name="tvInCallActions">Anrufoptionen</string>
     <string name="tvFlipAction">Telefon umdrehen zum Stummschalten.</string>
 
@@ -29,12 +27,12 @@
     <string name="tvReduceVolume">Lautstärke reduzieren, beim </string>
     <string name="tvShakeAction"> ... Schütteln.</string>
     <string name="tvPullOutAction"> ... aus der Tasche holen.</string>
+    <string name="tvSilenceVolume">Stummschalten</string>
 
     <string name="tvTTSenabled">Sprachausgabe</string>
     <string name="tvTTSmode">Modus</string>
     <string name="radio.TTS.headphones">nur über Kopfhörer</string>
     <string name="radio.TTS.always">immer über Lautsprecher</string>
-
     <string name="TTS_AnnounceCall">Anruf von</string>
 
     <string name="btnTest">Umgebungslautstärke messen</string>
@@ -64,17 +62,14 @@
         entstehen.
     </string>
 
-    <string name="titleAboutCredits">Credits</string>
-    <string name="summaryAboutCredits">
-            Stefan Fruhner (stefan.fruhner@gmail.com)
-    </string>
+    <string name="titleAboutCredits">Autor</string>
+    <string name="summaryAboutCredits">Stefan Fruhner (stefan.fruhner@gmail.com)</string>
 
     <string name="titleAboutLanguages">
         Sprachen
     </string>
     <string name="summaryAboutLanguages">
-        Englisch, Deutsch : Stefan Fruhner\n
-        Spanish, Katalanisch : Jaume Hernandez\n
+        Englisch, Deutsch : Stefan Fruhner\nSpanish, Katalanisch : Jaume Hernandez
     </string>
 
     <string name="tvExplanationNoiseLevels">Die

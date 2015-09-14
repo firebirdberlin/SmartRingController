@@ -22,11 +22,6 @@
                         android:key="PullOutAction"
                         android:summary="@string/tvPullOutAction"
                         android:defaultValue="false" />
-
-                    <CheckBoxPreference
-                        android:key="Ctrl.BrokenProximitySensor"
-                        android:summary="@string/tvBrokenProximitySensor"
-                        android:defaultValue="true" />
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/tvSilenceVolume">
@@ -49,6 +44,11 @@
                     android:icon="@drawable/ic_phone"
                     android:title="@string/switch_handle_vibration"
                     android:defaultValue="false" />
+
+                <CheckBoxPreference
+                    android:key="Ctrl.BrokenProximitySensor"
+                    android:summary="@string/tvBrokenProximitySensor"
+                    android:defaultValue="true" />
 
                 <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                     android:key="Ctrl.RingerVolume"
