@@ -304,6 +304,9 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     private boolean isScreenOn() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        //if (Build.VERSION.SDK_INT >= 20) {
+            //return pm.isInteractive();
+        //}
         return pm.isScreenOn();
     }
 
@@ -331,12 +334,15 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private void vibrateForNotification(){
-        vibrator.vibrate(600);
-        vibrationEndTime =  System.currentTimeMillis() + 600;
+        long data[] = {100, 100, 100, 100};
+        vibrator.vibrate(data, -1);
+        //vibrator.vibrate(600);
+        vibrationEndTime = System.currentTimeMillis() + 600;
     }
 
     private boolean handleVibration(){
         if (shouldVibrate()) { // handle vibration
+            //long data[] = {100, 600,100, 100, 100, 100, 100, 600, 600};
             long data[] = new long[9];
             data[0] = 100;
             data[1] = 600;
