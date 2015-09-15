@@ -1,6 +1,7 @@
 
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
@@ -29,5 +30,6 @@ public class AutoSwitchPreference extends SwitchPreference {
             return;
         }
         mContext.startActivity(mIntent);
+        ((Activity) mContext).overridePendingTransition(0, 0);
     }
 }

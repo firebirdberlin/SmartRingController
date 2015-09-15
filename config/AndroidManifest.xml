@@ -54,17 +54,21 @@
         >
         <activity
             android:name=".SmartRingController"
-            android:label="@CONFIG.APPNAME@"
-            android:configChanges="orientation|keyboard|screenSize"
-            android:screenOrientation="portrait">
+            android:label="@CONFIG.APPNAME@">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="SettingsActivity" android:theme="@style/noAnimTheme"></activity>
-        <activity android:name="TestActivity" android:theme="@style/noAnimTheme"></activity>
+        <activity android:name="SettingsActivity"
+            android:theme="@style/noAnimTheme"
+            android:launchMode="singleInstance">
+        </activity>
+        <activity android:name="TestActivity"
+            android:theme="@style/noAnimTheme"
+            android:launchMode="singleInstance">
+        </activity>
         <service android:enabled="true" android:name=".SetRingerService" />
         <service android:enabled="true" android:name=".TTSService" />
 <!--
