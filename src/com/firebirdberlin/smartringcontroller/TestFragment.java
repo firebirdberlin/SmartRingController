@@ -1,7 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Fragment;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.Date;
 import java.text.DateFormat;
+import java.util.Date;
 
 public class TestFragment extends Fragment {
 
