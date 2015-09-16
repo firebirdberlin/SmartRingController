@@ -374,13 +374,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             audiomanager.unmute();// sound is unmuted onDestroy
         } else {
             // mute phone until it is flipped again
-            Intent i = new Intent(this, EnjoyTheSilenceService.class);
-            final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-            boolean keepalive = settings.getBoolean("Ctrl.AutoReactivateRingerMode", false);
-
-            i.putExtra("action", "mute");
-            i.putExtra("WAIT_UNTIL_FLIPPED", keepalive);
-            startService(i);
+            EnjoyTheSilenceService.start(this);
         }
 
         if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
@@ -552,7 +546,6 @@ public class SetRingerService extends Service implements SensorEventListener {
                 }
             } else { // OFFHOOK or IDLE
                 vibrator.cancel();
-//                handler.post(stopService);
                 handler.postDelayed(stopService, 200);
             }
         }
