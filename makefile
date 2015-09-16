@@ -5,14 +5,6 @@ all:
 debug:
 	ant debug
 
-lite:
-	./genlitesrc.sh
-	ant release -f lite.build.xml && adb -d install -r bin/Lite/SmartRingController-release.apk
-
-debuglite:
-	./genlitesrc.sh
-	ant debug -f lite.build.xml && adb -d install -r bin/Lite/SmartRingController-debug.apk
-
 install:
 	adb -d install -r bin/Pro/SmartRingController-release.apk
 
@@ -24,4 +16,3 @@ uninstall:
 
 clean:
 	ant clean
-	ant clean -f lite.build.xml
