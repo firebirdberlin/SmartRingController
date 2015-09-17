@@ -17,7 +17,7 @@ public class PebbleDisconnectionReceiver extends BroadcastReceiver {
         Logger.i(TAG, "Pebble disconnected !");
         dumpIntent(intent);
 
-        OnRingerModeChanged event = EventBus.getDefault().getStickyEvent(OnRingerModeChanged.class);
+        OnRingerModeChanged event = EventBus.getDefault().removeStickyEvent(OnRingerModeChanged.class);
         if (event != null) {
             mAudioManager audiomanager = new mAudioManager(context);
             audiomanager.restoreRingerModeTo(event.previousRingerMode);

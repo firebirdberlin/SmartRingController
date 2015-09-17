@@ -18,6 +18,12 @@ public class PebbleConnectionReceiver extends BroadcastReceiver {
         dumpIntent(intent);
         mAudioManager audiomanager = new mAudioManager(context);
         int ringerMode = audiomanager.getRingerMode();
+
+        // if there is still a sticky event then we have missed the disconnection event
+        OnRingerModeChanged event = EventBus.getDefault().removeStickyEvent(OnRingerModeChanged.class);
+        if (event != null) {
+            ringerMode = event.previousRingerMode;
+        }
         audiomanager.setRingerModeSilent();
         EventBus.getDefault().postSticky(new OnRingerModeChanged(ringerMode));
     }
