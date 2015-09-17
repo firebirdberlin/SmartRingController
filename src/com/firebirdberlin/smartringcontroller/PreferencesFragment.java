@@ -56,6 +56,7 @@ public class PreferencesFragment extends PreferenceFragment {
                 boolean on = Boolean.parseBoolean(new_value.toString());
                 toggleComponentState(PebbleConnectionReceiver.class, on);
                 toggleComponentState(PebbleDisconnectionReceiver.class, on);
+                toggleComponentState(PebbleMessageReceiver.class, on);
                 return true;
             }
         });

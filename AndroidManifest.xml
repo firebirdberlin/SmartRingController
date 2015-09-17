@@ -117,7 +117,7 @@
         </receiver>
 
         <receiver android:name=".PebbleConnectionReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_CONNECTED"/>
@@ -125,12 +125,21 @@
         </receiver>
 
         <receiver android:name=".PebbleDisconnectionReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_DISCONNECTED"/>
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".PebbleMessageReceiver"
+            android:enabled="false"
+            android:priority="1000">
+            <intent-filter android:priority="1000">
+                 <action android:name="com.getpebble.action.app.RECEIVE"/>
+            </intent-filter>
+        </receiver>
+
 
         <receiver android:name=".BluetoothScoReceiver" android:enabled="true">
             <intent-filter>

@@ -15,23 +15,6 @@ public class PebbleDisconnectionReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Logger.i(TAG, "Pebble disconnected !");
-        dumpIntent(intent);
-
-        OnRingerModeChanged event = EventBus.getDefault().removeStickyEvent(OnRingerModeChanged.class);
-        if (event != null) {
-            mAudioManager audiomanager = new mAudioManager(context);
-            audiomanager.restoreRingerModeTo(event.previousRingerMode);
-        }
+        PebbleActions.unmute(context);
     }
-
-    public static void dumpIntent(Intent i){
-        Bundle bundle = i.getExtras();
-        if (bundle == null) return;
-        for (String key : bundle.keySet()) {
-            Object value = bundle.get(key);
-            Logger.d(TAG, String.format("%s %s (%s)", key,
-                            value.toString(), value.getClass().getName()));
-        }
-    }
-
 }
