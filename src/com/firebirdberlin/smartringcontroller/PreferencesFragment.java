@@ -1,6 +1,8 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,11 +38,24 @@ public class PreferencesFragment extends PreferenceFragment {
                 return true;
             }
         });
+
         Preference goToDonation = (Preference) findPreference("openDonationPage");
         goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
             public boolean onPreferenceClick(Preference preference) {
                 openDonationPage();
+                return true;
+            }
+        });
+
+        Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
+        prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            public boolean onPreferenceChange(Preference preference, Object new_value) {
+                Logger.i(TAG, preference.getKey());
+                boolean on = Boolean.parseBoolean(new_value.toString());
+                toggleComponentState(PebbleConnectionReceiver.class, on);
+                toggleComponentState(PebbleDisconnectionReceiver.class, on);
                 return true;
             }
         });
@@ -50,5 +65,13 @@ public class PreferencesFragment extends PreferenceFragment {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PX9XVHHE6XP8"));
         startActivity(browserIntent);
+    }
+
+    private void toggleComponentState(Class component, boolean on){
+        ComponentName receiver = new ComponentName(getActivity(), component);
+        PackageManager pm = getActivity().getPackageManager();
+        int new_state = (on) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                            : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 }
