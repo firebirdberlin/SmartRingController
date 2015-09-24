@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceCategory;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.SwitchPreference;
@@ -26,7 +27,6 @@ public class PreferencesFragment extends PreferenceFragment {
 
         Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
         goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
             public boolean onPreferenceClick(Preference preference) {
                 if (Build.VERSION.SDK_INT < 18) {
                     Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
@@ -41,7 +41,6 @@ public class PreferencesFragment extends PreferenceFragment {
 
         Preference goToDonation = (Preference) findPreference("openDonationPage");
         goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
             public boolean onPreferenceClick(Preference preference) {
                 openDonationPage();
                 return true;
@@ -49,17 +48,26 @@ public class PreferencesFragment extends PreferenceFragment {
         });
 
         Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
-        prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
-            public boolean onPreferenceChange(Preference preference, Object new_value) {
-                Logger.i(TAG, preference.getKey());
-                boolean on = Boolean.parseBoolean(new_value.toString());
-                toggleComponentState(PebbleConnectionReceiver.class, on);
-                toggleComponentState(PebbleDisconnectionReceiver.class, on);
-                toggleComponentState(PebbleMessageReceiver.class, on);
-                return true;
-            }
-        });
+        if ( Utility.isPackageInstalled(getActivity(), "com.getpebble.android") == false ) {
+            Logger.e(TAG, "Pebble app not installed !");
+            PreferenceCategory cat = (PreferenceCategory) findPreference("CategoryMuteActions");
+            cat.removePreference(prefSilentWhilePebbleConnected);
+            toggleComponentState(PebbleConnectionReceiver.class, false);
+            toggleComponentState(PebbleDisconnectionReceiver.class, false);
+            toggleComponentState(PebbleMessageReceiver.class, false);
+        } else {
+            Logger.e(TAG, "Pebble app is installed !");
+            prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object new_value) {
+                    Logger.i(TAG, preference.getKey());
+                    boolean on = Boolean.parseBoolean(new_value.toString());
+                    toggleComponentState(PebbleConnectionReceiver.class, on);
+                    toggleComponentState(PebbleDisconnectionReceiver.class, on);
+                    toggleComponentState(PebbleMessageReceiver.class, on);
+                    return true;
+                }
+            });
+        }
     }
 
     private void openDonationPage() {

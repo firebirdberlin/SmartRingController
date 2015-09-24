@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
 import java.lang.Exception;
 import java.lang.Thread;
 
@@ -34,6 +36,16 @@ public class Utility{
 
     public static boolean isDebuggable(Context context){
         return ( 0 != ( context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
+    }
+
+    public static boolean isPackageInstalled(Context context, String targetPackage){
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo info = pm.getPackageInfo(targetPackage, PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+        return true;
     }
 
     public int getStatusBarHeight(Context context) {

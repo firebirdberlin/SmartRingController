@@ -21,6 +21,7 @@
     <string name="tvControllers">Steuere ...</string>
     <string name="tvInCallActions">Anrufoptionen</string>
     <string name="tvFlipAction">Telefon umdrehen zum Stummschalten.</string>
+    <string name="tvSilentWhilePebbleConnected">Pebble verbunden</string>
 
     <string name="tvAutoReactivateRingerMode">Automatisch wieder auf laut stellen (erhöhter Batterieverbrauch).</string>
 

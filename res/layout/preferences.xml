@@ -8,7 +8,7 @@
             android:title="@string/tabSettings">
 
             <PreferenceScreen
-                android:key="second_preferencescreen"
+                android:key="preferenceScreenActions"
                 android:icon="@drawable/ic_call"
                 android:title="@string/tvInCallActions">
 
@@ -26,7 +26,8 @@
                         android:defaultValue="false" />
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/tvSilenceVolume">
+                <PreferenceCategory android:key="CategoryMuteActions"
+                                    android:title="@string/tvSilenceVolume">
                     <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                         android:key="FlipAction"
                         android:summary="@string/tvFlipAction"
