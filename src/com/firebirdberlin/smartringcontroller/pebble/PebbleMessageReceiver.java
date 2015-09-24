@@ -22,40 +22,32 @@ public class PebbleMessageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Logger.i(TAG, "Pebble message received!");
         dumpIntent(intent);
 
         Bundle bundle = intent.getExtras();
         Object uuid_object = bundle.get("uuid");
-        UUID uuid = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
-        if (uuid_object != null) {
-            uuid = (UUID) uuid_object;
-        }
+        String msg_data = bundle.getString("msg_data", "none");
 
-        Logger.i(TAG, uuid.toString());
-        Logger.i(TAG, PEBBLE_APP_UUID.toString());
-        if (! uuid.equals(PEBBLE_APP_UUID)){
-            Logger.w(TAG, "NO");
+        if (! PEBBLE_APP_UUID.equals(uuid_object)){
             return;
         }
 
-        Logger.w(TAG, "YES");
-        String msg_data = bundle.getString("msg_data", "none");
         int watchIsPlugged = -1;
         try {
             JSONArray json = new JSONArray(msg_data);
-            JSONObject first = json.getJSONObject(0);
-            int key = first.getInt("key");
-            int value = first.getInt("value");
-            if (key == TAG_WATCH_IS_PLUGGED) {
-                watchIsPlugged = value;
+            for (int i = 0; i < json.length(); i++) {
+                JSONObject jsonObject = json.getJSONObject(i);
+                int key = jsonObject.getInt("key");
+                int value = jsonObject.getInt("value");
+                if (key == TAG_WATCH_IS_PLUGGED) {
+                    watchIsPlugged = value;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         if (watchIsPlugged == VALUE_WATCH_IS_PLUGGED) {
-            Logger.w(TAG, "WATCH IS PLUGGED");
             PebbleActions.unmute(context);
         } else if (watchIsPlugged == VALUE_WATCH_IS_UNPLUGGED) {
             PebbleActions.mute(context);
