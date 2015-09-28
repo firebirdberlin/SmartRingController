@@ -311,7 +311,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private boolean isCovered(){
-        if ( brokenProximitySensor ){
+        if ( brokenProximitySensor ) {
             return ((DeviceIsCovered == true) || (ambientLight < MAX_POCKET_BRIGHTNESS));
         }
 
@@ -336,27 +336,15 @@ public class SetRingerService extends Service implements SensorEventListener {
     private void vibrateForNotification(){
         long data[] = {100, 100, 100, 100};
         vibrator.vibrate(data, -1);
-        //vibrator.vibrate(600);
         vibrationEndTime = System.currentTimeMillis() + 600;
     }
 
     private boolean handleVibration(){
-        if (shouldVibrate()) { // handle vibration
-            //long data[] = {100, 600,100, 100, 100, 100, 100, 600, 600};
-            long data[] = new long[9];
-            data[0] = 100;
-            data[1] = 600;
-            data[2] = 100;
-            data[3] = 100;
-            data[4] = 100;
-            data[5] = 100;
-            data[6] = 100;
-            data[7] = 600;
-            data[8] = 600;
+        if ( shouldVibrate() ) {
+            long data[] = {100, 600, 100, 100, 100, 100, 100, 600, 600};
             if (telephone.getCallState() == TelephonyManager.CALL_STATE_RINGING) { // phone call
                 vibrator.vibrate(data, 0);
             } else { // notification or test
-                //vibrator.vibrate(data, -1);
                 vibrateForNotification();
             }
             return true;
@@ -374,13 +362,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             audiomanager.unmute();// sound is unmuted onDestroy
         } else {
             // mute phone until it is flipped again
-            Intent i = new Intent(this, EnjoyTheSilenceService.class);
-            final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-            boolean keepalive = settings.getBoolean("Ctrl.AutoReactivateRingerMode", false);
-
-            i.putExtra("action", "mute");
-            i.putExtra("WAIT_UNTIL_FLIPPED", keepalive);
-            startService(i);
+            EnjoyTheSilenceService.start(this);
         }
 
         if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
@@ -496,11 +478,13 @@ public class SetRingerService extends Service implements SensorEventListener {
     new SensorEventListener()  {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float x_value = event.values[0];
+                float z_value = event.values[2];
                 // if acceleration in x and y direction is too strong, device is moving
                 if (ShakeAction == true) {
-                    if (event.values[0] < -12.) shake_left++;
-                    if (event.values[0] > 12.) shake_right++;
+                    if (x_value < -12.) shake_left++;
+                    if (x_value > 12.) shake_right++;
 
                     // shake to silence
                     if ((shake_left >= 1 && shake_right >= 2)
@@ -508,34 +492,26 @@ public class SetRingerService extends Service implements SensorEventListener {
                         audiomanager.setRingerVolume(1); // lowest volume possible
                         vibrator.cancel();
                         shake_left = shake_right = 0;
-                        //return;
                     }
                 }
 
                 if (FlipAction == true) {
-                    float z_value = event.values[2];
-                    // Display face down
-                    if (z_value > -10.3 && z_value < -9.3 ){
+                    if (z_value > -10.3 && z_value < -9.3 ){ // display face down
                         audiomanager.mute();
                         vibrator.cancel();
-                        //return;
                     }
                 }
-            } else if(event.sensor.getType()==Sensor.TYPE_PROXIMITY) {
-                if(event.values[0]>0.f){// uncovered
-                    DeviceUnCovered = true;
-                    //audiomanager.setRingerVolume(1); // lowest volume possible
-                    //vibrator.cancel();
-                } else DeviceUnCovered = false;
+            } else if(event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                DeviceUnCovered = (event.values[0] > 0.f);
 
-            } else if (event.sensor.getType()==Sensor.TYPE_LIGHT) {
+            } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 if ((PullOutAction == true) && isCovered()) {
                     // Attention do not choose the value to low,
                     // noise produces values up to 12 lux on my GNex
                     if(event.values[0] >= 15.f){// uncovered
                         audiomanager.setRingerVolume(1); // lowest volume possible
                         vibrator.cancel();
-                    } ;//else DeviceUnCovered = false;
+                    };
                 }
             }
         }
@@ -552,7 +528,6 @@ public class SetRingerService extends Service implements SensorEventListener {
                 }
             } else { // OFFHOOK or IDLE
                 vibrator.cancel();
-//                handler.post(stopService);
                 handler.postDelayed(stopService, 200);
             }
         }

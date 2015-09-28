@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="@CONFIG.PACKAGENAME@"
-    android:versionCode="15"
-    android:versionName="1.3" >
+    android:versionCode="16"
+    android:versionName="1.4" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -117,7 +117,7 @@
         </receiver>
 
         <receiver android:name=".PebbleConnectionReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_CONNECTED"/>
@@ -125,12 +125,21 @@
         </receiver>
 
         <receiver android:name=".PebbleDisconnectionReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_DISCONNECTED"/>
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".PebbleMessageReceiver"
+            android:enabled="false"
+            android:priority="1000">
+            <intent-filter android:priority="1000">
+                 <action android:name="com.getpebble.action.app.RECEIVE"/>
+            </intent-filter>
+        </receiver>
+
 
         <receiver android:name=".BluetoothScoReceiver" android:enabled="true">
             <intent-filter>

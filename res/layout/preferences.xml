@@ -8,32 +8,43 @@
             android:title="@string/tabSettings">
 
             <PreferenceScreen
-                android:key="second_preferencescreen"
+                android:key="preferenceScreenActions"
                 android:icon="@drawable/ic_call"
                 android:title="@string/tvInCallActions">
 
                 <PreferenceCategory android:title="@string/tvReduceVolume">
                     <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                         android:key="ShakeAction"
+                        android:selectable="false"
                         android:summary="@string/tvShakeAction"
                         android:defaultValue="false" />
 
                     <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                         android:key="PullOutAction"
+                        android:selectable="false"
                         android:summary="@string/tvPullOutAction"
                         android:defaultValue="false" />
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/tvSilenceVolume">
+                <PreferenceCategory android:key="CategoryMuteActions"
+                                    android:title="@string/tvSilenceVolume">
                     <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
                         android:key="FlipAction"
                         android:summary="@string/tvFlipAction"
+                        android:selectable="false"
                         android:defaultValue="false" />
 
                     <CheckBoxPreference
                         android:key="Ctrl.AutoReactivateRingerMode"
                         android:summary="@string/tvAutoReactivateRingerMode"
                         android:defaultValue="false" />
+
+                    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                        android:key="SilentWhilePebbleConnected"
+                        android:selectable="false"
+                        android:summary="@string/tvSilentWhilePebbleConnected"
+                        android:defaultValue="false" />
+
                 </PreferenceCategory>
             </PreferenceScreen>
 
