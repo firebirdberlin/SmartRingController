@@ -39,6 +39,20 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
+//        Preference goToRingerVolume = (Preference) findPreference("Ctrl.RingerVolume");
+//        goToRingerVolume.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference preference) {
+//
+//                Intent mIntent = preference.getIntent();
+//                if (mIntent == null) {
+//                    return false;
+//                }
+//                startActivity(mIntent);
+//                getActivity().overridePendingTransition(0, 0);
+//                return true;
+//            }
+//        });
+
         Preference goToDonation = (Preference) findPreference("openDonationPage");
         goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {

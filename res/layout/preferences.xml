@@ -13,25 +13,22 @@
                 android:title="@string/tvInCallActions">
 
                 <PreferenceCategory android:title="@string/tvReduceVolume">
-                    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                    <SwitchPreference
                         android:key="ShakeAction"
-                        android:selectable="false"
                         android:summary="@string/tvShakeAction"
                         android:defaultValue="false" />
 
-                    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                    <SwitchPreference
                         android:key="PullOutAction"
-                        android:selectable="false"
                         android:summary="@string/tvPullOutAction"
                         android:defaultValue="false" />
                 </PreferenceCategory>
 
                 <PreferenceCategory android:key="CategoryMuteActions"
                                     android:title="@string/tvSilenceVolume">
-                    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                    <SwitchPreference
                         android:key="FlipAction"
                         android:summary="@string/tvFlipAction"
-                        android:selectable="false"
                         android:defaultValue="false" />
 
                     <CheckBoxPreference
@@ -39,9 +36,8 @@
                         android:summary="@string/tvAutoReactivateRingerMode"
                         android:defaultValue="false" />
 
-                    <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                    <SwitchPreference
                         android:key="SilentWhilePebbleConnected"
-                        android:selectable="false"
                         android:summary="@string/tvSilentWhilePebbleConnected"
                         android:defaultValue="false" />
 
@@ -49,9 +45,8 @@
             </PreferenceScreen>
 
             <PreferenceCategory android:title="@string/tvControllers">
-                <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                <SwitchPreference
                     android:key="handle_vibration"
-                    android:selectable="false"
                     android:icon="@drawable/ic_phone"
                     android:title="@string/switch_handle_vibration"
                     android:defaultValue="false" />
@@ -61,17 +56,21 @@
                     android:summary="@string/tvBrokenProximitySensor"
                     android:defaultValue="true" />
 
-                <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                <SwitchPreference
                     android:key="Ctrl.RingerVolume"
                     android:icon="@drawable/ic_speaker"
                     android:title="@string/title_handle_ambient_noise"
                     android:summary="@string/switch_handle_ambient_noise"
-                    android:defaultValue="false">
+                    android:defaultValue="false"/>
 
+                <Preference
+                    android:key="Ctrl.RingerVolumePreferences"
+                    android:title="@string/tabSettings"
+                    android:dependency="Ctrl.RingerVolume">
                     <intent android:action="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"
                         android:targetPackage="com.firebirdberlin.smartringcontrollerpro"
                         android:targetClass="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"/>
-                </com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference>
+                </Preference>
 
                 <Preference
                     android:icon="@drawable/ic_menu"
@@ -81,9 +80,9 @@
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/tabTTS">
-                <com.firebirdberlin.smartringcontrollerpro.AutoSwitchPreference
+                <SwitchPreference
                     android:key="TTS.enabled"
-                    android:selectable="false"
+                    android:clickable="false"
                     android:icon="@drawable/ic_voice"
                     android:title="@string/tabTTS"
                     android:summary="@string/tvTTSenabled"
