@@ -150,6 +150,9 @@
                 android:key="about_icons8"
                 android:title="Icons"
                 android:summary="icons8" >
+
+                <intent android:action="android.intent.action.VIEW"
+                    android:data="https://icons8.com"/>
             </Preference>
         </PreferenceScreen>
 </PreferenceScreen>
