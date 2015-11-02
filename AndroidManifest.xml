@@ -140,6 +140,11 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".receivers.RingerModeStateChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.media.RINGER_MODE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".BluetoothScoReceiver" android:enabled="true">
             <intent-filter>
