@@ -31,11 +31,6 @@
                         android:summary="@string/tvFlipAction"
                         android:defaultValue="false" />
 
-                    <CheckBoxPreference
-                        android:key="Ctrl.AutoReactivateRingerMode"
-                        android:summary="@string/tvAutoReactivateRingerMode"
-                        android:defaultValue="false" />
-
                     <SwitchPreference
                         android:key="SilentWhilePebbleConnected"
                         android:summary="@string/tvSilentWhilePebbleConnected"

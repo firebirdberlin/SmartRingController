@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.firebirdberlin.smartringcontrollerpro"
-    android:versionCode="18"
-    android:versionName="1.6" >
+    android:versionCode="19"
+    android:versionName="1.7" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -140,7 +140,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receivers.RingerModeStateChangeReceiver" >
+        <receiver android:name=".RingerModeStateChangeReceiver" >
             <intent-filter>
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
             </intent-filter>
