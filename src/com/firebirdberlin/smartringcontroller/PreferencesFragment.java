@@ -39,20 +39,6 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-//        Preference goToRingerVolume = (Preference) findPreference("Ctrl.RingerVolume");
-//        goToRingerVolume.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            public boolean onPreferenceClick(Preference preference) {
-//
-//                Intent mIntent = preference.getIntent();
-//                if (mIntent == null) {
-//                    return false;
-//                }
-//                startActivity(mIntent);
-//                getActivity().overridePendingTransition(0, 0);
-//                return true;
-//            }
-//        });
-
         Preference goToDonation = (Preference) findPreference("openDonationPage");
         goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -63,17 +49,14 @@ public class PreferencesFragment extends PreferenceFragment {
 
         Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
         if ( Utility.isPackageInstalled(getActivity(), "com.getpebble.android") == false ) {
-            Logger.e(TAG, "Pebble app not installed !");
             PreferenceCategory cat = (PreferenceCategory) findPreference("CategoryMuteActions");
             cat.removePreference(prefSilentWhilePebbleConnected);
             toggleComponentState(PebbleConnectionReceiver.class, false);
             toggleComponentState(PebbleDisconnectionReceiver.class, false);
             toggleComponentState(PebbleMessageReceiver.class, false);
         } else {
-            Logger.e(TAG, "Pebble app is installed !");
             prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object new_value) {
-                    Logger.i(TAG, preference.getKey());
                     boolean on = Boolean.parseBoolean(new_value.toString());
                     toggleComponentState(PebbleConnectionReceiver.class, on);
                     toggleComponentState(PebbleDisconnectionReceiver.class, on);

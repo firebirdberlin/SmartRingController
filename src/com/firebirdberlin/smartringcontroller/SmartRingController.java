@@ -9,11 +9,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -28,19 +30,21 @@ public class SmartRingController extends Activity {
     public static final String TTS_MODE_ALWAYS = "always";
 
     private ActionBar actionbar;
+    private Context mContext = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
+        mContext = this;
 
         actionbar = getActionBar();
         actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionbar.setDisplayShowTitleEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         //actionBar.setTitle("");
+
+        final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        boolean enabled = settings.getBoolean("enabled", false);
 
         if (enabled){
             setupMainPage();
@@ -65,6 +69,12 @@ public class SmartRingController extends Activity {
                 SharedPreferences.Editor prefEditor = settings.edit();
                 prefEditor.putBoolean("enabled", isChecked);
                 prefEditor.commit();
+
+                toggleComponentState(mContext, RingerModeStateChangeReceiver.class, isChecked);
+                toggleComponentState(mContext, TTSService.class, isChecked);
+                toggleComponentState(mContext, SetRingerService.class, isChecked);
+                toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
+                toggleComponentState(mContext, EnjoyTheSilenceService.class, isChecked);
 
                 if (isChecked){
                     setupMainPage();
@@ -92,6 +102,14 @@ public class SmartRingController extends Activity {
         getFragmentManager().beginTransaction()
             .replace(android.R.id.content, new PreferencesFragment())
             .commit();
+    }
+
+    public void toggleComponentState(Context context, Class component, boolean on){
+        ComponentName receiver = new ComponentName(context, component);
+        PackageManager pm = context.getPackageManager();
+        int new_state = (on) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                            : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 }
 
