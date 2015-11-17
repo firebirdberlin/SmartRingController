@@ -66,7 +66,7 @@ public class mNotificationListener extends NotificationListenerService {
         } else {
             if (n.sound == null) {
                 // determine music volume
-                AudioManager am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 if (am.isMusicActive()){
                     SharedPreferences.Editor prefEditor = settings.edit();
                     int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -84,7 +84,7 @@ public class mNotificationListener extends NotificationListenerService {
         //mAudioManager.muteNotificationSounds(true, this);
 
         // if the last notification was within the last 10s
-        if ((System.currentTimeMillis()-last_notification_posted) < min_notification_interval){
+        if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
             //n.sound = null; // remove the sound, to be more pleasent
             queueMessage(n, this);
             return;
