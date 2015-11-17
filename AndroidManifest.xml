@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.firebirdberlin.smartringcontrollerpro"
-    android:versionCode="18"
-    android:versionName="1.6" >
+    android:versionCode="20"
+    android:versionName="1.8" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -75,8 +75,8 @@
             android:theme="@style/noAnimTheme"
             >
         </activity>
-        <service android:enabled="true" android:name=".SetRingerService" />
-        <service android:enabled="true" android:name=".TTSService" />
+        <service android:enabled="false" android:name=".SetRingerService" />
+        <service android:enabled="false" android:name=".TTSService" />
 <!--
         Notification listener Service for android 4.3 +
 -->
@@ -99,18 +99,23 @@
             android:name=".accNotificationListener"
             android:enabled="@bool/use_AccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-         <intent-filter>
-             <action android:name="android.accessibilityservice.AccessibilityService" />
-         </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibilityservice" />
         </service>
 
 
-        <service android:enabled="true" android:name=".EnjoyTheSilenceService" />
+        <service android:enabled="false" android:name=".EnjoyTheSilenceService" />
 
-        <receiver android:name=".IncomingCallReceiver" android:priority="1000">
+        <receiver android:name=".IncomingCallReceiver"
+            android:enabled="false"
+            android:priority="1000">
+
             <intent-filter android:priority="1000">
                  <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
@@ -135,11 +140,20 @@
         <receiver android:name=".PebbleMessageReceiver"
             android:enabled="false"
             android:priority="1000">
+
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.app.RECEIVE"/>
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".RingerModeStateChangeReceiver"
+            android:enabled="false"
+            android:priority="1000">
+
+            <intent-filter>
+                <action android:name="android.media.RINGER_MODE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".BluetoothScoReceiver" android:enabled="true">
             <intent-filter>

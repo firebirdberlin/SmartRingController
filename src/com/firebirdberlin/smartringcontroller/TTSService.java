@@ -88,64 +88,57 @@ public class TTSService extends Service {
 
     synchronized(messageQueue) {
       if (intent.hasExtra(BLUETOOTH_TIMEOUT_EXTRA)) {
-        if (bluetoothTimerTask != null) {
-          audioManager.stopBluetoothSco();
-          bluetoothTimerTask.cancel();
-          bluetoothTimerTask = null;
+          if (bluetoothTimerTask != null) {
+              audioManager.stopBluetoothSco();
+              bluetoothTimerTask.cancel();
+              bluetoothTimerTask = null;
 
-          if (shouldRead(false, this)) {
-            // If SCO failed but we have another method we can read through, do so.
-            startReading(this);
-          } else {
-            // Otherwise clear the queue.
-            messageQueue.clear();
+              if (shouldRead(false, this)) {
+                  // If SCO failed but we have another method we can read through, do so.
+                  startReading(this);
+              } else {
+                  // Otherwise clear the queue.
+                  messageQueue.clear();
+              }
           }
-        }
       } else if (intent.hasExtra(STOP_READING_EXTRA)) {
         boolean stop = (tts != null);
         if (stop == true) {
           // This will trigger onUtteranceCompleted, so we don't have to worry about cleaning up.
           tts.stop();
         }
-
         messageQueue.clear();
 
-        // We still want to stick around long enough for onUtteranceCompleted to get called, so let
-        // it call stopSelf();
-        // If no TTS service was running, we stop here
-//        if (stop == false) { // au backe .. das geht doch nicht
-//            TTSService.this.stopSelf();
-//        }
       } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
-        String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
-        messageQueue.add(message);
+          String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
+          messageQueue.add(message);
 
-        // if the TTS service is already running, just queue the message
-        if (tts == null) {
-          if (! preferSco &&
-              (audioManager.isBluetoothA2dpOn() ||
-               audioManager.isWiredHeadsetOn())) {
-            // We prefer to use non-sco if it's available. The logic is that if you have your
-            // headphones on in the car, the whole car shouldn't hear your messages.
-            TTSService.startReading(this);
-          } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO &&
-              audioManager.isBluetoothScoAvailableOffCall()) {
-            Logger.i(TAG, "Starting SCO, will wait until it is connected. sco on: " +
-                audioManager.isBluetoothScoOn());
-            audioManager.startBluetoothSco();
-            bluetoothTimerTask = new TimerTask() {
-              @Override
-              public void run() {
-                TTSService.bluetoothTimeout(TTSService.this);
+          // if the TTS service is already running, just queue the message
+          if (tts == null) {
+              if (! preferSco &&
+                      (audioManager.isBluetoothA2dpOn() ||
+                       audioManager.isWiredHeadsetOn())) {
+                  // We prefer to use non-sco if it's available. The logic is that if you have your
+                  // headphones on in the car, the whole car shouldn't hear your messages.
+                  TTSService.startReading(this);
+              } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO &&
+                      audioManager.isBluetoothScoAvailableOffCall()) {
+                  Logger.i(TAG, "Starting SCO, will wait until it is connected. sco on: " +
+                          audioManager.isBluetoothScoOn());
+                  audioManager.startBluetoothSco();
+                  bluetoothTimerTask = new TimerTask() {
+                      @Override
+                      public void run() {
+                          TTSService.bluetoothTimeout(TTSService.this);
+                      }
+                  };
+                  Timer timer = new Timer("bluetoothTimeoutTimer");
+                  timer.schedule(bluetoothTimerTask, 5000);
+              } else if (shouldRead(false, this)) {
+                  // In case we should read anyway (reading is always on)
+                  TTSService.startReading(this);
               }
-            };
-            Timer timer = new Timer("bluetoothTimeoutTimer");
-            timer.schedule(bluetoothTimerTask, 5000);
-          } else if (shouldRead(false, this)) {
-            // In case we should read anyway (reading is always on)
-            TTSService.startReading(this);
           }
-        }
       } else if (intent.hasExtra(START_READING_EXTRA)) {
         if (bluetoothTimerTask != null) {
           // Probably triggered by a bluetooth connection. reset;
@@ -175,8 +168,8 @@ public class TTSService extends Service {
                       }
                       tts.shutdown();
                       tts = null;
-                      TTSService.this.stopSelf();
                       Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
+                      TTSService.this.stopSelf();
                     } else {
                       Logger.i(TAG, "Speaking next message.");
                       speak(messageQueue.peek());
@@ -203,6 +196,8 @@ public class TTSService extends Service {
         boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
         String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 
+        Logger.w(TAG, "ttsmode \"" + ttsMode + "\"");
+
         if ( enabled && tts_enabled) {
             if (Utility.getCallState(context) == TelephonyManager.CALL_STATE_OFFHOOK){
                 // don't speak, when in call
@@ -210,13 +205,15 @@ public class TTSService extends Service {
             }
 
 
-            if ( ttsMode == SmartRingController.TTS_MODE_ALWAYS){
+            if ( ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS)){
                 return true;
             }
 
             AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            return ((canUseSco && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO &&
-                     audioManager.isBluetoothScoAvailableOffCall())
+
+            return ((canUseSco
+                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO
+                        && audioManager.isBluetoothScoAvailableOffCall())
                     || audioManager.isBluetoothA2dpOn()
                     || audioManager.isWiredHeadsetOn());
         }
@@ -318,6 +315,7 @@ public class TTSService extends Service {
 
 
   public static void queueMessage(String message, Context context) {
+    Logger.i(TAG, "Trying to Queue message: " + message);
     if (shouldRead(false, context) == false) return;
     Logger.i(TAG, "Queueing message: " + message);
     sendIntent(TTSService.QUEUE_MESSAGE_EXTRA, message, context);
