@@ -102,23 +102,16 @@
                 android:targetClass="com.firebirdberlin.smartringcontrollerpro.TestActivity"/>
         </PreferenceScreen>
 
-        <Preference
-            android:icon="@drawable/ic_github"
-            android:title="@string/titleContribute">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="https://github.com/firebirdberlin/SmartRingController"/>
-
-        </Preference>
-
-        <Preference
-            android:key="openDonationPage"
-            android:icon="@drawable/ic_paypal"
-            android:title="@string/titleDonate"/>
-
         <PreferenceScreen
             android:key="about_screen"
             android:icon="@drawable/ic_about"
             android:title="@string/tabAbout">
+
+            <com.firebirdberlin.smartringcontrollerpro.VersionPreference
+                android:key="version"
+                android:selectable="false"
+                android:summary="@string/summaryAboutCredits"/>
+                />
 
             <Preference
                 android:selectable="false"
@@ -128,11 +121,17 @@
                 android:summary="@string/tvAbout" />
 
             <Preference
-                android:key="credits"
-                android:selectable="false"
-                android:enabled="true"
-                android:title="@string/titleAboutCredits"
-                android:summary="@string/summaryAboutCredits"/>
+                android:icon="@drawable/ic_github"
+                android:title="@string/titleContribute">
+                <intent android:action="android.intent.action.VIEW"
+                    android:data="https://github.com/firebirdberlin/SmartRingController"/>
+
+            </Preference>
+
+            <Preference
+                android:key="openDonationPage"
+                android:icon="@drawable/ic_paypal"
+                android:title="@string/titleDonate"/>
 
             <Preference
                 android:selectable="false"
