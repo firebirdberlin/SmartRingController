@@ -58,15 +58,6 @@
                     android:summary="@string/switch_handle_ambient_noise"
                     android:defaultValue="false"/>
 
-                <Preference
-                    android:key="Ctrl.RingerVolumePreferences"
-                    android:title="@string/tabSettings"
-                    android:dependency="Ctrl.RingerVolume">
-                    <intent android:action="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"
-                        android:targetPackage="com.firebirdberlin.smartringcontrollerpro"
-                        android:targetClass="com.firebirdberlin.smartringcontrollerpro.SettingsActivity"/>
-                </Preference>
-
                 <PreferenceScreen
                     android:key="Ctrl.RingerVolumePreferenceScreen"
                     android:title="@string/tabSettings"
