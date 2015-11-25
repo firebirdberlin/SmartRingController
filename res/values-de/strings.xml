@@ -73,20 +73,22 @@
         Englisch, Deutsch : Stefan Fruhner\nSpanish, Katalanisch : Jaume Hernandez
     </string>
 
-    <string name="tvExplanationNoiseLevels">Die
-    Klingeltonlautstärke wird entsprechend der Umgebungslautstärke
-    eingestellt. Die Schwellwerte entsprechen jeweils der
-    Umgebungslautstärke, die der leisesten und der
-    lautesten Lautstärke zugeordnet werden.</string>
-    <string name=
-    "tvExplanationMinimumLevel">
-Minimum: Wählen Sie hier den Wert der Umgebungslautstärke, für den die
-leiseste Einstellung gerade noch angemessen ist (Standard: 0).</string>
+    <string name="tvExplanationNoiseLevels">
+        Die Klingeltonlautstärke wird entsprechend der Umgebungslautstärke
+        eingestellt. Die Schwellwerte entsprechen jeweils der
+        Umgebungslautstärke, die der leisesten und der
+        lautesten Lautstärke zugeordnet werden.
+    </string>
+    <string name= "tvExplanationMinimumLevel">
+        Wählen Sie den Wert der Umgebungslautstärke, für den die
+        leiseste Einstellung gerade noch angemessen ist (Standard: 0).
+    </string>
     <string name="tvExplanationMaximumLevel">
-Maximum: Wählen Sie den Wert, ab dem Sie die lauteste Einstellung benötigen.
-Erhöhen Sie den Schwellwert, falls das Telefon in ruhiger Umgebung zu
-laut klingelt. Reduzieren Sie ihn, wenn es lauter klingeln sollte.
-(Standard: 7000).</string>
+        Wählen Sie den Wert, ab dem Sie die lauteste Einstellung benötigen.
+        Erhöhen Sie den Schwellwert, falls das Telefon in ruhiger Umgebung zu
+        laut klingelt. Reduzieren Sie ihn, wenn es lauter klingeln sollte.
+        (Standard: 7000).
+    </string>
 
     <string name="tvTest">Testen Sie die App, indem
     Sie die Messung manuell starten. Bei Erfolg werden die Umgebungslautstärke
