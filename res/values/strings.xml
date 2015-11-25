@@ -73,17 +73,21 @@
         English, German : Stefan Fruhner\nSpanish, Catalan : Jaume Hernandez
     </string>
 
-    <string name="tvExplanationNoiseLevels">The ringer volume is set
-according to the current noise level the microphone detects. The noise levels
- correspond to the minimum and the maximum ringer volume.</string>
+    <string name="tvExplanationNoiseLevels">
+        The ringer volume is set
+        according to the current noise level the microphone detects. The noise levels
+        correspond to the minimum and the maximum ringer volume.
+    </string>
     <string name="tvExplanationMinimumLevel">
-Minimum level: Select the level of ambient noise for which the lowest
-ringer volume is suitable (default:0).</string>
+        Select the level of ambient noise for which the lowest
+        ringer volume is suitable (default:0).
+    </string>
     <string name="tvExplanationMaximumLevel">
-Maximum level: Select the level of ambient noise for which the highest
-ringer volume is needed. Increase this value if your ringer is too loud
-in silent situations. Decrease it if your ringer should be louder in
-silent situations  (default:7000).</string>
+        Select the level of ambient noise for which the highest
+        ringer volume is needed. Increase this value if your ringer is too loud
+        in silent situations. Decrease it if your ringer should be louder in
+        silent situations  (default:7000).
+    </string>
 
     <string name="tvTest">Test your settings by clicking the buttons.
     On success the ambient noise level and the new volume is reported.
@@ -91,6 +95,7 @@ silent situations  (default:7000).</string>
     (\'-\' device is covered, \'+\' device is not covered).\n\n
     Notifications can only be detected if the accessibility service is running.
     </string>
+
     <string name="AccessibilityDescription">
         Needed to set the volume on incoming notifications.
     </string>
