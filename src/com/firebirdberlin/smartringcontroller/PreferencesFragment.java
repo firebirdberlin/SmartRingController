@@ -1,5 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,23 +8,39 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceCategory;
-import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
+import de.greenrobot.event.EventBus;
+
+import android.os.AsyncTask;
 
 public class PreferencesFragment extends PreferenceFragment {
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
+    private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
+    private final SoundMeter soundMeter = new SoundMeter();
+
+    private boolean volumePreferencesDisplayed = false;
+
+    private InlineSeekBarPreference seekBarMinAmplitude = null;
+    private InlineSeekBarPreference seekBarMaxAmplitude = null;
+    private InlineProgressPreference progressBarRingerVolume = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Define the settings file to use by this settings fragment
         getPreferenceManager().setSharedPreferencesName(SmartRingController.PREFS_KEY);
 
         addPreferencesFromResource(R.layout.preferences);
+
+        seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
+        seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
+        progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
 
         Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
         goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -64,6 +81,58 @@ public class PreferencesFragment extends PreferenceFragment {
                     return true;
                 }
             });
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        EventBus.getDefault().register(this);
+        handleAmbientNoiseMeasurement();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+        soundMeter.stopMeasurement();
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        volumePreferencesDisplayed = (preference.getKey().equals(PREFERENCE_SCREEN_RINGER_VOLUME));
+        handleAmbientNoiseMeasurement();
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private void handleAmbientNoiseMeasurement() {
+        if (volumePreferencesDisplayed) {
+            new measureAmbientNoiseTask().execute();
+        } else {
+            soundMeter.stopMeasurement();
+        }
+    }
+
+    public void onEvent(OnNewAmbientNoiseValue event) {
+        seekBarMinAmplitude.setSecondaryProgress((int) event.value);
+        seekBarMaxAmplitude.setSecondaryProgress((int) event.value);
+        Context context = getActivity().getApplicationContext();
+        Settings settings = new Settings(context);
+        int volume = settings.getRingerVolume(event.value, false);
+        //Toast toast = Toast.makeText(context,
+                                     //String.valueOf(event.value)
+                                     //+ " => " +
+                                     //String.valueOf(volume)
+                                     //, Toast.LENGTH_SHORT);
+        //toast.show();
+        progressBarRingerVolume.setProgress(volume);
+        new measureAmbientNoiseTask().execute();
+    }
+
+    private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void...params) {
+            soundMeter.startMeasurement(1000);
+            return null;
         }
     }
 

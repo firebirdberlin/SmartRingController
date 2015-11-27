@@ -33,9 +33,10 @@ import java.util.List;
 
 public class SetRingerService extends Service implements SensorEventListener {
     private static String TAG = SmartRingController.TAG + ".SetRingerService";
-    private Handler handler;
-    private SoundMeter soundmeter;
-    private mAudioManager audiomanager;
+    private final Handler handler = new Handler();
+    private Settings settings = null;
+    private SoundMeter soundmeter = null;
+    private mAudioManager audiomanager = null;
 
     private BatteryStats battery;
 
@@ -66,6 +67,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private int count_proximity_sensor = 0;
     private int count_acceleration_sensor = 0;
     private int count_light_sensor = 0;
+
     private boolean handleVibration = false;
     private boolean handleNotification = false;
     private boolean brokenProximitySensor = false;
@@ -78,6 +80,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private int minRingerVolume = 1; // 0 means vibration
     private boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
     private int addPocketVolume = 0; // increase in pocket
+
     private static int waitMillis = 3000; // ms to wait before measuring ambient noise
     private static int measurementMillis = 800; // 800 ms is the minimum needed for Android 4.4.4
     private static int SENSOR_DELAY = 50000; // us = 50 ms
@@ -94,8 +97,8 @@ public class SetRingerService extends Service implements SensorEventListener {
         registerReceiver(PhoneStateReceiver, filter);
 
         battery = new BatteryStats(this);
-        handler = new Handler();
         soundmeter = new SoundMeter();
+        settings = new Settings(this);
         audiomanager = new mAudioManager(this);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -376,22 +379,15 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         boolean vibratorON = handleVibration();
 
-        int value = audiomanager.getRingerVolume();
+        int newRingerVolume = audiomanager.getRingerVolume();
         if (currentAmbientNoiseAmplitude > 0.) { // could not detect ambient noise
-
-            int max = audiomanager.getMaxRingerVolume();
-
-            value = minRingerVolume + (int) ((currentAmbientNoiseAmplitude / maxAmplitude)
-                                             * (double) (max - minRingerVolume));
-
-            if (isCovered()) value += addPocketVolume;
-
-            if (value > max) value = max;
-            audiomanager.setRingerVolume(value);
+            newRingerVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
+                                                       isCovered());
+            audiomanager.setRingerVolume(newRingerVolume);
 
         }
 
-        String msg = String.valueOf(currentAmbientNoiseAmplitude) + " => " + String.valueOf(value);
+        String msg = String.valueOf(currentAmbientNoiseAmplitude) + " => " + String.valueOf(newRingerVolume);
         msg += (DeviceIsCovered) ? " -" : " +";
         msg += (vibratorON) ? " | vibrate" : "";
 

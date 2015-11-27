@@ -76,7 +76,7 @@
                         android:title="@string/setting_min_amplitude"
                         android:summary="@string/tvExplanationMinimumLevel"
                         android:defaultValue="0"
-                        android:max="10000"
+                        android:max="5000"
                         seekbar:min="0"
                         seekbar:interval="50"
                         seekbar:unitsLeft=""
@@ -88,11 +88,17 @@
                         android:title="@string/setting_max_amplitude"
                         android:summary="@string/tvExplanationMaximumLevel"
                         android:defaultValue="7000"
-                        android:max="50000"
+                        android:max="32767"
                         seekbar:min="50"
                         seekbar:interval="50"
                         seekbar:unitsLeft=""
                         seekbar:unitsRight=""/>
+
+                    <com.firebirdberlin.smartringcontrollerpro.InlineProgressPreference
+                        xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+                        android:key="currentRingerVolumeValue"
+                        android:selectable="false"
+                        android:title="current ringer volume"/>
 
                     <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
                         xmlns:seekbar="http://schemas.android.com/apk/lib/android"

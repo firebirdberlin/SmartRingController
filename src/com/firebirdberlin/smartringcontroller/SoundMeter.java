@@ -125,7 +125,6 @@ public class SoundMeter {
     public void startMeasurement(int interval_millis) {
         this.interval = interval_millis;
         stopMeasurement();
-        recording = true;
         start();
         handler.postDelayed(listenToAmbientNoise, interval_millis);
     }
