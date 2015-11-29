@@ -159,6 +159,10 @@ public class InlineSeekBarPreference extends Preference implements OnSeekBarChan
         if (seekBar != null) seekBar.setSecondaryProgress(value);
     }
 
+    public void setMax(int value){
+        if (seekBar != null) seekBar.setMax(value);
+    }
+
     public int getProgress() {
         if (seekBar != null) return seekBar.getProgress();
         return 0;

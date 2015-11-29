@@ -26,13 +26,22 @@ public class SoundMeter {
         if (recording) return false;
         if (mRecorder == null) {
             mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+
+            try {
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            } catch(RuntimeException e){
+                mRecorder = null;
+                e.printStackTrace();
+                return false;
+            }
+
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mRecorder.setOutputFile("/dev/null");
             mRecorder.setOnErrorListener(errorListener);
             mRecorder.setOnInfoListener(infoListener);
         }
+
         try{
             mRecorder.prepare();
         }catch (IOException e) {
@@ -143,8 +152,8 @@ public class SoundMeter {
         public void run() {
             double amp = getAmplitude();
             Logger.i(TAG, "amplitude : " + String.valueOf(amp));
-            stop();
             EventBus.getDefault().post(new OnNewAmbientNoiseValue(amp));
+            handler.postDelayed(listenToAmbientNoise, interval);
         }
     };
 

@@ -50,23 +50,14 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@CONFIG.APPNAME@"
-        android:theme="@android:style/Theme.Holo"
-        >
+        android:theme="@android:style/Theme.Holo">
         <activity
             android:name=".SmartRingController"
             android:label="@CONFIG.APPNAME@">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleInstance"
-            android:name="TestActivity"
-            android:theme="@style/noAnimTheme"
-            >
         </activity>
         <service android:enabled="false" android:name=".SetRingerService" />
         <service android:enabled="false" android:name=".TTSService" />

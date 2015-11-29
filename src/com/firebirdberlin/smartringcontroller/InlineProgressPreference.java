@@ -1,10 +1,8 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +37,6 @@ public class InlineProgressPreference extends Preference {
                 layoutInflater.inflate(R.layout.inline_progressbar_preference, summaryParent2);
 
                 progressBar = (ProgressBar) summaryParent2.findViewById(R.id.progressBar);
-                progressBar.setMax(7);
-                progressBar.setProgress(5);
             }
         }
 
@@ -49,5 +45,9 @@ public class InlineProgressPreference extends Preference {
 
     public void setProgress(int value){
         if (progressBar != null) progressBar.setProgress(value);
+    }
+
+    public void setMax(int value){
+        if (progressBar != null) progressBar.setMax(value);
     }
 }

@@ -1,5 +1,8 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -24,15 +27,22 @@ public class PreferencesFragment extends PreferenceFragment {
     private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
     private final SoundMeter soundMeter = new SoundMeter();
 
+    private Context context = null;
     private boolean volumePreferencesDisplayed = false;
 
     private InlineSeekBarPreference seekBarMinAmplitude = null;
     private InlineSeekBarPreference seekBarMaxAmplitude = null;
+    private InlineSeekBarPreference seekBarMinRingerVolume = null;
+    private InlineSeekBarPreference seekBarAddPocketVolume = null;
     private InlineProgressPreference progressBarRingerVolume = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = getActivity().getApplicationContext();
+        Settings settings = new Settings(context);
+
         // Define the settings file to use by this settings fragment
         getPreferenceManager().setSharedPreferencesName(SmartRingController.PREFS_KEY);
 
@@ -40,7 +50,12 @@ public class PreferencesFragment extends PreferenceFragment {
 
         seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
         seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
+        seekBarMinRingerVolume = (InlineSeekBarPreference) findPreference("minRingerVolume");
+        seekBarAddPocketVolume = (InlineSeekBarPreference) findPreference("Ctrl.PocketVolume");
         progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
+
+        seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
+        seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
 
         Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
         goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -60,6 +75,14 @@ public class PreferencesFragment extends PreferenceFragment {
         goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 openDonationPage();
+                return true;
+            }
+        });
+
+        Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
+        prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                sendTestNotification();
                 return true;
             }
         });
@@ -116,24 +139,41 @@ public class PreferencesFragment extends PreferenceFragment {
     public void onEvent(OnNewAmbientNoiseValue event) {
         seekBarMinAmplitude.setSecondaryProgress((int) event.value);
         seekBarMaxAmplitude.setSecondaryProgress((int) event.value);
+
         Context context = getActivity().getApplicationContext();
         Settings settings = new Settings(context);
         int volume = settings.getRingerVolume(event.value, false);
-        //Toast toast = Toast.makeText(context,
-                                     //String.valueOf(event.value)
-                                     //+ " => " +
-                                     //String.valueOf(volume)
-                                     //, Toast.LENGTH_SHORT);
-        //toast.show();
+
+        progressBarRingerVolume.setMax(settings.maxRingerVolume);
         progressBarRingerVolume.setProgress(volume);
-        new measureAmbientNoiseTask().execute();
     }
 
     private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void...params) {
-            soundMeter.startMeasurement(1000);
+            soundMeter.startMeasurement(500);
             return null;
         }
+    }
+
+    private void sendTestNotification() {
+        Intent intent = new Intent(context, SmartRingController.class);
+        PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        // build notification
+        Notification n = new Notification.Builder(context)
+            .setContentTitle("SmartRingController")
+            .setContentText(getString(R.string.msgTestNotification))
+            .setSmallIcon(R.drawable.ic_launcher_gray)
+            .setContentIntent(pIntent)
+            .setAutoCancel(true)
+            .build();
+
+        n.defaults |= Notification.DEFAULT_SOUND;
+        //n.defaults |= Notification.DEFAULT_ALL;
+        NotificationManager notificationManager =
+            (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
     private void openDonationPage() {

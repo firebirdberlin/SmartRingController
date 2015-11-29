@@ -10,6 +10,7 @@
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_ringer_volume">Minimale Klingeltonlautstärke</string>
     <string name="tvPocketVolume">Erhöhe Lautstärke in der Tasche um </string>
+    <string name="tvCalculatedVolume">Klingeltonlautstärke</string>
 
     <string name="title_handle_ambient_noise">Lautstärke</string>
     <string name="switch_handle_ambient_noise">des Klingeltons.</string>
@@ -69,37 +70,37 @@
     <string name="titleAboutLanguages">
         Sprachen
     </string>
+
     <string name="summaryAboutLanguages">
         Englisch, Deutsch : Stefan Fruhner\nSpanish, Katalanisch : Jaume Hernandez
     </string>
 
     <string name="tvExplanationNoiseLevels">
-        Die Klingeltonlautstärke wird entsprechend der Umgebungslautstärke
-        eingestellt. Die Schwellwerte entsprechen jeweils der
-        Umgebungslautstärke, die der leisesten und der
+        Die Klingeltonlautstärke wird entsprechend der Umgebungslautstärke eingestellt.  Die
+        Schwellwerte entsprechen jeweils der Umgebungslautstärke, die der leisesten und der
         lautesten Lautstärke zugeordnet werden.
     </string>
+
     <string name= "tvExplanationMinimumLevel">
-        Wählen Sie den Wert der Umgebungslautstärke, für den die
-        leiseste Einstellung gerade noch angemessen ist (Standard: 0).
+        Wählen Sie den Wert der Umgebungslautstärke, für den die leiseste Einstellung gerade noch
+        angemessen ist (Standard: 0).
     </string>
+
     <string name="tvExplanationMaximumLevel">
-        Wählen Sie den Wert, ab dem Sie die lauteste Einstellung benötigen.
-        Erhöhen Sie den Schwellwert, falls das Telefon in ruhiger Umgebung zu
-        laut klingelt. Reduzieren Sie ihn, wenn es lauter klingeln sollte.
-        (Standard: 7000).
+        Erhöhen Sie den Schwellwert, falls das Telefon in ruhiger Umgebung zu laut klingelt.
+        Reduzieren Sie ihn, wenn es lauter klingeln sollte (Standard: 7000).
     </string>
 
-    <string name="tvTest">Testen Sie die App, indem
-    Sie die Messung manuell starten. Bei Erfolg werden die Umgebungslautstärke
-    und die neue Klingeltonlautstärke angezeigt.
-    Decken Sie den Annäherungssensor ab, wenn Sie die
-    Vibration ausprobieren möchten (\'-\' Gerät abgedeckt,
-    \'+\' Gerät nicht abgedeckt).\n\n
+    <string name="tvTest">
+        Testen Sie die App, indem Sie die Messung manuell starten. Bei Erfolg werden die
+        Umgebungslautstärke und die neue Klingeltonlautstärke angezeigt. Decken Sie den
+        Annäherungssensor ab, wenn Sie die Vibration ausprobieren möchten (\'-\' Gerät abgedeckt,
+        \'+\' Gerät nicht abgedeckt).\n\n
 
-    Benachrichtigungen können nur erkannt werden, falls der zugehörige
-    Dienst läuft.
+        Benachrichtigungen können nur erkannt werden, falls der zugehörige
+        Dienst läuft.
     </string>
+
     <string name="AccessibilityDescription">
         Wird benötigt, um die Lautstärke bei eintreffenden Benachrichtigungen zu regeln.
     </string>

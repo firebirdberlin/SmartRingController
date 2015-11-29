@@ -23,6 +23,7 @@ public class Settings {
     public double maxAmplitude = 10000.;
     public double minAmplitude = 1000.;
     public int addPocketVolume = 0; // increase in pocket
+    public int maxRingerVolume = 7;
     public int minRingerVolume = 1; // 0 means vibration
     private mAudioManager audiomanager = null;
 
@@ -43,6 +44,7 @@ public class Settings {
         handleVibration = settings.getBoolean("handle_vibration", false);
         maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
         minAmplitude = (double) settings.getInt("minAmplitude", 500);
+        maxRingerVolume = audiomanager.getMaxRingerVolume();
         minRingerVolume = settings.getInt("minRingerVolume", 1);
         PullOutAction = settings.getBoolean("PullOutAction", false);
         ShakeAction = settings.getBoolean("ShakeAction", false);
@@ -52,10 +54,9 @@ public class Settings {
     public int getRingerVolume(double currentAmplitude, boolean deviceIsCovered) {
         double min = this.minAmplitude;
         double max = this.maxAmplitude;
-        int maxRingerVolume = audiomanager.getMaxRingerVolume();
-        int diffRingerVolume = maxRingerVolume - minRingerVolume;
+        float diffRingerVolume = maxRingerVolume - minRingerVolume;
         int volume = minRingerVolume
-                     + diffRingerVolume * (int) ((currentAmplitude - min)/ (max - min));
+                     + (int) ( diffRingerVolume * (currentAmplitude - min)/ (max - min) );
 
         if (deviceIsCovered) volume += addPocketVolume;
         if (volume > maxRingerVolume) volume = maxRingerVolume;
@@ -63,11 +64,4 @@ public class Settings {
 
         return volume;
     }
-
-    //public void setBrightnessOffset(float value){
-        //dim_offset = value;
-        //SharedPreferences.Editor prefEditor = settings.edit();
-        //prefEditor.putFloat("dimOffset", value);
-        //prefEditor.commit();
-    //}
 }
