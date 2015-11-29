@@ -146,19 +146,4 @@
             </intent-filter>
         </receiver>
     </application>
-
-<!--
-    <receiver android:name=".MediaButtonIntentReceiver" android:enabled="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MEDIA_BUTTON" />
-        </intent-filter>
-    </receiver>
--->
-
-
 </manifest>
-
-<!--
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.intent.action.CALL_BUTTON"/>
--->

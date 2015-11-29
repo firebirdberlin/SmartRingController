@@ -224,12 +224,8 @@ public class SetRingerService extends Service implements SensorEventListener {
             } catch (Exception e){
                 success = false;
             }
-            error_on_microphone = !success;
-            // on error starting the recording
-            if (error_on_microphone) {
-                broadcastEvent("Failed to initialise the microphone! ");
-            }
 
+            error_on_microphone = !success;
             handler.postDelayed(stopListening, measurementMillis);
         }
     };
@@ -329,7 +325,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         if ( shouldRing() ){// otherwise pass
             audiomanager.unmute();// sound is unmuted onDestroy
         } else {
-            // mute phone until it is flipped again
+            // mute the phone
             EnjoyTheSilenceService.start(this);
         }
 
@@ -351,16 +347,6 @@ public class SetRingerService extends Service implements SensorEventListener {
             audiomanager.setRingerVolume(newRingerVolume);
 
         }
-
-        String msg = String.valueOf(currentAmbientNoiseAmplitude) + " => " + String.valueOf(newRingerVolume);
-        msg += (DeviceIsCovered) ? " -" : " +";
-        msg += (vibratorON) ? " | vibrate" : "";
-
-        if (isOnTable == DISPLAY_FACE_DOWN ) msg += " | face DOWN";
-        else if (isOnTable == DISPLAY_FACE_UP ) msg += " | face UP";
-
-        msg += " | " + String.valueOf(ambientLight);
-        broadcastEvent(msg);
 
         if ( PhoneState.equals("Notification") ){
 
@@ -536,10 +522,4 @@ public class SetRingerService extends Service implements SensorEventListener {
             }
         }
     };
-
-    private void broadcastEvent(String msg){
-        Intent i = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-        i.putExtra("notification_event", msg);
-        sendBroadcast(i);
-    }
 }
