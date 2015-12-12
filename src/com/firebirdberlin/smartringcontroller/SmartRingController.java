@@ -112,7 +112,3 @@ public class SmartRingController extends Activity {
         pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 }
-
-////Use following code to open Notification Access setting screen
-//Intent intent=new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-//startActivity(intent);

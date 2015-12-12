@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="@CONFIG.PACKAGENAME@"
-    android:versionCode="21"
-    android:versionName="1.9" >
+    android:versionCode="22"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -50,23 +50,14 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@CONFIG.APPNAME@"
-        android:theme="@android:style/Theme.Holo"
-        >
+        android:theme="@android:style/Theme.Holo">
         <activity
             android:name=".SmartRingController"
             android:label="@CONFIG.APPNAME@">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleInstance"
-            android:name="TestActivity"
-            android:theme="@style/noAnimTheme"
-            >
         </activity>
         <service android:enabled="false" android:name=".SetRingerService" />
         <service android:enabled="false" android:name=".TTSService" />
@@ -155,19 +146,4 @@
             </intent-filter>
         </receiver>
     </application>
-
-<!--
-    <receiver android:name=".MediaButtonIntentReceiver" android:enabled="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MEDIA_BUTTON" />
-        </intent-filter>
-    </receiver>
--->
-
-
 </manifest>
-
-<!--
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.intent.action.CALL_BUTTON"/>
--->

@@ -1,5 +1,9 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,23 +11,51 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceCategory;
-import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
+import de.greenrobot.event.EventBus;
+
+import android.os.AsyncTask;
 
 public class PreferencesFragment extends PreferenceFragment {
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
+    private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
+    private final SoundMeter soundMeter = new SoundMeter();
+
+    private Context context = null;
+    private boolean volumePreferencesDisplayed = false;
+
+    private InlineSeekBarPreference seekBarMinAmplitude = null;
+    private InlineSeekBarPreference seekBarMaxAmplitude = null;
+    private InlineSeekBarPreference seekBarMinRingerVolume = null;
+    private InlineSeekBarPreference seekBarAddPocketVolume = null;
+    private InlineProgressPreference progressBarRingerVolume = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = getActivity().getApplicationContext();
+        Settings settings = new Settings(context);
+
         // Define the settings file to use by this settings fragment
         getPreferenceManager().setSharedPreferencesName(SmartRingController.PREFS_KEY);
 
         addPreferencesFromResource(R.layout.preferences);
+
+        seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
+        seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
+        seekBarMinRingerVolume = (InlineSeekBarPreference) findPreference("minRingerVolume");
+        seekBarAddPocketVolume = (InlineSeekBarPreference) findPreference("Ctrl.PocketVolume");
+        progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
+
+        seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
+        seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
 
         Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
         goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -47,6 +79,14 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
+        Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
+        prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                sendTestNotification();
+                return true;
+            }
+        });
+
         Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
         if ( Utility.isPackageInstalled(getActivity(), "com.getpebble.android") == false ) {
             PreferenceCategory cat = (PreferenceCategory) findPreference("CategoryMuteActions");
@@ -65,6 +105,75 @@ public class PreferencesFragment extends PreferenceFragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        EventBus.getDefault().register(this);
+        handleAmbientNoiseMeasurement();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+        soundMeter.stopMeasurement();
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        volumePreferencesDisplayed = (preference.getKey().equals(PREFERENCE_SCREEN_RINGER_VOLUME));
+        handleAmbientNoiseMeasurement();
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private void handleAmbientNoiseMeasurement() {
+        if (volumePreferencesDisplayed) {
+            new measureAmbientNoiseTask().execute();
+        } else {
+            soundMeter.stopMeasurement();
+        }
+    }
+
+    public void onEvent(OnNewAmbientNoiseValue event) {
+        seekBarMinAmplitude.setSecondaryProgress((int) event.value);
+        seekBarMaxAmplitude.setSecondaryProgress((int) event.value);
+
+        Context context = getActivity().getApplicationContext();
+        Settings settings = new Settings(context);
+        int volume = settings.getRingerVolume(event.value, false);
+
+        progressBarRingerVolume.setMax(settings.maxRingerVolume);
+        progressBarRingerVolume.setProgress(volume);
+    }
+
+    private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void...params) {
+            soundMeter.startMeasurement(500);
+            return null;
+        }
+    }
+
+    private void sendTestNotification() {
+        Intent intent = new Intent(context, SmartRingController.class);
+        PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        // build notification
+        Notification n = new Notification.Builder(context)
+            .setContentTitle("SmartRingController")
+            .setContentText(getString(R.string.msgTestNotification))
+            .setSmallIcon(R.drawable.ic_launcher_gray)
+            .setContentIntent(pIntent)
+            .setAutoCancel(true)
+            .build();
+
+        n.defaults |= Notification.DEFAULT_SOUND;
+        //n.defaults |= Notification.DEFAULT_ALL;
+        NotificationManager notificationManager =
+            (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
     private void openDonationPage() {

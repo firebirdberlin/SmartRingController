@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,7 +22,6 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
 import java.lang.Math;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -33,14 +30,15 @@ import java.util.List;
 
 public class SetRingerService extends Service implements SensorEventListener {
     private static String TAG = SmartRingController.TAG + ".SetRingerService";
-    private Handler handler;
-    private SoundMeter soundmeter;
-    private mAudioManager audiomanager;
+    private final Handler handler = new Handler();
+    private Settings settings = null;
+    private SoundMeter soundmeter = null;
+    private mAudioManager audiomanager = null;
 
     private BatteryStats battery;
 
-    private SensorManager sensorManager;
-    private Vibrator vibrator;
+    private SensorManager sensorManager = null;
+    private Vibrator vibrator = null;
     private Sensor accelerometerSensor = null;
     private Sensor proximitySensor = null;
     private Sensor lightSensor = null;
@@ -66,18 +64,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private int count_proximity_sensor = 0;
     private int count_acceleration_sensor = 0;
     private int count_light_sensor = 0;
-    private boolean handleVibration = false;
-    private boolean handleNotification = false;
-    private boolean brokenProximitySensor = false;
-    private boolean FlipAction = false;
-    private boolean ShakeAction = false;
-    private boolean PullOutAction = false;
-    private boolean TTSenabled = false;
-    private double minAmplitude = 1000.;
-    private double maxAmplitude = 10000.;
-    private int minRingerVolume = 1; // 0 means vibration
-    private boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
-    private int addPocketVolume = 0; // increase in pocket
+
     private static int waitMillis = 3000; // ms to wait before measuring ambient noise
     private static int measurementMillis = 800; // 800 ms is the minimum needed for Android 4.4.4
     private static int SENSOR_DELAY = 50000; // us = 50 ms
@@ -94,8 +81,8 @@ public class SetRingerService extends Service implements SensorEventListener {
         registerReceiver(PhoneStateReceiver, filter);
 
         battery = new BatteryStats(this);
-        handler = new Handler();
         soundmeter = new SoundMeter();
+        settings = new Settings(this);
         audiomanager = new mAudioManager(this);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -116,12 +103,8 @@ public class SetRingerService extends Service implements SensorEventListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        // read settings
-        SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
-
         // no action needed
-        if (audiomanager.isSilent() || audiomanager.isVibration() || (enabled == false)){
+        if (audiomanager.isSilent() || audiomanager.isVibration() || (settings.enabled == false)){
             stopSelf();
             return Service.START_NOT_STICKY;
         }
@@ -153,9 +136,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         //create instance of sensor manager and get system service to interact with Sensor
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (proximitySensor == null){
-           //Toast.makeText(this,"No Proximity Sensor Found! ",Toast.LENGTH_LONG).show();
-        } else {
+        if (proximitySensor != null) {
             //ProximityMaximumRange = proximitySensor.getMaximumRange();
             if (Build.VERSION.SDK_INT < 19) {
                 sensorManager.registerListener(this, proximitySensor, SENSOR_DELAY);
@@ -181,19 +162,6 @@ public class SetRingerService extends Service implements SensorEventListener {
                                                SENSOR_DELAY/2);
             }
         }
-
-        minAmplitude = (double) settings.getInt("minAmplitude", 500);
-        maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
-        minRingerVolume = settings.getInt("minRingerVolume", 1);
-        controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
-        addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
-        handleVibration = settings.getBoolean("handle_vibration", false);
-        handleNotification = settings.getBoolean("handle_notification", true);
-        brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
-        FlipAction = settings.getBoolean("FlipAction", false);
-        ShakeAction = settings.getBoolean("ShakeAction", false);
-        PullOutAction = settings.getBoolean("PullOutAction", false);
-        TTSenabled = settings.getBoolean("TTS.enabled", false);
 
         // pleasent setting as initial value
         //audiomanager.setRingerVolume(minRingerVolume);
@@ -245,7 +213,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private Runnable startListening = new Runnable() {
         @Override
         public void run() {
-            if (controlRingerVolume == false) {
+            if (settings.controlRingerVolume == false) {
                 handler.postDelayed(stopListening, measurementMillis/2);
                 return;
             }
@@ -256,12 +224,8 @@ public class SetRingerService extends Service implements SensorEventListener {
             } catch (Exception e){
                 success = false;
             }
-            error_on_microphone = !success;
-            // on error starting the recording
-            if (error_on_microphone) {
-                broadcastEvent("Failed to initialise the microphone! ");
-            }
 
+            error_on_microphone = !success;
             handler.postDelayed(stopListening, measurementMillis);
         }
     };
@@ -270,7 +234,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         @Override
         public void run() {
 
-            if (error_on_microphone || controlRingerVolume == false) {
+            if (error_on_microphone || settings.controlRingerVolume == false) {
                 setVolume(0.);
             } else {
                 setVolume(soundmeter.getAmplitude());
@@ -292,9 +256,9 @@ public class SetRingerService extends Service implements SensorEventListener {
                 vibrator.cancel();
                 // to be sure we unmute the streams
                 audiomanager.unmute();
-                if (controlRingerVolume) {
+                if (settings.controlRingerVolume) {
                     // and restore a silent setting, so that bursts are not too loud
-                    audiomanager.setRingerVolume(minRingerVolume);
+                    audiomanager.setRingerVolume(settings.minRingerVolume);
                 }
 
                 stopSelf();
@@ -311,7 +275,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private boolean isCovered(){
-        if ( brokenProximitySensor ) {
+        if ( settings.brokenProximitySensor ) {
             return ((DeviceIsCovered == true) || (ambientLight < MAX_POCKET_BRIGHTNESS));
         }
 
@@ -319,7 +283,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private boolean shouldVibrate(){
-        return ((handleVibration == true)
+        return ((settings.handleVibration == true)
                 && isCovered()
                 && (! isScreenOn() )
                 && (isOnTable == NOT_ON_TABLE)
@@ -328,7 +292,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private boolean shouldRing(){
-        return (! (FlipAction == true
+        return (! (settings.FlipAction == true
                    && isOnTable == DISPLAY_FACE_DOWN
                    && ambientLight < MAX_POCKET_BRIGHTNESS));
     }
@@ -361,7 +325,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         if ( shouldRing() ){// otherwise pass
             audiomanager.unmute();// sound is unmuted onDestroy
         } else {
-            // mute phone until it is flipped again
+            // mute the phone
             EnjoyTheSilenceService.start(this);
         }
 
@@ -376,30 +340,13 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         boolean vibratorON = handleVibration();
 
-        int value = audiomanager.getRingerVolume();
+        int newRingerVolume = audiomanager.getRingerVolume();
         if (currentAmbientNoiseAmplitude > 0.) { // could not detect ambient noise
-
-            int max = audiomanager.getMaxRingerVolume();
-
-            value = minRingerVolume + (int) ((currentAmbientNoiseAmplitude / maxAmplitude)
-                                             * (double) (max - minRingerVolume));
-
-            if (isCovered()) value += addPocketVolume;
-
-            if (value > max) value = max;
-            audiomanager.setRingerVolume(value);
+            newRingerVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
+                                                       isCovered());
+            audiomanager.setRingerVolume(newRingerVolume);
 
         }
-
-        String msg = String.valueOf(currentAmbientNoiseAmplitude) + " => " + String.valueOf(value);
-        msg += (DeviceIsCovered) ? " -" : " +";
-        msg += (vibratorON) ? " | vibrate" : "";
-
-        if (isOnTable == DISPLAY_FACE_DOWN ) msg += " | face DOWN";
-        else if (isOnTable == DISPLAY_FACE_UP ) msg += " | face UP";
-
-        msg += " | " + String.valueOf(ambientLight);
-        broadcastEvent(msg);
 
         if ( PhoneState.equals("Notification") ){
 
@@ -482,7 +429,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                 float x_value = event.values[0];
                 float z_value = event.values[2];
                 // if acceleration in x and y direction is too strong, device is moving
-                if (ShakeAction == true) {
+                if (settings.ShakeAction == true) {
                     if (x_value < -12.) shake_left++;
                     if (x_value > 12.) shake_right++;
 
@@ -495,7 +442,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                     }
                 }
 
-                if (FlipAction == true) {
+                if (settings.FlipAction == true) {
                     if (z_value > -10.3 && z_value < -9.3 ){ // display face down
                         audiomanager.mute();
                         vibrator.cancel();
@@ -505,7 +452,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                 DeviceUnCovered = (event.values[0] > 0.f);
 
             } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                if ((PullOutAction == true) && isCovered()) {
+                if ((settings.PullOutAction == true) && isCovered()) {
                     // Attention do not choose the value to low,
                     // noise produces values up to 12 lux on my GNex
                     if(event.values[0] >= 15.f){// uncovered
@@ -548,7 +495,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         AudioManager am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         am.setMode(AudioManager.MODE_NORMAL);
-        MediaPlayer mp=new MediaPlayer();
+        MediaPlayer mp = new MediaPlayer();
         try {
             mp.setDataSource(context, uri);
             if (am.isWiredHeadsetOn() || am.isBluetoothA2dpOn()) {
@@ -575,10 +522,4 @@ public class SetRingerService extends Service implements SensorEventListener {
             }
         }
     };
-
-    private void broadcastEvent(String msg){
-        Intent i = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-        i.putExtra("notification_event", msg);
-        sendBroadcast(i);
-    }
 }
