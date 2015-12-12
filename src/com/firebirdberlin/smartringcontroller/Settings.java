@@ -51,7 +51,8 @@ public class Settings {
         TTSenabled = settings.getBoolean("TTS.enabled", false);
     }
 
-    public int getRingerVolume(double currentAmplitude, boolean deviceIsCovered) {
+    public int getRingerVolume(double currentAmplitude, boolean deviceIsCovered,
+                               boolean wiredHeadsetIsOn) {
         double min = this.minAmplitude;
         double max = this.maxAmplitude;
         float diffRingerVolume = maxRingerVolume - minRingerVolume;
@@ -61,6 +62,11 @@ public class Settings {
         if (deviceIsCovered) volume += addPocketVolume;
         if (volume > maxRingerVolume) volume = maxRingerVolume;
         if (volume < minRingerVolume) volume = minRingerVolume;
+
+        if ( wiredHeadsetIsOn ) {
+            // limit the maximum ringer volume
+            if (volume > maxRingerVolume/2) volume = maxRingerVolume/2;
+        }
 
         return volume;
     }

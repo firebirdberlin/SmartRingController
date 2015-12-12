@@ -332,7 +332,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
             int callState = telephone.getCallState();
             // call has stopped, while we were waiting for measurements
-            if (callState != TelephonyManager.CALL_STATE_RINGING){
+            if (callState != TelephonyManager.CALL_STATE_RINGING) {
                 handler.post(stopService);
                 return;
             }
@@ -343,7 +343,8 @@ public class SetRingerService extends Service implements SensorEventListener {
         int newRingerVolume = audiomanager.getRingerVolume();
         if (currentAmbientNoiseAmplitude > 0.) { // could not detect ambient noise
             newRingerVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
-                                                       isCovered());
+                                                       isCovered(),
+                                                       audiomanager.isWiredHeadsetOn());
             audiomanager.setRingerVolume(newRingerVolume);
 
         }
@@ -366,7 +367,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             // could be a test of the service
             if (vibratorON){
                 handler.postDelayed(stopService, 600);
-            }else{
+            } else {
                 handler.post(stopService);
             }
         }
@@ -482,8 +483,9 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     /**
      * Plays a notification sound. If a wired headset is present the
-     * sound if played on the music stream. In order to save the
+     * sound if played on the music stream in order to save the
      * environment from sounds.
+     *
      * @param context: The aaplication context
      * @param uri: Uri of the sound to be played
      */
@@ -493,7 +495,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
 
-        AudioManager am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         am.setMode(AudioManager.MODE_NORMAL);
         MediaPlayer mp = new MediaPlayer();
         try {
