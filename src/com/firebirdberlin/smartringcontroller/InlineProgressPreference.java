@@ -44,10 +44,16 @@ public class InlineProgressPreference extends Preference {
     }
 
     public void setProgress(int value){
-        if (progressBar != null) progressBar.setProgress(value);
+        if (progressBar != null) {
+            progressBar.setProgress(value);
+            progressBar.invalidate();
+        }
     }
 
     public void setMax(int value){
-        if (progressBar != null) progressBar.setMax(value);
+        if (progressBar != null) {
+            progressBar.setMax(value);
+            progressBar.invalidate();
+        }
     }
 }
