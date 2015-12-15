@@ -13,6 +13,7 @@ public class Settings {
 
     public boolean brokenProximitySensor = false;
     public boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
+    public boolean increasingRingerVolume = false;
     public boolean enabled = false;
     public boolean FlipAction = false;
     public boolean handleNotification = false;
@@ -38,6 +39,7 @@ public class Settings {
         addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
         brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
         controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
+        increasingRingerVolume = settings.getBoolean("increasingRingerVolume", false);
         enabled = settings.getBoolean("enabled", false);
         FlipAction = settings.getBoolean("FlipAction", false);
         handleNotification = settings.getBoolean("handle_notification", true);

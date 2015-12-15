@@ -48,6 +48,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private boolean running = false;
     private boolean error_on_microphone = false;
     private boolean DeviceIsCovered = false;
+    private int targetVolume = 1;
     private float ambientLight = 0;//SensorManager.LIGHT_SUNLIGHT_MAX;
     private String PhoneState;
     private int initialPhoneState = TelephonyManager.CALL_STATE_IDLE;
@@ -69,6 +70,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private static int measurementMillis = 800; // 800 ms is the minimum needed for Android 4.4.4
     private static int SENSOR_DELAY = 50000; // us = 50 ms
     private static float MAX_POCKET_BRIGHTNESS = 10.f; // proximity sensor fix
+    private static final int INCREASING_RINGER_VOLUME_STEP_DELAY = 3000; // ms
 
     @Override
     public void onCreate(){
@@ -122,12 +124,14 @@ public class SetRingerService extends Service implements SensorEventListener {
         initialPhoneState = telephone.getCallState();
         DeviceIsCovered = false;
         PhoneState = "None";
+        targetVolume = settings.minRingerVolume;
+
         Bundle extras = intent.getExtras();
         if (extras != null) {
             PhoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
-            if (PhoneState.equals("Notification")){
-                // store te sound URI
-                if (intent.hasExtra("Sound")){
+            if (PhoneState.equals("Notification")) {
+                if (intent.hasExtra("Sound")) {
+                    // store te sound URI
                     String sound = intent.getStringExtra("Sound");
                     soundUri = Uri.parse(sound);
                 }
@@ -163,14 +167,11 @@ public class SetRingerService extends Service implements SensorEventListener {
             }
         }
 
-        // pleasent setting as initial value
-        //audiomanager.setRingerVolume(minRingerVolume);
-
         if ( PhoneState.equals("Notification") ){
             audiomanager.mute();
             handler.postDelayed(startListening, waitMillis);
         } else { // phone call
-            //handler.postDelayed(MuteAndListen,200);
+            audiomanager.mute();
             handler.post(startListening);
         }
 
@@ -179,19 +180,18 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     @Override
     public IBinder onBind(Intent intent) {
-        //TODO for communication return IBinder implementation
         return null;
     }
 
     @Override
     public void onDestroy(){
 
+        handler.removeCallbacks(handleIncreasingRingerVolume);
         unregisterReceiver(PhoneStateReceiver);
         sensorManager.unregisterListener(this);
         sensorManager.unregisterListener(inCallActions);
 
         if (soundmeter != null){
-            //soundmeter.stop();
             soundmeter.release();
             soundmeter = null;
         }
@@ -201,14 +201,6 @@ public class SetRingerService extends Service implements SensorEventListener {
         }
         Logger.d(TAG,"onDestroy()");
     }
-
-    private Runnable MuteAndListen = new Runnable() {
-        @Override
-        public void run() {
-            audiomanager.mute();
-            handler.post(startListening);
-        }
-    };
 
     private Runnable startListening = new Runnable() {
         @Override
@@ -260,9 +252,22 @@ public class SetRingerService extends Service implements SensorEventListener {
                     // and restore a silent setting, so that bursts are not too loud
                     audiomanager.setRingerVolume(settings.minRingerVolume);
                 }
-
                 stopSelf();
             }
+        }
+    };
+
+    private Runnable handleIncreasingRingerVolume = new Runnable() {
+        @Override
+        public void run() {
+            int currentVolume = audiomanager.getRingerVolume(); // current value
+            if (currentVolume < targetVolume) {
+                audiomanager.setRingerVolume(currentVolume + 1);
+                handler.postDelayed(handleIncreasingRingerVolume, INCREASING_RINGER_VOLUME_STEP_DELAY);
+            }
+            currentVolume = audiomanager.getRingerVolume(); // current value
+            Logger.i(TAG, "current ringer volume: " + String.valueOf(currentVolume) +
+                          " / " + String.valueOf(targetVolume));
         }
     };
 
@@ -276,7 +281,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     private boolean isCovered(){
         if ( settings.brokenProximitySensor ) {
-            return ((DeviceIsCovered == true) || (ambientLight < MAX_POCKET_BRIGHTNESS));
+            return ( DeviceIsCovered || (ambientLight < MAX_POCKET_BRIGHTNESS));
         }
 
         return DeviceIsCovered;
@@ -323,13 +328,13 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         //audiomanager.restoreRingerMode();
         if ( shouldRing() ){// otherwise pass
-            audiomanager.unmute();// sound is unmuted onDestroy
+            audiomanager.unmute();
         } else {
             // mute the phone
             EnjoyTheSilenceService.start(this);
         }
 
-        if ( PhoneState.equals("RINGING") ){ // expecting that a call is runnning
+        if ( PhoneState.equals("RINGING") ) { // expecting that a call is runnning
             int callState = telephone.getCallState();
             // call has stopped, while we were waiting for measurements
             if (callState != TelephonyManager.CALL_STATE_RINGING) {
@@ -340,30 +345,34 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         boolean vibratorON = handleVibration();
 
-        int newRingerVolume = audiomanager.getRingerVolume();
-        if (currentAmbientNoiseAmplitude > 0.) { // could not detect ambient noise
-            newRingerVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
-                                                       isCovered(),
-                                                       audiomanager.isWiredHeadsetOn());
-            audiomanager.setRingerVolume(newRingerVolume);
-
+        targetVolume = audiomanager.getRingerVolume(); // current value
+        if (currentAmbientNoiseAmplitude > 0.) {
+            targetVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
+                                                    isCovered(),
+                                                    audiomanager.isWiredHeadsetOn());
         }
 
-        if ( PhoneState.equals("Notification") ){
-
-            if ( shouldRing() && ! TTSService.shouldRead(false, this) ){
-                // service is stopped on NotificationCompleted
+        if ( PhoneState.equals("Notification") ) {
+            audiomanager.setRingerVolume(targetVolume);
+            if ( shouldRing() && ! TTSService.shouldRead(false, this) ) {
+                // the service is stopped on NotificationCompleted
                 playNotification(this, soundUri);
             } else {
-                // otherwise stop service in 600ms (wait for vibrator)
+                // otherwise stop service after 600ms (wait for vibrator)
                 handler.postDelayed(stopService, 600);
                 return;
             }
 
         } else if ( PhoneState.equals("RINGING") ){
-            // The service will be stopped on change of the in-call state
+            if ( settings.increasingRingerVolume ) {
+                handler.postDelayed(handleIncreasingRingerVolume, INCREASING_RINGER_VOLUME_STEP_DELAY);
+            } else {
+                audiomanager.setRingerVolume(targetVolume);
+            }
             registerInCallSensorListeners();
+            // The service will be stopped on change of the in-call state
         } else {
+            audiomanager.setRingerVolume(targetVolume);
             // could be a test of the service
             if (vibratorON){
                 handler.postDelayed(stopService, 600);
@@ -435,29 +444,33 @@ public class SetRingerService extends Service implements SensorEventListener {
                     if (x_value > 12.) shake_right++;
 
                     // shake to silence
-                    if ((shake_left >= 1 && shake_right >= 2)
-                            || (shake_left >= 2 && shake_right >= 1)){
-                        audiomanager.setRingerVolume(1); // lowest volume possible
+                    if ( (shake_left >= 1 && shake_right >= 2) ||
+                         (shake_left >= 2 && shake_right >= 1) ) {
+                        handler.removeCallbacks(handleIncreasingRingerVolume);
+                        audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
                         vibrator.cancel();
                         shake_left = shake_right = 0;
                     }
                 }
 
-                if (settings.FlipAction == true) {
-                    if (z_value > -10.3 && z_value < -9.3 ){ // display face down
+                if (settings.FlipAction) {
+                    if (z_value > -10.3 && z_value < -9.3 ) { // display face down
+                        handler.removeCallbacks(handleIncreasingRingerVolume);
                         audiomanager.mute();
                         vibrator.cancel();
                     }
                 }
+
             } else if(event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 DeviceUnCovered = (event.values[0] > 0.f);
 
             } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                if ((settings.PullOutAction == true) && isCovered()) {
+                if ((settings.PullOutAction) && isCovered()) {
                     // Attention do not choose the value to low,
                     // noise produces values up to 12 lux on my GNex
-                    if(event.values[0] >= 15.f){// uncovered
-                        audiomanager.setRingerVolume(1); // lowest volume possible
+                    if(event.values[0] >= 15.f) { // uncovered
+                        handler.removeCallbacks(handleIncreasingRingerVolume);
+                        audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
                         vibrator.cancel();
                     };
                 }

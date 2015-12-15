@@ -115,6 +115,11 @@
                 seekbar:interval="1"
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
+
+            <SwitchPreference
+                android:key="increasingRingerVolume"
+                android:title="@string/title_increasing_ringer_volume"
+                android:defaultValue="false"/>
         </PreferenceScreen>
 
         <Preference

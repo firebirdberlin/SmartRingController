@@ -11,6 +11,7 @@
     <string name="setting_min_ringer_volume">Minimum ringer volume</string>
     <string name="tvPocketVolume">Increase volume in pocket by </string>
     <string name="tvCalculatedVolume">Resulting ringer volume</string>
+    <string name="title_increasing_ringer_volume">Increasing ringer volume</string>
 
     <string name="title_handle_ambient_noise">Volume</string>
     <string name="switch_handle_ambient_noise">of the ringer.</string>
