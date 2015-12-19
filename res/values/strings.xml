@@ -23,6 +23,7 @@
     <string name="tvControllers">Control ...</string>
     <string name="tvInCallActions">Actions</string>
     <string name="tvFlipAction">Flip device to mute ringer.</string>
+    <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="tvSilentWhilePebbleConnected">Pebble connected</string>
 
     <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>

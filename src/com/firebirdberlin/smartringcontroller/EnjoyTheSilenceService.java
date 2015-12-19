@@ -45,12 +45,15 @@ public class EnjoyTheSilenceService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.hasExtra("action")) {
             String action = intent.getStringExtra("action");
-            if (action.equals("unmute")){
+            boolean disconnectDataConnections =
+                intent.getBooleanExtra("disconnectDataConnections", false);
+
+            if ( action.equals("unmute") ) {
                 parseIntent(intent);
                 restoreSystemSettings();
-            } else if (action.equals("mute")){
-                toggleMobileDataState = true;
-                toggleWifiState = true;
+            } else if ( action.equals("mute") ) {
+                toggleMobileDataState = disconnectDataConnections;
+                toggleWifiState = disconnectDataConnections;
                 getSystemSettings();
                 activateSilentMode();
             }
@@ -91,9 +94,10 @@ public class EnjoyTheSilenceService extends Service {
         systemRingerMode = intent.getIntExtra("systemRingerMode", AudioManager.RINGER_MODE_NORMAL);
     }
 
-    public static void start(Context context) {
+    public static void start(Context context, boolean disconnectDataConnections) {
         Intent i = new Intent(context, EnjoyTheSilenceService.class);
         i.putExtra("action", "mute");
+        i.putExtra("disconnectDataConnections", disconnectDataConnections);
         context.startService(i);
     }
 

@@ -138,34 +138,12 @@ public class SetRingerService extends Service implements SensorEventListener {
             }
         }
 
-        //create instance of sensor manager and get system service to interact with Sensor
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (proximitySensor != null) {
-            //ProximityMaximumRange = proximitySensor.getMaximumRange();
-            if (Build.VERSION.SDK_INT < 19) {
-                sensorManager.registerListener(this, proximitySensor, SENSOR_DELAY);
-            } else {
-                sensorManager.registerListener(this, proximitySensor, SENSOR_DELAY, SENSOR_DELAY/2);
-            }
-        }
-
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (lightSensor != null) {
-            if (Build.VERSION.SDK_INT < 19) {
-                sensorManager.registerListener(this, lightSensor, SENSOR_DELAY);
-            } else {
-                sensorManager.registerListener(this, lightSensor, SENSOR_DELAY, SENSOR_DELAY/2);
-            }
-        }
 
-        if (accelerometerSensor != null) {
-            if (Build.VERSION.SDK_INT < 19) {
-                sensorManager.registerListener(this, accelerometerSensor, SENSOR_DELAY);
-            } else {
-                sensorManager.registerListener(this, accelerometerSensor, SENSOR_DELAY,
-                                               SENSOR_DELAY/2);
-            }
-        }
+        registerListenerForSensor(proximitySensor);
+        registerListenerForSensor(lightSensor);
+        registerListenerForSensor(accelerometerSensor);
 
         if ( PhoneState.equals("Notification") ){
             audiomanager.mute();
@@ -200,6 +178,16 @@ public class SetRingerService extends Service implements SensorEventListener {
             wakelock.release();
         }
         Logger.d(TAG,"onDestroy()");
+    }
+
+    private void registerListenerForSensor(Sensor sensor) {
+        if (sensor != null) {
+            if (Build.VERSION.SDK_INT < 19) {
+                sensorManager.registerListener(this, sensor, SENSOR_DELAY);
+            } else {
+                sensorManager.registerListener(this, sensor, SENSOR_DELAY, SENSOR_DELAY/2);
+            }
+        }
     }
 
     private Runnable startListening = new Runnable() {
@@ -330,8 +318,10 @@ public class SetRingerService extends Service implements SensorEventListener {
         if ( shouldRing() ){// otherwise pass
             audiomanager.unmute();
         } else {
-            // mute the phone
-            EnjoyTheSilenceService.start(this);
+            // unmute the audiostream
+            audiomanager.unmute();
+            // but therefore mute the phone
+            EnjoyTheSilenceService.start(this, settings.disconnectWhenFaceDown);
         }
 
         if ( PhoneState.equals("RINGING") ) { // expecting that a call is runnning
