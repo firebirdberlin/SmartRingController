@@ -142,7 +142,7 @@ public class PreferencesFragment extends PreferenceFragment {
 
         Context context = getActivity().getApplicationContext();
         Settings settings = new Settings(context);
-        int volume = settings.getRingerVolume(event.value, false);
+        int volume = settings.getRingerVolume(event.value, false, false);
 
         progressBarRingerVolume.setMax(settings.maxRingerVolume);
         progressBarRingerVolume.setProgress(volume);

@@ -11,6 +11,7 @@
     <string name="setting_min_ringer_volume">Minimale Klingeltonlautstärke</string>
     <string name="tvPocketVolume">Erhöhe Lautstärke in der Tasche um </string>
     <string name="tvCalculatedVolume">Klingeltonlautstärke</string>
+    <string name="title_increasing_ringer_volume">Ansteigende Lautstärke</string>
 
     <string name="title_handle_ambient_noise">Lautstärke</string>
     <string name="switch_handle_ambient_noise">des Klingeltons.</string>
@@ -21,7 +22,8 @@
 
     <string name="tvControllers">Steuere ...</string>
     <string name="tvInCallActions">Anrufoptionen</string>
-    <string name="tvFlipAction">Telefon umdrehen zum Stummschalten.</string>
+    <string name="tvFlipAction">Telefon umdrehen zum Stummschalten</string>
+    <string name="disconnectWhenFaceDown">... und trenne Datenverbindung.</string>
     <string name="tvSilentWhilePebbleConnected">Pebble verbunden</string>
 
     <string name="tvAutoReactivateRingerMode">Automatisch wieder auf laut stellen (erhöhter Batterieverbrauch).</string>
@@ -49,7 +51,7 @@
         automatisch je nachdem wie laut es in der Umgebung ist.\n\n
 
         Der Service läuft zur Zeit NICHT. Um ihn zu aktivieren,
-        betätigen Sie bitte den Schalter oben rechts,
+        betätigen Sie bitte den Schalter oben rechts.
     </string>
 
     <string name="titleContribute">Beitragen</string>

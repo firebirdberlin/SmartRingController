@@ -57,11 +57,11 @@ public class mAudioManager{
         if (currentRingerMode == AudioManager.RINGER_MODE_VIBRATE) return;
 
         if (value > maxRingerVolume) value = maxRingerVolume;
-        else
         if (value < 0 ) value = 0;
+
         audiomanage.setStreamVolume(AudioManager.STREAM_RING, value,  0);
 //        audiomanage.setStreamVolume(AudioManager.STREAM_RING, value,  AudioManager.FLAG_SHOW_UI);
-        Logger.i(TAG,"new ringer volume : " + String.valueOf(value));
+        Logger.i(TAG, "new ringer volume : " + String.valueOf(value));
     }
 
     public int getRingerMode(){

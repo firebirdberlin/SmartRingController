@@ -21,15 +21,22 @@
 
         <PreferenceCategory android:key="CategoryMuteActions"
             android:title="@string/tvSilenceVolume">
-            <SwitchPreference
-                android:key="FlipAction"
-                android:summary="@string/tvFlipAction"
-                android:defaultValue="false" />
 
             <SwitchPreference
                 android:key="SilentWhilePebbleConnected"
                 android:summary="@string/tvSilentWhilePebbleConnected"
                 android:defaultValue="false" />
+
+            <SwitchPreference
+                android:key="FlipAction"
+                android:summary="@string/tvFlipAction"
+                android:defaultValue="false" />
+
+            <CheckBoxPreference
+                android:key="disconnectWhenFaceDown"
+                android:summary="@string/disconnectWhenFaceDown"
+                android:defaultValue="false"
+                android:dependency="FlipAction" />
 
         </PreferenceCategory>
     </PreferenceScreen>
@@ -115,6 +122,11 @@
                 seekbar:interval="1"
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
+
+            <SwitchPreference
+                android:key="increasingRingerVolume"
+                android:title="@string/title_increasing_ringer_volume"
+                android:defaultValue="false"/>
         </PreferenceScreen>
 
         <Preference
