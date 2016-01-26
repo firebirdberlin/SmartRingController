@@ -88,7 +88,10 @@ public class PreferencesFragment extends PreferenceFragment {
         });
 
         Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
-        if ( Utility.isPackageInstalled(getActivity(), "com.getpebble.android") == false ) {
+        boolean installed = Utility.isPackageInstalled(getActivity(), "com.getpebble.android") ||
+                            Utility.isPackageInstalled(getActivity(), "com.getpebble.android.basalt");
+
+        if ( ! installed ) {
             PreferenceCategory cat = (PreferenceCategory) findPreference("CategoryMuteActions");
             cat.removePreference(prefSilentWhilePebbleConnected);
             toggleComponentState(PebbleConnectionReceiver.class, false);
