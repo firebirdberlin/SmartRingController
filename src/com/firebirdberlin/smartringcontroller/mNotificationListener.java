@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -81,11 +82,9 @@ public class mNotificationListener extends NotificationListenerService {
             }
         }
 
-        //mAudioManager.muteNotificationSounds(true, this);
-
-        // if the last notification was within the last 10s
+        // if the last notification was within the last 3s
+        // just queue the message but play no sound
         if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
-            //n.sound = null; // remove the sound, to be more pleasent
             queueMessage(n, this);
             return;
         }
@@ -123,17 +122,17 @@ public class mNotificationListener extends NotificationListenerService {
                     mNotificationListener.this.cancelAllNotifications();
             }
             else if(intent.getStringExtra("command").equals("list")){
-                Intent i1 = new  Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
+                Intent i1 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
                 i1.putExtra("notification_event","=====================");
                 sendBroadcast(i1);
                 int i=1;
                 for (StatusBarNotification sbn : mNotificationListener.this.getActiveNotifications()) {
-                    Intent i2 = new  Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
+                    Intent i2 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
                     i2.putExtra("notification_event",i +" " + sbn.getPackageName() + "n");
                     sendBroadcast(i2);
                     i++;
                 }
-                Intent i3 = new  Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
+                Intent i3 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
                 i3.putExtra("notification_event","===== Notification List ====");
                 sendBroadcast(i3);
             }
@@ -149,7 +148,8 @@ public class mNotificationListener extends NotificationListenerService {
     }
 
     public static String truncate(final String content, final int lastIndex) {
-        if (lastIndex >  content.length()) return content; // do nothing if short enough
+        if (lastIndex > content.length()) return content; // do nothing if short enough
+
         String result = content.substring(0, lastIndex);
         if (content.charAt(lastIndex) != ' ') { // find last word
             result = result.substring(0, result.lastIndexOf(" "));
@@ -158,14 +158,21 @@ public class mNotificationListener extends NotificationListenerService {
     }
 
     public static String getText(Notification notification) {
+        if (Build.VERSION.SDK_INT > 19){
+            Bundle extras = notification.extras;
+            String title = extras.getString(Notification.EXTRA_TITLE);
+            String text = extras.getCharSequence(Notification.EXTRA_TEXT).toString();
+            String time = format_time(notification.when);
+            return title + " " + text + " " + time;
+        }
+
         // We have to extract the information from the view
-        RemoteViews        views = notification.bigContentView;
+        RemoteViews views = notification.bigContentView;
         if (views == null) views = notification.contentView;
         if (views == null) return null;
 
         // Use reflection to examine the m_actions member of the given RemoteViews object.
         // It's not pretty, but it works.
-        //List<String> text = new ArrayList<String>();
         String text = "";
         try {
             Field field = views.getClass().getDeclaredField("mActions");
@@ -191,31 +198,19 @@ public class mNotificationListener extends NotificationListenerService {
                 if (methodName == null) continue;
 
                 // Save strings
-                else if (methodName.equals("setText"))
-                {
+                else if (methodName.equals("setText")) {
                     // Parameter type (10 = Character Sequence)
                     parcel.readInt();
-
-                    // Store the actual string
                     String t = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel).toString().trim();
-                    //text.add(t);
                     text += " " + t;
                 }
 
                 // Save times. Comment this section out if the notification time isn't important
-                else if (methodName.equals("setTime"))
-                {
+                else if (methodName.equals("setTime")) {
                     // Parameter type (5 = Long)
                     parcel.readInt();
                     long val = parcel.readLong();
-                    String t = new SimpleDateFormat("h:mm a").format(new Date(val));
-                    if (Build.VERSION.SDK_INT >= 18){
-                        DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
-                        String pattern  = ((SimpleDateFormat)formatter).toLocalizedPattern();
-                        t = new SimpleDateFormat(pattern).format(new Date(val));
-                    }
-                    //text.add(t);
-                    text += " " + t;
+                    text += " " + format_time(val);
                 }
 
                 parcel.recycle();
@@ -228,5 +223,18 @@ public class mNotificationListener extends NotificationListenerService {
         }
 
         return text;
+    }
+
+    private static String format_time(long value) {
+        String t = "";
+        if (Build.VERSION.SDK_INT >= 18){
+            DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
+            String pattern = ((SimpleDateFormat)formatter).toLocalizedPattern();
+            t = new SimpleDateFormat(pattern).format(new Date(value));
+        } else {
+            t = new SimpleDateFormat("h:mm a").format(new Date(value));
+
+        }
+        return t;
     }
 }

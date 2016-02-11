@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="@CONFIG.PACKAGENAME@"
-    android:versionCode="24"
-    android:versionName="2.2" >
+    android:versionCode="25"
+    android:versionName="2.3" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
-<!--
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        >
--->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -51,6 +43,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@CONFIG.APPNAME@"
         android:theme="@android:style/Theme.Holo">
+
         <activity
             android:name=".SmartRingController"
             android:label="@CONFIG.APPNAME@">
@@ -61,6 +54,7 @@
         </activity>
         <service android:enabled="false" android:name=".SetRingerService" />
         <service android:enabled="false" android:name=".TTSService" />
+
 <!--
         Notification listener Service for android 4.3 +
 -->
@@ -74,7 +68,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
 
 <!--
         Accessibility service for Android 4.0 - 4.2.2
