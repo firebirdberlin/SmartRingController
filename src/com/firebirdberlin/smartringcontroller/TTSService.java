@@ -9,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -231,9 +232,9 @@ public class TTSService extends Service {
   private void speak(final String text) {
     // The first message should clear the queue so we can start speaking right away.
     Logger.i(TAG, "speaking \"" + text + "\"");
+
     final HashMap<String, String> params = new HashMap<String, String>();
-    params.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
-               String.valueOf(READING_AUDIO_STREAM));
+    params.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(READING_AUDIO_STREAM));
 
     params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "valueNotUsed");
     prepareAudio();
@@ -248,77 +249,104 @@ public class TTSService extends Service {
   }
 
   private void prepareAudio() {
-    final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+      final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+      final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
+      final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 
-    audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
-    audioManager.setSpeakerphoneOn(false);
-    if ( settings.getBoolean("TTS.enabled", false)
-         && (settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES)
-             == SmartRingController.TTS_MODE_ALWAYS) ) {
-        audioManager.setSpeakerphoneOn(true);
-    }
+      audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
+      audioManager.setSpeakerphoneOn(false);
 
-    //int desiredVolume = SettingsUtil.getVolume(this);
+      if ( ttsEnabled && ttsMode == SmartRingController.TTS_MODE_ALWAYS ) {
+          audioManager.setSpeakerphoneOn(true);
+      }
 
-    // -1 means use the system volume.
-    if (desiredVolume != -1) {
-      systemVolume = audioManager.getStreamVolume(READING_AUDIO_STREAM);
-      int boudedDesiredVolume =
-          Math.min(desiredVolume, audioManager.getStreamMaxVolume(READING_AUDIO_STREAM));
-      Logger.i(TAG, "Temporarily setting volume to " + boudedDesiredVolume);
-      audioManager.setStreamVolume(READING_AUDIO_STREAM, boudedDesiredVolume, 0);
-    } else {
-      systemVolume = -1;
-    }
+      // -1 means use the system volume.
+      if (desiredVolume != -1) {
+          systemVolume = audioManager.getStreamVolume(READING_AUDIO_STREAM);
+          int boudedDesiredVolume = Math.min(desiredVolume,
+                                             audioManager.getStreamMaxVolume(READING_AUDIO_STREAM));
+
+          Logger.i(TAG, "Temporarily setting volume to " + boudedDesiredVolume);
+          audioManager.setStreamVolume(READING_AUDIO_STREAM, boudedDesiredVolume, 0);
+      } else {
+          systemVolume = -1;
+      }
+
+      int result = audioManager.requestAudioFocus(audioFocusChangeListener,
+                                                 AudioManager.STREAM_MUSIC,
+                                                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+
+      if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+        // start playing
+      }
   }
 
   private void restoreAudio() {
-     sensorManager.unregisterListener(ShakeActions); // disable shake action
+      final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+      final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
+      final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 
-    // restore system setting of the speakerphone
-    if (         settings.getBoolean("TTS.enabled", false)
-            && (settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES)
-                == SmartRingController.TTS_MODE_ALWAYS) ) {
-        audioManager.setSpeakerphoneOn(false);
-    }
+      sensorManager.unregisterListener(ShakeActions); // disable shake action
 
-    if (systemVolume != -1) {
-      Logger.i(TAG, "Resetting volume to " + systemVolume);
-      audioManager.setStreamVolume(READING_AUDIO_STREAM, systemVolume, 0);
-    }
-    audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
+      // restore system setting of the speakerphone
+      if ( ttsEnabled && (ttsMode == SmartRingController.TTS_MODE_ALWAYS) ) {
+          audioManager.setSpeakerphoneOn(false);
+      }
+
+      if (systemVolume != -1) {
+          Logger.i(TAG, "Resetting volume to " + systemVolume);
+          audioManager.setStreamVolume(READING_AUDIO_STREAM, systemVolume, 0);
+      }
+      audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
+      audioManager.abandonAudioFocus(audioFocusChangeListener);
   }
 
+  AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
+      new AudioManager.OnAudioFocusChangeListener() {
+          public void onAudioFocusChange(int focusChange) {
+              if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                  // Pause playback
+              } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                  // Lower the volume
+              } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                  // Resume playback or raise it back to normal
+              } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                  audioManager.abandonAudioFocus(audioFocusChangeListener);
+                  // Stop playback
+              }
+          }
+      };
+
   private final SensorEventListener ShakeActions =
-    new SensorEventListener()  {
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
+      new SensorEventListener()  {
+          @Override
+          public void onAccuracyChanged(Sensor sensor, int accuracy) {
+          }
 
-        // called when sensor value have changed
-        private int shake_left = 0;
-        private int shake_right = 0;
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+          // called when sensor value have changed
+          private int shake_left = 0;
+          private int shake_right = 0;
+          @Override
+          public void onSensorChanged(SensorEvent event) {
+              if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
 
-                // if acceleration in x and y direction is too strong, device is moving
+                  // if acceleration in x and y direction is too strong, device is moving
 
-                if (event.values[0] < -12.) shake_left++;
-                if (event.values[0] > 12.) shake_right++;
+                  if (event.values[0] < -12.) shake_left++;
+                  if (event.values[0] > 12.) shake_right++;
 
-                // shake to silence
-                if ((shake_left >= 1 && shake_right >= 2)
-                        || (shake_left >= 2 && shake_right >= 1)){
+                  // shake to silence
+                  if ((shake_left >= 1 && shake_right >= 2)
+                          || (shake_left >= 2 && shake_right >= 1)){
 
-                    tts.stop(); // stop reading current message
-                    shake_left = shake_right = 0;
-                }
+                      tts.stop(); // stop reading current message
+                      shake_left = shake_right = 0;
+                          }
 
-            }
+              }
 
-        }
-    };
+          }
+      };
 
 
   public static void queueMessage(String message, Context context) {
