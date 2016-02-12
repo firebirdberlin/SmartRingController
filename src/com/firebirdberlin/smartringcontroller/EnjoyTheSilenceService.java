@@ -147,6 +147,8 @@ public class EnjoyTheSilenceService extends Service {
            iConnectivityManagerField.setAccessible(true);
            final Object iConnectivityManager = iConnectivityManagerField.get(conman);
            final Class iConnectivityManagerClass =  Class.forName(iConnectivityManager.getClass().getName());
+
+           @SuppressWarnings("unchecked")
            final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
            setMobileDataEnabledMethod.setAccessible(true);
 
@@ -160,6 +162,8 @@ public class EnjoyTheSilenceService extends Service {
         try{
             final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             Class cmClass = Class.forName(cm.getClass().getName());
+
+            @SuppressWarnings("unchecked")
             Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
             method.setAccessible(true); // Make the method callable
             enabled = (Boolean) method.invoke(cm);

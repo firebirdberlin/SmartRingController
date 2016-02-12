@@ -77,6 +77,7 @@ public class TTSService extends Service {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent == null) {
       // Service restarted after suspension. Nothing to do.
@@ -190,6 +191,7 @@ public class TTSService extends Service {
     }
   }
 
+    @SuppressWarnings("deprecation")
     public static boolean shouldRead(boolean canUseSco, Context context){
         final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", false);
@@ -199,23 +201,28 @@ public class TTSService extends Service {
         Logger.w(TAG, "ttsmode \"" + ttsMode + "\"");
 
         if ( enabled && tts_enabled) {
-            if (Utility.getCallState(context) == TelephonyManager.CALL_STATE_OFFHOOK){
+            if (Utility.getCallState(context) == TelephonyManager.CALL_STATE_OFFHOOK ) {
                 // don't speak, when in call
                 return false;
             }
 
 
-            if ( ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS)){
+            if ( ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS) ){
                 return true;
             }
 
-            AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-            return ((canUseSco
-                        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO
-                        && audioManager.isBluetoothScoAvailableOffCall())
-                    || audioManager.isBluetoothA2dpOn()
-                    || audioManager.isWiredHeadsetOn());
+            if ( canUseSco
+                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO
+                    && audioManager.isBluetoothScoAvailableOffCall() ) {
+                return true;
+            }
+
+            if ( audioManager.isBluetoothA2dpOn()
+                    || audioManager.isWiredHeadsetOn() ) {
+                return true;
+            }
         }
 
         return false;

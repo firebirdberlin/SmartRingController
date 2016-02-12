@@ -119,12 +119,13 @@ public class mAudioManager{
         audiomanage.setSpeakerphoneOn(on);
     }
 
+    @SuppressWarnings("deprecation")
     public boolean isWiredHeadsetOn(){
         return audiomanage.isWiredHeadsetOn();
     }
 
     //public static void muteNotificationSounds(boolean on, Context context){
-        //AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        //AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         //am.setStreamMute(AudioManager.STREAM_NOTIFICATION, on);
     //}
 }

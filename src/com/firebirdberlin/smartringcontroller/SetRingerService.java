@@ -309,6 +309,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     private void setVolume(double currentAmbientNoiseAmplitude) {
 
         sensorManager.unregisterListener(this);
@@ -337,7 +338,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
         targetVolume = audiomanager.getRingerVolume(); // current value
         if (currentAmbientNoiseAmplitude > 0.) {
-            targetVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude ,
+            targetVolume = settings.getRingerVolume(currentAmbientNoiseAmplitude,
                                                     isCovered(),
                                                     audiomanager.isWiredHeadsetOn());
         }
@@ -489,9 +490,13 @@ public class SetRingerService extends Service implements SensorEventListener {
      * sound if played on the music stream in order to save the
      * environment from sounds.
      *
+     * Note: isWiredHeadsetOn() is deprecated without a proper alternative. Use only to check if
+     *       a wired headset is on.
+     *
      * @param context: The aaplication context
      * @param uri: Uri of the sound to be played
      */
+    @SuppressWarnings("deprecation")
     private void playNotification(Context context, Uri uri){
 
         if (uri == null) {

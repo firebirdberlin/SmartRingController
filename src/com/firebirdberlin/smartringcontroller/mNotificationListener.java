@@ -8,21 +8,20 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
-import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
+import android.text.format.DateFormat;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
-
 import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.Locale;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class mNotificationListener extends NotificationListenerService {
 
@@ -140,7 +139,7 @@ public class mNotificationListener extends NotificationListenerService {
     }
 
     public static void queueMessage(Notification n, Context context){
-        String text = getText(n);
+        String text = getText(n, context);
         text = text.replace('#',' '); // replace hashtags
         text = text.replaceAll("\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]"," "); // remove urls
         text = truncate(text, 1000); // truncate after 1000 chars
@@ -157,12 +156,12 @@ public class mNotificationListener extends NotificationListenerService {
         return result;
     }
 
-    public static String getText(Notification notification) {
+    public static String getText(Notification notification, Context context) {
         if (Build.VERSION.SDK_INT > 19){
             Bundle extras = notification.extras;
             String title = extras.getString(Notification.EXTRA_TITLE);
             String text = extras.getCharSequence(Notification.EXTRA_TEXT).toString();
-            String time = format_time(notification.when);
+            String time = format_time(notification.when, context);
             return title + " " + text + " " + time;
         }
 
@@ -210,7 +209,7 @@ public class mNotificationListener extends NotificationListenerService {
                     // Parameter type (5 = Long)
                     parcel.readInt();
                     long val = parcel.readLong();
-                    text += " " + format_time(val);
+                    text += " " + format_time(val, context);
                 }
 
                 parcel.recycle();
@@ -225,16 +224,12 @@ public class mNotificationListener extends NotificationListenerService {
         return text;
     }
 
-    private static String format_time(long value) {
-        String t = "";
-        if (Build.VERSION.SDK_INT >= 18){
-            DateFormat formatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
-            String pattern = ((SimpleDateFormat)formatter).toLocalizedPattern();
-            t = new SimpleDateFormat(pattern).format(new Date(value));
-        } else {
-            t = new SimpleDateFormat("h:mm a").format(new Date(value));
-
+    private static String format_time(long value, Context context) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a");
+        if ( DateFormat.is24HourFormat(context) ) {
+            dateFormat = new SimpleDateFormat("H:mm");
         }
-        return t;
+
+        return dateFormat.format(new Date(value));
     }
 }
