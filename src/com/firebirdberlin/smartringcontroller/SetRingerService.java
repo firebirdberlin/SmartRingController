@@ -111,8 +111,10 @@ public class SetRingerService extends Service implements SensorEventListener {
             return Service.START_NOT_STICKY;
         }
 
+        // force to stop the service after 3 minutes
+        handler.postDelayed(stopService, 180000);
 
-        if (running == true) {
+        if (running) {
             // Don't bother the service while already running.
             // The volume is beeing set right now.
             Logger.i(TAG,"Declined ! Service already running");
@@ -129,12 +131,10 @@ public class SetRingerService extends Service implements SensorEventListener {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             PhoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
-            if (PhoneState.equals("Notification")) {
-                if (intent.hasExtra("Sound")) {
-                    // store te sound URI
-                    String sound = intent.getStringExtra("Sound");
-                    soundUri = Uri.parse(sound);
-                }
+            if (PhoneState.equals("Notification") && intent.hasExtra("Sound")) {
+                // store the sound URI
+                String sound = intent.getStringExtra("Sound");
+                soundUri = Uri.parse(sound);
             }
         }
 
