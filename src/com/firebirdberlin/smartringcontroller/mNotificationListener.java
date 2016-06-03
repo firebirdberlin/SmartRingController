@@ -104,7 +104,15 @@ public class mNotificationListener extends NotificationListenerService {
         if (n.sound != null) {
             i2.putExtra("Sound", n.sound.toString() );
         }
-        startService(i2);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            int interruptionFilter = getCurrentInterruptionFilter();
+            if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
+                startService(i2);
+            }
+        } else {
+            startService(i2);
+        }
 
         queueMessage(n, this);
     }
