@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Build;
@@ -50,7 +51,8 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
         Notification note  = new Notification.Builder(mContext)
             .setContentTitle(mContext.getString(R.string.titleSilenceMode))
             .setContentText(mContext.getString(R.string.msgRestoreRingerMode))
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.ic_logo_bw)
+            .setColor(Color.RED)
             .setContentIntent(pIntentUnmute)
             .setAutoCancel(true)
             //.addAction(R.drawable.ic_launcher, "unmute", pIntentUnmute)

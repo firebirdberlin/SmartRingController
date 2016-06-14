@@ -166,7 +166,7 @@ public class PreferencesFragment extends PreferenceFragment {
         Notification n = new Notification.Builder(context)
             .setContentTitle("SmartRingController")
             .setContentText(getString(R.string.msgTestNotification))
-            .setSmallIcon(R.drawable.ic_launcher_gray)
+            .setSmallIcon(R.drawable.ic_logo_bw)
             .setContentIntent(pIntent)
             .setAutoCancel(true)
             .build();
