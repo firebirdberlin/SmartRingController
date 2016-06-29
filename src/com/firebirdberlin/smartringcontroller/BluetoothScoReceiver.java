@@ -17,8 +17,7 @@ public class BluetoothScoReceiver extends BroadcastReceiver {
       return;
     }
 
-    if (intent.getAction().equals(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED) ||
-        intent.getAction().equals(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)) {
+    if (intent.getAction().equals(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED)) {
       receivedScoStateUpdate(bundle, context);
     } else {
       Logger.w(LOG_TAG, "Received unrecognized action broadcast: " + intent.getAction());

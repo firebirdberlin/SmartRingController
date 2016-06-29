@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.telephony.TelephonyManager;
@@ -233,10 +234,6 @@ public class TTSService extends Service {
     // The first message should clear the queue so we can start speaking right away.
     Logger.i(TAG, "speaking \"" + text + "\"");
 
-    final HashMap<String, String> params = new HashMap<String, String>();
-    params.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(READING_AUDIO_STREAM));
-
-    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "valueNotUsed");
     prepareAudio();
 
     if (accelerometerPresent){
@@ -245,7 +242,24 @@ public class TTSService extends Service {
         else
             sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
     }
-    tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
+
+    if (Build.VERSION.SDK_INT >= 21) {
+        Bundle ttsParams = new Bundle();
+        ttsParams.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, READING_AUDIO_STREAM);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, "SRC1");
+    } else {
+        deprecated_speak(text);
+    }
+  }
+
+  @SuppressWarnings("deprecation")
+  private void deprecated_speak(final String text) {
+      if (Build.VERSION.SDK_INT < 21) {
+          final HashMap<String, String> params = new HashMap<String, String>();
+          params.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(READING_AUDIO_STREAM));
+          params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SRC1");
+          tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
+      }
   }
 
   private void prepareAudio() {
