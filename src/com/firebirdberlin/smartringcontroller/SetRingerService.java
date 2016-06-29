@@ -260,10 +260,16 @@ public class SetRingerService extends Service implements SensorEventListener {
     };
 
     private boolean isScreenOn() {
+        if (Build.VERSION.SDK_INT >= 20) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            return pm.isInteractive();
+        }
+        return deprecated_isScreenOn();
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean deprecated_isScreenOn() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        //if (Build.VERSION.SDK_INT >= 20) {
-            //return pm.isInteractive();
-        //}
         return pm.isScreenOn();
     }
 

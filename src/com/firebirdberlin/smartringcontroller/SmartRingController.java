@@ -1,7 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.ActionBar; // >= api level 11
-import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -38,7 +37,6 @@ public class SmartRingController extends Activity {
         mContext = this;
 
         actionbar = getActionBar();
-        actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionbar.setDisplayShowTitleEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         //actionBar.setTitle("");
