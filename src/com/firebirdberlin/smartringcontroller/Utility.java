@@ -7,12 +7,9 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import java.lang.Exception;
-import java.lang.Thread;
 
 public class Utility{
 

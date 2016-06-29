@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -16,11 +17,8 @@ import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
-import android.widget.Toast;
 import de.greenrobot.event.EventBus;
 
-import android.os.AsyncTask;
 
 public class PreferencesFragment extends PreferenceFragment {
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
