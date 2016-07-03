@@ -1,24 +1,14 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.ActionBar; // >= api level 11
-import android.app.ActionBar.Tab;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -38,7 +28,6 @@ public class SmartRingController extends Activity {
         mContext = this;
 
         actionbar = getActionBar();
-        actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionbar.setDisplayShowTitleEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         //actionBar.setTitle("");

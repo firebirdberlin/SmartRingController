@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -16,11 +17,8 @@ import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
-import android.widget.Toast;
 import de.greenrobot.event.EventBus;
 
-import android.os.AsyncTask;
 
 public class PreferencesFragment extends PreferenceFragment {
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
@@ -126,7 +124,12 @@ public class PreferencesFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        volumePreferencesDisplayed = (preference.getKey().equals(PREFERENCE_SCREEN_RINGER_VOLUME));
+        String key = "";
+        volumePreferencesDisplayed = false;
+        if( preference != null && preference.getKey() != null ) {
+            key = preference.getKey();
+            volumePreferencesDisplayed = key.equals(PREFERENCE_SCREEN_RINGER_VOLUME);
+        }
         handleAmbientNoiseMeasurement();
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -166,7 +169,7 @@ public class PreferencesFragment extends PreferenceFragment {
         Notification n = new Notification.Builder(context)
             .setContentTitle("SmartRingController")
             .setContentText(getString(R.string.msgTestNotification))
-            .setSmallIcon(R.drawable.ic_launcher_gray)
+            .setSmallIcon(R.drawable.ic_logo_bw)
             .setContentIntent(pIntent)
             .setAutoCancel(true)
             .build();

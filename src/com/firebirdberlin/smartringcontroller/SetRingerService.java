@@ -23,8 +23,6 @@ import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import java.lang.Math;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 
@@ -260,10 +258,16 @@ public class SetRingerService extends Service implements SensorEventListener {
     };
 
     private boolean isScreenOn() {
+        if (Build.VERSION.SDK_INT >= 20) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            return pm.isInteractive();
+        }
+        return deprecated_isScreenOn();
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean deprecated_isScreenOn() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        //if (Build.VERSION.SDK_INT >= 20) {
-            //return pm.isInteractive();
-        //}
         return pm.isScreenOn();
     }
 
