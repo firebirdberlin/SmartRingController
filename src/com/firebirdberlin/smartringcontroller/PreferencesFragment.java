@@ -124,7 +124,12 @@ public class PreferencesFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        volumePreferencesDisplayed = (preference.getKey().equals(PREFERENCE_SCREEN_RINGER_VOLUME));
+        String key = "";
+        volumePreferencesDisplayed = false;
+        if( preference != null && preference.getKey() != null ) {
+            key = preference.getKey();
+            volumePreferencesDisplayed = key.equals(PREFERENCE_SCREEN_RINGER_VOLUME);
+        }
         handleAmbientNoiseMeasurement();
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
