@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.telephony.TelephonyManager;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -150,42 +151,48 @@ public class TTSService extends Service {
         }
 
         if (tts == null && !messageQueue.isEmpty()) {
-          tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-              tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
+            tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
                 @Override
-                public void onUtteranceCompleted(String utteranceId) { // ready reading
-                  restoreAudio();
-                  synchronized (messageQueue) {
-                    messageQueue.poll(); // retrieves and removes head of the queue
-                    if (messageQueue.isEmpty()) { //another message to speak ?
-                      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
-                        // Sleep a little to give the bluetooth device a bit longer to finish.
-                        try {
-                          Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                          Logger.w(TAG, e.toString());
-                        }
-                        audioManager.stopBluetoothSco();
-                      }
-                      tts.shutdown();
-                      tts = null;
-                      Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
-                      TTSService.this.stopSelf();
-                    } else {
-                      Logger.i(TAG, "Speaking next message.");
-                      speak(messageQueue.peek());
-                    }
-                  }
-                }
-              });
+                public void onInit(int status) {
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onError(String utteranceId) { // ready reading
 
-              synchronized (messageQueue) {
-                speak(messageQueue.peek());
-              }
-            }
-          });
+                        }
+                        @Override
+                        public void onStart(String utteranceId) { // ready reading
+
+                        }
+                        @Override
+                        public void onDone(String utteranceId) { // ready reading
+                            restoreAudio();
+                            synchronized (messageQueue) {
+                                messageQueue.poll(); // retrieves and removes head of the queue
+                                if (messageQueue.isEmpty()) { //another message to speak ?
+                                    // Sleep a little to give the bluetooth device a bit longer to finish.
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        Logger.w(TAG, e.toString());
+                                    }
+                                    audioManager.stopBluetoothSco();
+                                    tts.shutdown();
+                                    tts = null;
+                                    Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
+                                    TTSService.this.stopSelf();
+                                } else {
+                                    Logger.i(TAG, "Speaking next message.");
+                                    speak(messageQueue.peek());
+                                }
+                            }
+                        }
+                    });
+
+                    synchronized (messageQueue) {
+                        speak(messageQueue.peek());
+                    }
+                }
+            });
         }
       }
 
