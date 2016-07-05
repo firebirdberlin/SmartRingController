@@ -119,7 +119,8 @@ public class TTSService extends Service {
                 // if the TTS service is already running, just queue the message
                 if (tts == null) {
                     if (! preferSco &&
-                            (audioManager.isBluetoothA2dpOn() || isWiredHeadsetOn(audioManager))) {
+                            (audioManager.isBluetoothA2dpOn() ||
+                                mAudioManager.isWiredHeadsetOn(getApplicationContext()))) {
                         // We prefer to use non-sco if it's available. The logic is that if you have your
                         // headphones on in the car, the whole car shouldn't hear your messages.
                         TTSService.startReading(this);
@@ -199,13 +200,6 @@ public class TTSService extends Service {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private static boolean isWiredHeadsetOn(AudioManager audioManager) {
-        // This method was deprecated in API level 14.
-        // Use only to check is a headset is connected or not.
-        return audioManager.isWiredHeadsetOn();
-    }
-
     public static boolean shouldRead(boolean canUseSco, Context context){
         final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", false);
@@ -231,7 +225,7 @@ public class TTSService extends Service {
                 return true;
             }
 
-            if ( audioManager.isBluetoothA2dpOn() || isWiredHeadsetOn(audioManager) ) {
+            if ( audioManager.isBluetoothA2dpOn() || mAudioManager.isWiredHeadsetOn(context) ) {
                 return true;
             }
         }
