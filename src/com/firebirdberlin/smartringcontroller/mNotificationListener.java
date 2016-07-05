@@ -21,7 +21,6 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class mNotificationListener extends NotificationListenerService {
 
@@ -121,7 +120,7 @@ public class mNotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
 
-    class NLServiceReceiver extends BroadcastReceiver{
+    class NLServiceReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {

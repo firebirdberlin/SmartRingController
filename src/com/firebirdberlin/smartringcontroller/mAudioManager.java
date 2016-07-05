@@ -17,7 +17,15 @@ public class mAudioManager{
         this.mContext = context;
         audiomanage = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         currentRingerMode = audiomanage.getRingerMode();
-        maxRingerVolume   = audiomanage.getStreamMaxVolume(AudioManager.STREAM_RING);
+        maxRingerVolume  = audiomanage.getStreamMaxVolume(AudioManager.STREAM_RING);
+    }
+
+    public void setMode(int stream) {
+        audiomanage.setMode(stream);
+    }
+
+    public boolean isBluetoothA2dpOn() {
+        return audiomanage.isBluetoothA2dpOn();
     }
 
     public int getMaxRingerVolume() {return maxRingerVolume;}
@@ -93,7 +101,7 @@ public class mAudioManager{
 
     private boolean isMuted = false;
     public void mute(){
-        if (isMuted == false){
+        if ( isMuted == false ) {
             Logger.d(TAG,"mute ringer volume");
             isMuted = true;
             muteRinger(true);
@@ -123,9 +131,5 @@ public class mAudioManager{
     public static boolean isWiredHeadsetOn(Context context){
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         return am.isWiredHeadsetOn();
-    }
-
-    public void muteNotificationSounds(boolean on){
-        audiomanage.setStreamMute(AudioManager.STREAM_NOTIFICATION, on);
     }
 }

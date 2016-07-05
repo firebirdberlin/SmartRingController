@@ -17,13 +17,13 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
-	private final static String TAG = SmartRingController.TAG + ".IncomingCallReceiver";
+    private final static String TAG = SmartRingController.TAG + ".IncomingCallReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
-		SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-		if (settings.getBoolean("enabled", false) == false) return;
+        SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        if (settings.getBoolean("enabled", false) == false) return;
 
-		AudioManager am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         String msg = "Phone state changed to " + state;
@@ -32,65 +32,59 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);  // 5
             msg += ". Incoming number is " + incomingNumber;
 
-			Intent i= new Intent(context, SetRingerService.class);
-			i.putExtra("PHONE_STATE", state);
-			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startService(i);
+            Intent i =  new Intent(context, SetRingerService.class);
+            i.putExtra("PHONE_STATE", state);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startService(i);
 
+            // activate tts
+            if (am.isBluetoothA2dpOn() == false){
+                TTSService.stopReading(context);
+                String from = getContactNameFromNumber(incomingNumber, context.getContentResolver());
 
-			// activate tts
-			if (am.isBluetoothA2dpOn() == false){
-				TTSService.stopReading(context);
-				String from = getContactNameFromNumber(incomingNumber, context.getContentResolver());
-
-				String text = context.getString(R.string.TTS_AnnounceCall) +
-								" " + from + ".";
-				TTSService.queueMessage(text, context);
-			}
+                String text = context.getString(R.string.TTS_AnnounceCall) +
+                                " " + from + ".";
+                TTSService.queueMessage(text, context);
+            }
 
         } else{ // OFFHOOK or IDLE
-			TTSService.stopReading(context);
+            TTSService.stopReading(context);
         }
 
 
-		if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
-			// Using a bluetooth headset the media volume reminas muted.
-			// It seems to be a bug in android 4.3. The problem appears
-			// also when Smart Ring Controller is disabled.
-			// So we reset thhe volume manually ...
-			int vol	= settings.getInt("lastMusicVolume", 7);
-//			if ( vol == 0 ) vol = 7;
-			am.setStreamVolume(AudioManager.STREAM_MUSIC, vol, AudioManager.FLAG_SHOW_UI);
-			Logger.d(TAG, "setting media volume " + String.valueOf(vol));
-		}
-
-
-		//Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-
+        if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
+            // Using a bluetooth headset the media volume reminas muted.
+            // It seems to be a bug in android 4.3. The problem appears
+            // also when Smart Ring Controller is disabled.
+            // So we reset thhe volume manually ...
+            int vol = settings.getInt("lastMusicVolume", 7);
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, vol, AudioManager.FLAG_SHOW_UI);
+            Logger.d(TAG, "setting media volume " + String.valueOf(vol));
+        }
     }
 
-	private String getContactNameFromNumber(String number, ContentResolver contentResolver) {
-		Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+    private String getContactNameFromNumber(String number, ContentResolver contentResolver) {
+        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 
-		Cursor cursor = null;
-		try {
-		  cursor = contentResolver.query(uri, new String[]{ PhoneLookup.DISPLAY_NAME }, null, null, null);
+        Cursor cursor = null;
+        try {
+          cursor = contentResolver.query(uri, new String[]{ PhoneLookup.DISPLAY_NAME }, null, null, null);
 
-		  if (cursor.isAfterLast()) {
-			// If nothing was found, return the number....
-			Logger.w(TAG, "Unable to look up incoming number in contacts");
-			return number;
-		  }
+          if (cursor.isAfterLast()) {
+            // If nothing was found, return the number....
+            Logger.w(TAG, "Unable to look up incoming number in contacts");
+            return number;
+          }
 
-		  // ...otherwise return the first entry.
-		  cursor.moveToFirst();
-		  int nameFieldColumnIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);
-		  String contactName = cursor.getString(nameFieldColumnIndex);
-		  return contactName;
-		} finally {
-		  cursor.close();
-		}
-	}
+          // ...otherwise return the first entry.
+          cursor.moveToFirst();
+          int nameFieldColumnIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);
+          String contactName = cursor.getString(nameFieldColumnIndex);
+          return contactName;
+        } finally {
+          cursor.close();
+        }
+    }
 
 
 }
