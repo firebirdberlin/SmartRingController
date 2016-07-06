@@ -1,28 +1,31 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
-import android.os.Build;
-import android.provider.Settings;
-import android.provider.Settings.System;
 
 
 public class mAudioManager{
     private static String TAG = SmartRingController.TAG + ".mAudioManager";
-    Context mContext;
-    AudioManager audiomanage;
-    int currentRingerMode;
-    int maxRingerVolume;
+    private Context mContext;
+    private AudioManager audiomanage = null;
+    private int currentRingerMode;
+    private int maxRingerVolume;
 
 
     // constructor
     public mAudioManager(Context context){
         this.mContext = context;
-        audiomanage = null;
         audiomanage = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         currentRingerMode = audiomanage.getRingerMode();
-        maxRingerVolume   = audiomanage.getStreamMaxVolume(AudioManager.STREAM_RING);
+        maxRingerVolume  = audiomanage.getStreamMaxVolume(AudioManager.STREAM_RING);
+    }
+
+    public void setMode(int stream) {
+        audiomanage.setMode(stream);
+    }
+
+    public boolean isBluetoothA2dpOn() {
+        return audiomanage.isBluetoothA2dpOn();
     }
 
     public int getMaxRingerVolume() {return maxRingerVolume;}
@@ -98,7 +101,7 @@ public class mAudioManager{
 
     private boolean isMuted = false;
     public void mute(){
-        if (isMuted == false){
+        if ( isMuted == false ) {
             Logger.d(TAG,"mute ringer volume");
             isMuted = true;
             muteRinger(true);
@@ -124,8 +127,9 @@ public class mAudioManager{
         return audiomanage.isWiredHeadsetOn();
     }
 
-    //public static void muteNotificationSounds(boolean on, Context context){
-        //AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        //am.setStreamMute(AudioManager.STREAM_NOTIFICATION, on);
-    //}
+    @SuppressWarnings("deprecation")
+    public static boolean isWiredHeadsetOn(Context context){
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return am.isWiredHeadsetOn();
+    }
 }

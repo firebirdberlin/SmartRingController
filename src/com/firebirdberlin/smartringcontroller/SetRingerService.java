@@ -143,11 +143,10 @@ public class SetRingerService extends Service implements SensorEventListener {
         registerListenerForSensor(lightSensor);
         registerListenerForSensor(accelerometerSensor);
 
+        audiomanager.mute();
         if ( PhoneState.equals("Notification") ){
-            audiomanager.mute();
             handler.postDelayed(startListening, waitMillis);
         } else { // phone call
-            audiomanager.mute();
             handler.post(startListening);
         }
 
@@ -313,19 +312,16 @@ public class SetRingerService extends Service implements SensorEventListener {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     private void setVolume(double currentAmbientNoiseAmplitude) {
 
         sensorManager.unregisterListener(this);
         ambientLight /= (float) count_light_sensor; // mean value
 
         //audiomanager.restoreRingerMode();
-        if ( shouldRing() ){// otherwise pass
-            audiomanager.unmute();
-        } else {
-            // unmute the audiostream
-            audiomanager.unmute();
-            // but therefore mute the phone
+        // unmute the audiostream
+        audiomanager.unmute();
+        if (! shouldRing() ) {
+            // but mute the device by another service
             EnjoyTheSilenceService.start(this, settings.disconnectWhenFaceDown);
         }
 
@@ -351,7 +347,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             audiomanager.setRingerVolume(targetVolume);
             if ( shouldRing() && ! TTSService.shouldRead(false, this) ) {
                 // the service is stopped on NotificationCompleted
-                playNotification(this, soundUri);
+                playNotification(soundUri);
             } else {
                 // otherwise stop service after 600ms (wait for vibrator)
                 handler.postDelayed(stopService, 600);
@@ -494,25 +490,19 @@ public class SetRingerService extends Service implements SensorEventListener {
      * sound if played on the music stream in order to save the
      * environment from sounds.
      *
-     * Note: isWiredHeadsetOn() is deprecated without a proper alternative. Use only to check if
-     *       a wired headset is on.
-     *
-     * @param context: The aaplication context
      * @param uri: Uri of the sound to be played
      */
-    @SuppressWarnings("deprecation")
-    private void playNotification(Context context, Uri uri){
+    private void playNotification(Uri uri){
 
         if (uri == null) {
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
 
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        am.setMode(AudioManager.MODE_NORMAL);
+        audiomanager.setMode(AudioManager.MODE_NORMAL);
         MediaPlayer mp = new MediaPlayer();
         try {
-            mp.setDataSource(context, uri);
-            if (am.isWiredHeadsetOn() || am.isBluetoothA2dpOn()) {
+            mp.setDataSource(this, uri);
+            if (audiomanager.isWiredHeadsetOn() || audiomanager.isBluetoothA2dpOn()) {
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             } else {
                 mp.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
@@ -521,7 +511,6 @@ public class SetRingerService extends Service implements SensorEventListener {
             mp.start();
             mp.setOnCompletionListener(NotificationCompleted);
         } catch(Exception e) {
-            //exception caught in the end zone
         }
     }
 
