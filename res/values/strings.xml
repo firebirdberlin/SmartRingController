@@ -40,8 +40,13 @@
     <string name="TTS_AnnounceCall">Call from</string>
 
     <string name="btnTest">Measure ambient noise</string>
-    <string name="btnTestNotification">Send test notification</string>
+    <string name="btnTestNotification">Send a test notification</string>
     <string name="msgTestNotification">This is a test notification.</string>
+    <string name="notificationSoundUri">Notification sound</string>
+    <string name="soundSettings">Sound preferences</string>
+    <string name="systemSoundSummary">
+        For best results you should disable the default notification sound.
+    </string>
 
     <string name="titleSilenceMode">Silence mode.</string>
     <string name="msgRestoreRingerMode">Click to restore normal mode.</string>

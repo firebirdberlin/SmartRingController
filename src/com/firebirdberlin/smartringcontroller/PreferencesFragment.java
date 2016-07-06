@@ -85,6 +85,14 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
+        Preference prefSystemSounds = (Preference) findPreference("systemSoundPreferences");
+        prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
+                return true;
+            }
+        });
+
         Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
         boolean installed = Utility.isPackageInstalled(getActivity(), "com.getpebble.android") ||
                             Utility.isPackageInstalled(getActivity(), "com.getpebble.android.basalt");

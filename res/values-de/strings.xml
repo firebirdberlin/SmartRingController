@@ -42,6 +42,11 @@
     <string name="btnTest">Umgebungslautstärke messen</string>
     <string name="btnTestNotification">Testbenachrichtigung senden</string>
     <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
+    <string name="notificationSoundUri">Benachrichtigungston</string>
+    <string name="soundSettings">Ton-Einstellungen</string>
+    <string name="systemSoundSummary">
+        Hinweis: Deaktivieren sie den Standardton für Benachrichtigungen.
+    </string>
 
     <string name="titleSilenceMode">Lautlos Modus.</string>
     <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>

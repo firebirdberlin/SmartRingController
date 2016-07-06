@@ -129,15 +129,32 @@
                 android:defaultValue="false"/>
         </PreferenceScreen>
 
-        <Preference
+        <PreferenceScreen
             android:icon="@drawable/ic_menu"
-            android:key="openNotificationListenerSettings"
             android:title="@string/switch_handle_notification" >
-        </Preference>
 
-        <Preference
-            android:key="sendTestNotification"
-            android:title="@string/btnTestNotification"/>
+            <Preference
+                android:icon="@drawable/ic_menu"
+                android:key="openNotificationListenerSettings"
+                android:title="@string/switch_handle_notification" >
+            </Preference>
+
+            <RingtonePreference
+                android:key="defaultNotificationUri"
+                android:title="@string/notificationSoundUri"
+                android:ringtoneType="notification"
+                android:showDefault="false"
+                android:showSilent="false"/>
+
+            <Preference
+                android:key="systemSoundPreferences"
+                android:summary="@string/systemSoundSummary"
+                android:title="@string/soundSettings"/>
+
+            <Preference
+                android:key="sendTestNotification"
+                android:title="@string/btnTestNotification"/>
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/tabTTS">
