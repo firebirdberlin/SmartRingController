@@ -17,6 +17,7 @@
     <string name="switch_handle_ambient_noise">des Klingeltons.</string>
     <string name="switch_handle_vibration">Vibration</string>
     <string name="switch_handle_notification">Benachrichtigungen</string>
+    <string name="notification_listeners">Benachrichtigungszugriff</string>
     <string name="buttonAccessibilitySettings">Benachrichtigungsüberwachung starten</string>
     <string name="tvBrokenProximitySensor">Auch den Lichtsensor verwenden, um zu erkennen, ob das Telefon in der Tasche steckt.</string>
 
@@ -44,8 +45,12 @@
     <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
     <string name="notificationSoundUri">Benachrichtigungston</string>
     <string name="soundSettings">Ton-Einstellungen</string>
-    <string name="systemSoundSummary">
-        Hinweis: Deaktivieren sie den Standardton für Benachrichtigungen.
+    <string name="systemSoundSummary">Hinweis: Deaktivieren Sie den Standardton
+für Benachrichtigungen.</string>
+    <string name="systemVibrationSummary">
+        Hinweis:
+        Um ein optimales Ergebnis zu erzielen, sollten Sie die Vibration für Anrufe und
+        Benachrichtigungen deaktivieren.
     </string>
 
     <string name="titleSilenceMode">Lautlos Modus.</string>

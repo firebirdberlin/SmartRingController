@@ -43,17 +43,6 @@
 
     <PreferenceCategory android:title="@string/tvControllers">
         <SwitchPreference
-            android:key="handle_vibration"
-            android:icon="@drawable/ic_phone"
-            android:title="@string/switch_handle_vibration"
-            android:defaultValue="false" />
-
-        <CheckBoxPreference
-            android:key="Ctrl.BrokenProximitySensor"
-            android:summary="@string/tvBrokenProximitySensor"
-            android:defaultValue="true" />
-
-        <SwitchPreference
             android:key="Ctrl.RingerVolume"
             android:icon="@drawable/ic_speaker"
             android:title="@string/title_handle_ambient_noise"
@@ -61,9 +50,9 @@
             android:defaultValue="false"/>
 
         <PreferenceScreen
+            android:dependency="Ctrl.RingerVolume"
             android:key="Ctrl.RingerVolumePreferenceScreen"
-            android:title="@string/tabSettings"
-            android:dependency="Ctrl.RingerVolume">
+            android:title="@string/tabSettings">
 
             <Preference
                 android:selectable="false"
@@ -130,13 +119,34 @@
         </PreferenceScreen>
 
         <PreferenceScreen
+            android:icon="@drawable/ic_phone"
+            android:title="@string/switch_handle_vibration">
+            <SwitchPreference
+                android:key="handle_vibration"
+                android:icon="@drawable/ic_phone"
+                android:title="@string/switch_handle_vibration"
+                android:defaultValue="false" />
+
+            <CheckBoxPreference
+                android:dependency="handle_vibration"
+                android:key="Ctrl.BrokenProximitySensor"
+                android:summary="@string/tvBrokenProximitySensor"
+                android:defaultValue="true" />
+
+            <Preference
+                android:dependency="handle_vibration"
+                android:clickable="false"
+                android:summary="@string/systemVibrationSummary"/>
+
+        </PreferenceScreen>
+
+        <PreferenceScreen
             android:icon="@drawable/ic_menu"
             android:title="@string/switch_handle_notification" >
 
             <Preference
-                android:icon="@drawable/ic_menu"
                 android:key="openNotificationListenerSettings"
-                android:title="@string/switch_handle_notification" >
+                android:title="@string/notification_listeners" >
             </Preference>
 
             <RingtonePreference

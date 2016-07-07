@@ -17,6 +17,7 @@
     <string name="switch_handle_ambient_noise">of the ringer.</string>
     <string name="switch_handle_vibration">Vibration</string>
     <string name="switch_handle_notification">Notifications</string>
+    <string name="notification_listeners">Notification listeners</string>
     <string name="buttonAccessibilitySettings">start accessibility service</string>
     <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
 
@@ -46,6 +47,9 @@
     <string name="soundSettings">Sound preferences</string>
     <string name="systemSoundSummary">
         For best results you should disable the default notification sound.
+    </string>
+    <string name="systemVibrationSummary">
+        You should disable vibrations for incoming calls and notificatiosn.
     </string>
 
     <string name="titleSilenceMode">Silence mode.</string>
