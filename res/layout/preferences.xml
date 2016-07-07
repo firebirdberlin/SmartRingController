@@ -60,7 +60,7 @@
                 android:title="@string/tvNoiseLevels"
                 android:summary="@string/tvExplanationNoiseLevels"/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="minRingerVolume"
                 android:title="@string/setting_min_ringer_volume"
@@ -71,7 +71,7 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="minAmplitude"
                 android:title="@string/setting_min_amplitude"
@@ -83,7 +83,7 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="maxAmplitude"
                 android:title="@string/setting_max_amplitude"
@@ -101,7 +101,7 @@
                 android:selectable="false"
                 android:title="@string/tvCalculatedVolume"/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="Ctrl.PocketVolume"
                 android:title="@string/tvPocketVolume"
@@ -190,10 +190,14 @@
         android:icon="@drawable/ic_about"
         android:title="@string/tabAbout">
 
-        <com.firebirdberlin.smartringcontrollerpro.VersionPreference
+        <de.firebirdberlin.preference.VersionPreference
             android:key="version"
-            android:selectable="false"
-            android:summary="@string/summaryAboutCredits"/>
+            android:title="SmartRingController"
+            android:summary="@string/summaryAboutCredits">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://play.google.com/store/apps/details?id=com.firebirdberlin.smartringcontrollerpro"/>
+
+        </de.firebirdberlin.preference.VersionPreference>
 
         <Preference
             android:selectable="false"
