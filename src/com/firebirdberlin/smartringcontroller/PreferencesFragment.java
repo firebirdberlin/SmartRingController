@@ -18,6 +18,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
 import de.greenrobot.event.EventBus;
+import de.firebirdberlin.preference.InlineProgressPreference;
 import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 

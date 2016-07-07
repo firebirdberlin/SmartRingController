@@ -95,7 +95,7 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineProgressPreference
+            <de.firebirdberlin.preference.InlineProgressPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="currentRingerVolumeValue"
                 android:selectable="false"
