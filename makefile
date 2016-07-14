@@ -16,3 +16,6 @@ uninstall:
 
 clean:
 	ant clean
+
+clear-data:
+	adb shell pm clear com.firebirdberlin.smartringcontrollerpro

@@ -18,6 +18,8 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
 import de.greenrobot.event.EventBus;
+import de.firebirdberlin.preference.InlineProgressPreference;
+import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
 public class PreferencesFragment extends PreferenceFragment {
@@ -81,6 +83,14 @@ public class PreferencesFragment extends PreferenceFragment {
         prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 sendTestNotification();
+                return true;
+            }
+        });
+
+        Preference prefSystemSounds = (Preference) findPreference("systemSoundPreferences");
+        prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
                 return true;
             }
         });

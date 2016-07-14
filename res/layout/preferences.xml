@@ -43,17 +43,6 @@
 
     <PreferenceCategory android:title="@string/tvControllers">
         <SwitchPreference
-            android:key="handle_vibration"
-            android:icon="@drawable/ic_phone"
-            android:title="@string/switch_handle_vibration"
-            android:defaultValue="false" />
-
-        <CheckBoxPreference
-            android:key="Ctrl.BrokenProximitySensor"
-            android:summary="@string/tvBrokenProximitySensor"
-            android:defaultValue="true" />
-
-        <SwitchPreference
             android:key="Ctrl.RingerVolume"
             android:icon="@drawable/ic_speaker"
             android:title="@string/title_handle_ambient_noise"
@@ -61,9 +50,9 @@
             android:defaultValue="false"/>
 
         <PreferenceScreen
+            android:dependency="Ctrl.RingerVolume"
             android:key="Ctrl.RingerVolumePreferenceScreen"
-            android:title="@string/tabSettings"
-            android:dependency="Ctrl.RingerVolume">
+            android:title="@string/tabSettings">
 
             <Preference
                 android:selectable="false"
@@ -71,7 +60,7 @@
                 android:title="@string/tvNoiseLevels"
                 android:summary="@string/tvExplanationNoiseLevels"/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="minRingerVolume"
                 android:title="@string/setting_min_ringer_volume"
@@ -82,7 +71,7 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="minAmplitude"
                 android:title="@string/setting_min_amplitude"
@@ -94,7 +83,7 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="maxAmplitude"
                 android:title="@string/setting_max_amplitude"
@@ -106,13 +95,13 @@
                 seekbar:unitsLeft=""
                 seekbar:unitsRight=""/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineProgressPreference
+            <de.firebirdberlin.preference.InlineProgressPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="currentRingerVolumeValue"
                 android:selectable="false"
                 android:title="@string/tvCalculatedVolume"/>
 
-            <com.firebirdberlin.smartringcontrollerpro.InlineSeekBarPreference
+            <de.firebirdberlin.preference.InlineSeekBarPreference
                 xmlns:seekbar="http://schemas.android.com/apk/lib/android"
                 android:key="Ctrl.PocketVolume"
                 android:title="@string/tvPocketVolume"
@@ -129,15 +118,53 @@
                 android:defaultValue="false"/>
         </PreferenceScreen>
 
-        <Preference
-            android:icon="@drawable/ic_menu"
-            android:key="openNotificationListenerSettings"
-            android:title="@string/switch_handle_notification" >
-        </Preference>
+        <PreferenceScreen
+            android:icon="@drawable/ic_phone"
+            android:title="@string/switch_handle_vibration">
+            <SwitchPreference
+                android:key="handle_vibration"
+                android:icon="@drawable/ic_phone"
+                android:title="@string/switch_handle_vibration"
+                android:defaultValue="false" />
 
-        <Preference
-            android:key="sendTestNotification"
-            android:title="@string/btnTestNotification"/>
+            <CheckBoxPreference
+                android:dependency="handle_vibration"
+                android:key="Ctrl.BrokenProximitySensor"
+                android:summary="@string/tvBrokenProximitySensor"
+                android:defaultValue="true" />
+
+            <Preference
+                android:dependency="handle_vibration"
+                android:clickable="false"
+                android:summary="@string/systemVibrationSummary"/>
+
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:icon="@drawable/ic_menu"
+            android:title="@string/switch_handle_notification" >
+
+            <Preference
+                android:key="openNotificationListenerSettings"
+                android:title="@string/notification_listeners" >
+            </Preference>
+
+            <RingtonePreference
+                android:key="defaultNotificationUri"
+                android:title="@string/notificationSoundUri"
+                android:ringtoneType="notification"
+                android:showDefault="false"
+                android:showSilent="false"/>
+
+            <Preference
+                android:key="systemSoundPreferences"
+                android:summary="@string/systemSoundSummary"
+                android:title="@string/soundSettings"/>
+
+            <Preference
+                android:key="sendTestNotification"
+                android:title="@string/btnTestNotification"/>
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/tabTTS">
@@ -163,10 +190,14 @@
         android:icon="@drawable/ic_about"
         android:title="@string/tabAbout">
 
-        <com.firebirdberlin.smartringcontrollerpro.VersionPreference
+        <de.firebirdberlin.preference.VersionPreference
             android:key="version"
-            android:selectable="false"
-            android:summary="@string/summaryAboutCredits"/>
+            android:title="SmartRingController"
+            android:summary="@string/summaryAboutCredits">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://play.google.com/store/apps/details?id=com.firebirdberlin.smartringcontrollerpro"/>
+
+        </de.firebirdberlin.preference.VersionPreference>
 
         <Preference
             android:selectable="false"

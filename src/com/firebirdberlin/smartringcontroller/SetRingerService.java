@@ -12,6 +12,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -133,6 +134,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                 // store the sound URI
                 String sound = intent.getStringExtra("Sound");
                 soundUri = Uri.parse(sound);
+                Logger.i(TAG, "The notification ships this sound uri " + soundUri);
             }
         }
 
@@ -494,9 +496,12 @@ public class SetRingerService extends Service implements SensorEventListener {
      */
     private void playNotification(Uri uri){
 
-        if (uri == null) {
-            uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        if (uri == null || uri.equals(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI) ) {
+            Logger.w(TAG, "default sound uri detected ! Falling back to own setting");
+            uri = Uri.parse(settings.defaultNotificationUri);
         }
+
+        Logger.i(TAG, "Playing notification " + uri.toString());
 
         audiomanager.setMode(AudioManager.MODE_NORMAL);
         MediaPlayer mp = new MediaPlayer();

@@ -27,6 +27,7 @@ public class Settings {
     public int addPocketVolume = 0; // increase in pocket
     public int maxRingerVolume = 7;
     public int minRingerVolume = 1; // 0 means vibration
+    public String defaultNotificationUri = android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString();
     private mAudioManager audiomanager = null;
 
     public Settings(Context context){
@@ -53,6 +54,8 @@ public class Settings {
         PullOutAction = settings.getBoolean("PullOutAction", false);
         ShakeAction = settings.getBoolean("ShakeAction", false);
         TTSenabled = settings.getBoolean("TTS.enabled", false);
+        defaultNotificationUri = settings.getString("defaultNotificationUri",
+                                                    android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString());
     }
 
     public int getRingerVolume(double currentAmplitude, boolean deviceIsCovered,
