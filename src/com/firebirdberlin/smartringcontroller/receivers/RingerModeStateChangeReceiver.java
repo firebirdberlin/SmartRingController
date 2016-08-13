@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 
 
 public class RingerModeStateChangeReceiver extends BroadcastReceiver {
@@ -48,7 +49,7 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
         IntentUnmute.putExtra("systemRingerMode", AudioManager.RINGER_MODE_NORMAL);
         PendingIntent pIntentUnmute = PendingIntent.getService(mContext, 0, IntentUnmute, 0);
 
-        Notification note  = new Notification.Builder(mContext)
+        Notification note  = new NotificationCompat.Builder(mContext)
             .setContentTitle(mContext.getString(R.string.titleSilenceMode))
             .setContentText(mContext.getString(R.string.msgRestoreRingerMode))
             .setSmallIcon(R.drawable.ic_logo_bw)
