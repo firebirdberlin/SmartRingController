@@ -164,25 +164,25 @@
             <Preference
                 android:key="sendTestNotification"
                 android:title="@string/btnTestNotification"/>
+
+            <PreferenceCategory android:title="@string/tabTTS">
+                <SwitchPreference
+                    android:key="TTS.enabled"
+                    android:clickable="false"
+                    android:icon="@drawable/ic_voice"
+                    android:title="@string/tabTTS"
+                    android:summary="@string/tvTTSenabled"
+                    android:defaultValue="false" />
+
+                <ListPreference
+                    android:key="TTSmode"
+                    android:dependency="TTS.enabled"
+                    android:title="@string/tvTTSmode"
+                    android:defaultValue="headphones"
+                    android:entries="@array/tts_modes"
+                    android:entryValues="@array/tts_modes_data"/>
+            </PreferenceCategory>
         </PreferenceScreen>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/tabTTS">
-        <SwitchPreference
-            android:key="TTS.enabled"
-            android:clickable="false"
-            android:icon="@drawable/ic_voice"
-            android:title="@string/tabTTS"
-            android:summary="@string/tvTTSenabled"
-            android:defaultValue="false" />
-
-        <ListPreference
-            android:key="TTSmode"
-            android:dependency="TTS.enabled"
-            android:title="@string/tvTTSmode"
-            android:defaultValue="headphones"
-            android:entries="@array/tts_modes"
-            android:entryValues="@array/tts_modes_data"/>
     </PreferenceCategory>
 
     <PreferenceScreen
