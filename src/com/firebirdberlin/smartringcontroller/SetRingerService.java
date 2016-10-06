@@ -12,8 +12,6 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +21,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import java.lang.Math;
 import java.util.List;
 
@@ -103,7 +102,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        Log.d(TAG, "onStartCommand() ( running = " + String.valueOf(running) +" )");
         // no action needed
         if (audiomanager.isSilent() || audiomanager.isVibration() || (settings.enabled == false)){
             stopSelf();
@@ -290,9 +289,15 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private boolean shouldRing(){
+        Log.i(TAG, "shouldRing()");
+        Log.i(TAG, " settings.FlipAction = " + String.valueOf(settings.FlipAction));
+        Log.i(TAG, " isOnTable = " + String.valueOf(isOnTable));
+        Log.i(TAG, " ambientLight = " + String.valueOf(ambientLight));
+        Log.i(TAG, " DeviceIsCovered = " + String.valueOf(DeviceIsCovered));
         return (! (settings.FlipAction == true
                    && isOnTable == DISPLAY_FACE_DOWN
-                   && ambientLight < MAX_POCKET_BRIGHTNESS));
+                   && isCovered()));
+                   //&& ambientLight < MAX_POCKET_BRIGHTNESS));
     }
 
     private void vibrateForNotification(){
@@ -323,6 +328,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         // unmute the audiostream
         audiomanager.unmute();
         if (! shouldRing() ) {
+            Log.i(TAG, "Hush ... silence.");
             // but mute the device by another service
             EnjoyTheSilenceService.start(this, settings.disconnectWhenFaceDown);
         }

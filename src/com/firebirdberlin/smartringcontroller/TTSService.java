@@ -71,10 +71,10 @@ public class TTSService extends Service {
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-        if(sensorList.size() > 0){
+        if( sensorList.size() > 0 ){
             accelerometerPresent = true;
             accelerometerSensor = sensorList.get(0);
-        }else{
+        } else {
             accelerometerPresent = false;
         }
     }
