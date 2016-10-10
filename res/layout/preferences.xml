@@ -182,6 +182,11 @@
                     android:entries="@array/tts_modes"
                     android:entryValues="@array/tts_modes_data"/>
             </PreferenceCategory>
+            <Preference
+                android:key="tts_settings"
+                android:title="@string/tts_settings">
+                <intent android:action="com.android.settings.TTS_SETTINGS"/>
+            </Preference>
         </PreferenceScreen>
     </PreferenceCategory>
 

@@ -39,6 +39,7 @@
     <string name="radio.TTS.headphones"> ... with headphones.</string>
     <string name="radio.TTS.always"> ... always via speakerphone.</string>
     <string name="TTS_AnnounceCall">Call from</string>
+    <string name="tts_settings">Text-to-speech settings</string>
 
     <string name="btnTest">Measure ambient noise</string>
     <string name="btnTestNotification">Send a test notification</string>

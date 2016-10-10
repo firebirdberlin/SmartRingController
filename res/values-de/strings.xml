@@ -39,6 +39,7 @@
     <string name="radio.TTS.headphones">nur über Kopfhörer</string>
     <string name="radio.TTS.always">immer über Lautsprecher</string>
     <string name="TTS_AnnounceCall">Anruf von</string>
+    <string name="tts_settings">Text-in-Sprache Einstellungen</string>
 
     <string name="btnTest">Umgebungslautstärke messen</string>
     <string name="btnTestNotification">Testbenachrichtigung senden</string>
