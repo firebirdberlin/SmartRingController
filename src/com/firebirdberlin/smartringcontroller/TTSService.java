@@ -33,7 +33,7 @@ public class TTSService extends Service {
 
     private static final String TAG = SmartRingController.TAG + "." + TTSService.class.getSimpleName();
 
-    private static int SENSOR_DELAY          = 50000;     // us = 50 ms
+    private static int SENSOR_DELAY = 50000;     // us = 50 ms
     private SensorManager sensorManager;
     private Sensor accelerometerSensor = null;
     private boolean accelerometerPresent;
@@ -86,7 +86,6 @@ public class TTSService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
-
         settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
         synchronized(messageQueue) {
@@ -158,34 +157,34 @@ public class TTSService extends Service {
 
                                 }
 
-                            @Override
-                            public void onStart(String utteranceId) {
+                                @Override
+                                public void onStart(String utteranceId) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onDone(String utteranceId) {
-                                restoreAudio();
-                                synchronized (messageQueue) {
-                                    messageQueue.poll(); // retrieves and removes head of the queue
-                                    if (messageQueue.isEmpty()) { //another message to speak ?
-                                        // Sleep a little to give the bluetooth device a bit longer to finish.
-                                        try {
-                                            Thread.sleep(1000);
-                                        } catch (InterruptedException e) {
-                                            Logger.w(TAG, e.toString());
+                                @Override
+                                public void onDone(String utteranceId) {
+                                    restoreAudio();
+                                    synchronized (messageQueue) {
+                                        messageQueue.poll(); // retrieves and removes head of the queue
+                                        if (messageQueue.isEmpty()) { //another message to speak ?
+                                            // Sleep a little to give the bluetooth device a bit longer to finish.
+                                            try {
+                                                Thread.sleep(1000);
+                                            } catch (InterruptedException e) {
+                                                Logger.w(TAG, e.toString());
+                                            }
+                                            audioManager.stopBluetoothSco();
+                                            tts.shutdown();
+                                            tts = null;
+                                            Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
+                                            TTSService.this.stopSelf();
+                                        } else {
+                                            Logger.i(TAG, "Speaking next message.");
+                                            speak(messageQueue.peek());
                                         }
-                                        audioManager.stopBluetoothSco();
-                                        tts.shutdown();
-                                        tts = null;
-                                        Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
-                                        TTSService.this.stopSelf();
-                                    } else {
-                                        Logger.i(TAG, "Speaking next message.");
-                                        speak(messageQueue.peek());
                                     }
                                 }
-                            }
                             });
 
                             synchronized (messageQueue) {
@@ -353,12 +352,13 @@ public class TTSService extends Service {
                     if (event.values[0] > 12.) shake_right++;
 
                     // shake to silence
-                    if ((shake_left >= 1 && shake_right >= 2)
-                            || (shake_left >= 2 && shake_right >= 1)){
+                    if ((shake_left >= 1 && shake_right >= 2) ||
+                            (shake_left >= 2 && shake_right >= 1)){
 
                         tts.stop(); // stop reading current message
+                        stopSelf();
                         shake_left = shake_right = 0;
-                            }
+                    }
 
                 }
 
