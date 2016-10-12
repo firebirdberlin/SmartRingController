@@ -71,14 +71,6 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        Preference goToDonation = (Preference) findPreference("openDonationPage");
-        goToDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                openDonationPage();
-                return true;
-            }
-        });
-
         Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
         prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -190,12 +182,6 @@ public class PreferencesFragment extends PreferenceFragment {
             (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
-    }
-
-    private void openDonationPage() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5PX9XVHHE6XP8"));
-        startActivity(browserIntent);
     }
 
     private void toggleComponentState(Class component, boolean on){

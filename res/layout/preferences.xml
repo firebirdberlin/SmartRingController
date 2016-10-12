@@ -219,9 +219,8 @@
 
         </Preference>
 
-        <Preference
-            android:key="openDonationPage"
-            android:icon="@drawable/ic_paypal"
+        <de.firebirdberlin.preference.BitcoinDonationPreference 
+            android:icon="@drawable/ic_bitcoin" 
             android:title="@string/titleDonate"/>
 
         <Preference
