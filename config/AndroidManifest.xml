@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="@CONFIG.PACKAGENAME@"
-    android:versionCode="33"
-    android:versionName="2.4.7" >
+    android:versionCode="34"
+    android:versionName="2.4.8" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -27,11 +27,6 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-<!--
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE"/>
--->
 
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.light" android:required="true" />
