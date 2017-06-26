@@ -234,6 +234,14 @@
         </Preference>
 
         <Preference
+            android:icon="@drawable/ic_globe"
+            android:summary="Please add or update the translation for your language."
+            android:title="Translations wanted !">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://fhain.zzzz.io/apps/SmartRingController/translation/"/>
+        </Preference>
+
+        <Preference
             android:icon="@drawable/ic_github"
             android:title="@string/titleContribute">
             <intent android:action="android.intent.action.VIEW"
