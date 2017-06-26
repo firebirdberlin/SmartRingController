@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="@CONFIG.PACKAGENAME@"
-    android:versionCode="34"
-    android:versionName="2.4.8" >
+    android:versionCode="35"
+    android:versionName="2.5.0" >
 
     <uses-sdk
-        android:minSdkVersion="15"
+        android:minSdkVersion="19"
         android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -63,24 +63,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
-<!--
-        Accessibility service for Android 4.0 - 4.2.2
--->
-        <service
-            android:name=".accNotificationListener"
-            android:enabled="@bool/use_AccessibilityService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibilityservice" />
-        </service>
-
 
         <service android:enabled="false" android:name=".EnjoyTheSilenceService" />
 

@@ -1,69 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smart Ring Controller</string>
-    <string name="tabSettings">Settings</string>
-    <string name="tabTTS">TTS</string>
-    <string name="tabTest">Test</string>
-    <string name="tabAbout">About</string>
-    <string name="tvNoiseLevels">Noise levels</string>
-    <string name="setting_min_amplitude">Minimum</string>
-    <string name="setting_max_amplitude">Maximum</string>
-    <string name="setting_min_ringer_volume">Minimum ringer volume</string>
-    <string name="tvPocketVolume">Increase volume in pocket by </string>
-    <string name="tvCalculatedVolume">Resulting ringer volume</string>
-    <string name="title_increasing_ringer_volume">Increasing ringer volume</string>
-
-    <string name="title_handle_ambient_noise">Volume</string>
-    <string name="switch_handle_ambient_noise">of the ringer.</string>
-    <string name="switch_handle_vibration">Vibration</string>
-    <string name="switch_handle_notification">Notifications</string>
-    <string name="notification_listeners">Notification listeners</string>
-    <string name="buttonAccessibilitySettings">start accessibility service</string>
-    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
-
-    <string name="tvControllers">Control ...</string>
-    <string name="tvInCallActions">Actions</string>
-    <string name="tvFlipAction">Flip device to mute ringer.</string>
-    <string name="disconnectWhenFaceDown">Disable data connections.</string>
-    <string name="tvSilentWhilePebbleConnected">Pebble connected</string>
-
-    <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>
-
-    <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
-    <string name="tvShakeAction"> ... is shaken.</string>
-    <string name="tvPullOutAction"> ...is uncovered.</string>
-    <string name="tvSilenceVolume">Mute the ringer</string>
-
-    <string name="tvTTSenabled">text-to-speech engine</string>
-    <string name="tvTTSmode">Enable TTS ...</string>
-    <string name="radio.TTS.headphones"> ... with headphones.</string>
-    <string name="radio.TTS.always"> ... always via speakerphone.</string>
-    <string name="TTS_AnnounceCall">Call from</string>
-    <string name="tts_settings">Text-to-speech settings</string>
-
     <string name="btnTest">Measure ambient noise</string>
     <string name="btnTestNotification">Send a test notification</string>
+    <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="msgTestNotification">This is a test notification.</string>
+    <string name="notification_listeners">Notification listeners</string>
     <string name="notificationSoundUri">Notification sound</string>
+    <string name="radio.TTS.always"> ... always via speakerphone.</string>
+    <string name="radio.TTS.headphones"> ... with headphones.</string>
+    <string name="read_out_notifications">Read out notifications</string>
+    <string name="setting_max_amplitude">Maximum</string>
+    <string name="setting_min_amplitude">Minimum</string>
+    <string name="setting_min_ringer_volume">Minimum ringer volume</string>
     <string name="soundSettings">Sound preferences</string>
+    <string name="switch_handle_ambient_noise">of the ringer.</string>
+    <string name="switch_handle_notification">Notifications</string>
+    <string name="switch_handle_vibration">Vibration</string>
+    <string name="tabAbout">About</string>
+    <string name="tabSettings">Settings</string>
+    <string name="tabTest">Test</string>
+    <string name="tabTTS">TTS</string>
+    <string name="title_handle_ambient_noise">Volume</string>
+    <string name="title_increasing_ringer_volume">Increasing ringer volume</string>
+    <string name="TTS_AnnounceCall">Call from</string>
+    <string name="tts_settings">Text-to-speech settings</string>
+    <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>
+    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
+    <string name="tvCalculatedVolume">Resulting ringer volume</string>
+    <string name="tvControllers">Control ...</string>
+    <string name="tvFlipAction">Flip device to mute ringer.</string>
+    <string name="tvInCallActions">Actions</string>
+    <string name="tvNoiseLevels">Noise levels</string>
+    <string name="tvPocketVolume">Increase volume in pocket by </string>
+    <string name="tvPullOutAction"> ...is uncovered.</string>
+    <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
+    <string name="tvShakeAction"> ... is shaken.</string>
+    <string name="tvSilenceVolume">Mute the ringer</string>
+    <string name="tvSilentWhilePebbleConnected">Pebble connected</string>
+    <string name="tvTTSenabled">text-to-speech engine</string>
+    <string name="tvTTSmode">Enable TTS ...</string>
     <string name="systemSoundSummary">
         For best results you should disable the default notification sound.
     </string>
     <string name="systemVibrationSummary">
         You should disable vibrations for incoming calls and notificatiosn.
     </string>
-
     <string name="titleSilenceMode">Silence mode.</string>
     <string name="msgRestoreRingerMode">Click to restore normal mode.</string>
-
     <string name="tvWelcome">
         SmartRingController adjusts the ringer volume
-        automatically according to the ambient noise level.\n\n
+        automatically according to the ambient noise level. It also reads out notifications.\n\n
 
         The service is currently NOT enabled. To enable the service
         use the switch in the action bar.
     </string>
-
     <string name="titleContribute">Contribute</string>
     <string name="titleDonate">Donate</string>
     <string name="tvAbout">
@@ -75,18 +66,15 @@
         your own risk. The author is not liable for
         direct, indirect, incidential or consequential damage.
     </string>
-
     <string name="titleAboutCredits">Author</string>
     <string name="titlePrivacyPolicy">Privacy Policy</string>
     <string name="summaryAboutCredits">Stefan Fruhner (stefan.fruhner@gmail.com)</string>
-
     <string name="titleAboutLanguages">
         Languages
     </string>
     <string name="summaryAboutLanguages">
         English, German : Stefan Fruhner\nSpanish, Catalan : Jaume Hernandez
     </string>
-
     <string name="tvExplanationNoiseLevels">
         The ringer volume is set
         according to the current noise level the microphone detects. The noise levels
@@ -101,16 +89,5 @@
         ringer volume is needed. Increase this value if your ringer is too loud
         in silent situations. Decrease it if your ringer should be louder in
         silent situations  (default:7000).
-    </string>
-
-    <string name="tvTest">Test your settings by clicking the buttons.
-    On success the ambient noise level and the new volume is reported.
-    Cover the proximity sensor to test if the vibration is correctly working
-    (\'-\' device is covered, \'+\' device is not covered).\n\n
-    Notifications can only be detected if the accessibility service is running.
-    </string>
-
-    <string name="AccessibilityDescription">
-        Needed to set the volume on incoming notifications.
     </string>
 </resources>

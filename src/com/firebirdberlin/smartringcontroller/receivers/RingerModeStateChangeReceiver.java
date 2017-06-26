@@ -6,11 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 
@@ -61,10 +59,7 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
             .build();
         note.flags |= Notification.FLAG_NO_CLEAR;
         note.flags |= Notification.FLAG_ONGOING_EVENT;
-
-        if (Build.VERSION.SDK_INT >= 16) {
-            note.priority = Notification.PRIORITY_HIGH;
-        }
+        note.priority = Notification.PRIORITY_HIGH;
 
         NotificationManager notificationManager =
             (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);

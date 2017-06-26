@@ -180,11 +180,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     private void registerListenerForSensor(Sensor sensor) {
         if (sensor != null) {
-            if (Build.VERSION.SDK_INT < 19) {
-                sensorManager.registerListener(this, sensor, SENSOR_DELAY);
-            } else {
-                sensorManager.registerListener(this, sensor, SENSOR_DELAY, SENSOR_DELAY/2);
-            }
+            sensorManager.registerListener(this, sensor, SENSOR_DELAY, SENSOR_DELAY/2);
         }
     }
 

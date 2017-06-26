@@ -116,6 +116,33 @@
                 android:key="increasingRingerVolume"
                 android:title="@string/title_increasing_ringer_volume"
                 android:defaultValue="false"/>
+
+            <PreferenceCategory
+                android:key="categoryNotification"
+                android:title="@string/switch_handle_notification" >
+
+                <SwitchPreference
+                    android:key="handleNotification"
+                    android:title="@string/switch_handle_notification"
+                    android:defaultValue="true"/>
+
+                <RingtonePreference
+                    android:dependency="handleNotification"
+                    android:key="defaultNotificationUri"
+                    android:title="@string/notificationSoundUri"
+                    android:ringtoneType="notification"
+                    android:showDefault="false"
+                    android:showSilent="false"/>
+
+                <Preference
+                    android:key="systemSoundPreferences"
+                    android:summary="@string/systemSoundSummary"
+                    android:title="@string/soundSettings"/>
+
+                <Preference
+                    android:key="sendTestNotification"
+                    android:title="@string/btnTestNotification"/>
+            </PreferenceCategory>
         </PreferenceScreen>
 
         <PreferenceScreen
@@ -142,53 +169,41 @@
 
         <PreferenceScreen
             android:icon="@drawable/ic_menu"
-            android:title="@string/switch_handle_notification" >
+            android:title="@string/read_out_notifications" >
 
-            <Preference
-                android:key="openNotificationListenerSettings"
-                android:title="@string/notification_listeners" >
-            </Preference>
+            <SwitchPreference
+                android:key="TTS.enabled"
+                android:clickable="false"
+                android:icon="@drawable/ic_voice"
+                android:title="@string/tabTTS"
+                android:summary="@string/tvTTSenabled"
+                android:defaultValue="false" />
 
-            <RingtonePreference
-                android:key="defaultNotificationUri"
-                android:title="@string/notificationSoundUri"
-                android:ringtoneType="notification"
-                android:showDefault="false"
-                android:showSilent="false"/>
+            <ListPreference
+                android:key="TTSmode"
+                android:dependency="TTS.enabled"
+                android:title="@string/tvTTSmode"
+                android:defaultValue="headphones"
+                android:entries="@array/tts_modes"
+                android:entryValues="@array/tts_modes_data"/>
 
-            <Preference
-                android:key="systemSoundPreferences"
-                android:summary="@string/systemSoundSummary"
-                android:title="@string/soundSettings"/>
-
-            <Preference
-                android:key="sendTestNotification"
-                android:title="@string/btnTestNotification"/>
-
-            <PreferenceCategory android:title="@string/tabTTS">
-                <SwitchPreference
-                    android:key="TTS.enabled"
-                    android:clickable="false"
-                    android:icon="@drawable/ic_voice"
-                    android:title="@string/tabTTS"
-                    android:summary="@string/tvTTSenabled"
-                    android:defaultValue="false" />
-
-                <ListPreference
-                    android:key="TTSmode"
-                    android:dependency="TTS.enabled"
-                    android:title="@string/tvTTSmode"
-                    android:defaultValue="headphones"
-                    android:entries="@array/tts_modes"
-                    android:entryValues="@array/tts_modes_data"/>
-            </PreferenceCategory>
             <Preference
                 android:key="tts_settings"
                 android:title="@string/tts_settings">
                 <intent android:action="com.android.settings.TTS_SETTINGS"/>
             </Preference>
+
+            <Preference
+                android:key="sendTestNotification2"
+                android:title="@string/btnTestNotification"/>
+
         </PreferenceScreen>
     </PreferenceCategory>
+
+    <Preference
+        android:key="openNotificationListenerSettings"
+        android:title="@string/notification_listeners" >
+    </Preference>
 
     <PreferenceScreen
         android:key="about_screen"

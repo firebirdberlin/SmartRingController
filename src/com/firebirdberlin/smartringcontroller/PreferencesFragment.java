@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,18 +59,20 @@ public class PreferencesFragment extends PreferenceFragment {
         Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
         goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                if (Build.VERSION.SDK_INT < 18) {
-                    Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    startActivityForResult(intent, 0);
-                } else {
-                    Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                    startActivityForResult(intent, 0);
-                }
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivityForResult(intent, 0);
                 return true;
             }
         });
 
         Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
+        prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                sendTestNotification();
+                return true;
+            }
+        });
+        Preference prefSendTestNotification2 = (Preference) findPreference("sendTestNotification2");
         prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 sendTestNotification();

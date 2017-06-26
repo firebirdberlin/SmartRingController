@@ -1,46 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smart Ring Controller</string>
-    <string name="tabSettings">Configuración</string>
-    <string name="tabTTS">TTS</string>
-    <string name="tabTest">Prueba</string>
-    <string name="tabAbout">About</string>
-    <string name="tvNoiseLevels">Niveles de Ruido</string>
-    <string name="setting_min_amplitude">Mínimo</string>
+    <string name="btnTestNotification">Envia una notificación de prueba</string>
+    <string name="msgRestoreRingerMode">Haga clic para restaurar el modo normal.</string>
+    <string name="msgTestNotification">Esta es una notificación de prueba.</string>
+    <string name="radio.TTS.always"> ... always via speakerphone.</string>
+    <string name="radio.TTS.headphones"> ... with headphones.</string>
     <string name="setting_max_amplitude">Máximo</string>
+    <string name="setting_min_amplitude">Mínimo</string>
     <string name="setting_min_ringer_volume">Volumen mínimo del tono de llamada</string>
-    <string name="tvPocketVolume">Increase volume in pocket by </string>
-
-    <string name="title_handle_ambient_noise">Volumen</string>
     <string name="switch_handle_ambient_noise">del timbre.</string>
-    <string name="switch_handle_vibration"> Vibración</string>
     <string name="switch_handle_notification">Notificaciones</string>
-    <string name="buttonAccessibilitySettings"> Inicia el Servicio de Accesibilidad</string>
-    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
-
-    <string name="tvControllers">Control ...</string>
-    <string name="tvInCallActions">Acciones</string>
-    <string name="tvFlipAction">Dar la vuelta al telefono para silenciar la llamada</string>
+    <string name="switch_handle_vibration"> Vibración</string>
+    <string name="tabAbout">About</string>
+    <string name="tabSettings">Configuración</string>
+    <string name="tabTest">Prueba</string>
+    <string name="tabTTS">TTS</string>
+    <string name="title_handle_ambient_noise">Volumen</string>
+    <string name="titleSilenceMode"> Modo silencio.</string>
+    <string name="TTS_AnnounceCall">Call from</string>
     <string name="tvAutoReactivateRingerMode">Reactivar automáticamente el modo de timbre.</string>
-
+    <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
+    <string name="tvControllers">Control ...</string>
+    <string name="tvFlipAction">Dar la vuelta al telefono para silenciar la llamada</string>
+    <string name="tvInCallActions">Acciones</string>
+    <string name="tvNoiseLevels">Niveles de Ruido</string>
+    <string name="tvPocketVolume">Increase volume in pocket by </string>
+    <string name="tvPullOutAction"> ...se destapa.</string>
     <string name="tvReduceVolume">Reduce el volumen del tono de llamada cuando el dispositivo...</string>
     <string name="tvShakeAction"> ... se agita.</string>
-    <string name="tvPullOutAction"> ...se destapa.</string>
     <string name="tvSilenceVolume">Silenciar el timbre</string>
-
     <string name="tvTTSenabled">text-to-speech engine</string>
     <string name="tvTTSmode">Enable TTS ...</string>
-    <string name="radio.TTS.headphones"> ... with headphones.</string>
-    <string name="radio.TTS.always"> ... always via speakerphone.</string>
-    <string name="TTS_AnnounceCall">Call from</string>
-
-    <string name="btnTest">Mide el ruido ambiente</string>
-    <string name="btnTestNotification">Envia una notificación de prueba</string>
-    <string name="msgTestNotification">Esta es una notificación de prueba.</string>
-
-    <string name="titleSilenceMode"> Modo silencio.</string>
-    <string name="msgRestoreRingerMode">Haga clic para restaurar el modo normal.</string>
-
     <string name="tvWelcome">
         SmartRingController ajusta el volumen del tono de llamada
         automaticamente de acuerdo con el ruido ambiente.\n\n
@@ -57,7 +48,7 @@
         en lugar de dejar un mal comentario o una mala puntuación.\n\n
 
         Esta aplicación puede contener algun error y el usuario entiende y asume
-        los riesgos que conlleva su uso. El autor no es responsable 
+        los riesgos que conlleva su uso. El autor no es responsable
         de los daños directos, indirectos, accidentales o de sus consecuencias.\n\n
     </string>
     <string name="titleAboutCredits">Créditos</string>
@@ -72,18 +63,11 @@
 de acuerdo con el nivel actual de ruido ambiente que detecta el microfono. Los niveles de ruido
 corresponden al volumen mínimo y máximo del tono de llamada.</string>
     <string name="tvExplanationMinimumLevel">
-Nivel mínimo: Selecciona el nivel de ruido ambiente en el que se debe usar el 
+Nivel mínimo: Selecciona el nivel de ruido ambiente en el que se debe usar el
 volumen mínimo del tono de llamada (por defecto:0).</string>
     <string name="tvExplanationMaximumLevel">
-Nivel máximo: Selecciona el nivel de ruido ambiente en el que se debe usar el 
+Nivel máximo: Selecciona el nivel de ruido ambiente en el que se debe usar el
 volumen máximo del tono de llamada (por defecto:7000). Tienes que aumentar este valor
-si el dispositivo suena demasiado fuerte. Disminuye este valor si el dispositivo no 
+si el dispositivo suena demasiado fuerte. Disminuye este valor si el dispositivo no
 se oye lo suficiente.</string>
-
-    <string name="tvTest">Prueba la configuración haciendo clic en los botones.
-    Te informamos del ruido ambiente y del nuevo volumen del tono si todo funciona correctamente.
-    Cubre el sensor de proximidad para probar si la vibracion funciona correctamente.
-    (\'-\' dispositivo cubierto, \'+\' dispositivo NO cubierto).\n\n
-    Las notificaciones solo pueden ser detectadas si el Servicio de Accesibilidad esta en funcionamiento.
-    </string>
 </resources>

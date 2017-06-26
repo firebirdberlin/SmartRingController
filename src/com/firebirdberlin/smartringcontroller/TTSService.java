@@ -239,10 +239,7 @@ public class TTSService extends Service {
         prepareAudio();
 
         if (accelerometerPresent){
-            if (Build.VERSION.SDK_INT < 19)
-                sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY);
-            else
-                sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
+            sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
         }
 
         if (Build.VERSION.SDK_INT >= 21) {

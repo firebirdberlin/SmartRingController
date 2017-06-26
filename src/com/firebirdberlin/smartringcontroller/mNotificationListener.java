@@ -10,16 +10,11 @@ import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.format.DateFormat;
-import android.text.TextUtils;
-import android.widget.RemoteViews;
-import java.lang.reflect.Field;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class mNotificationListener extends NotificationListenerService {
@@ -97,22 +92,25 @@ public class mNotificationListener extends NotificationListenerService {
         i.putExtra("notification_event","notification :" + sbn.getPackageName());
         sendBroadcast(i);
 
-        Intent i2 = new Intent(this, SetRingerService.class);
-        // potentially add data to the intent
-        i2.putExtra("PHONE_STATE", "Notification");
-        if (n.sound != null) {
-            i2.putExtra("Sound", n.sound.toString() );
-        }
+        boolean handleNotification = settings.getBoolean("handle_notification", true);
+        if (handleNotification) {
+            Intent i2 = new Intent(this, SetRingerService.class);
+            // potentially add data to the intent
+            i2.putExtra("PHONE_STATE", "Notification");
+            if (n.sound != null) {
+                i2.putExtra("Sound", n.sound.toString() );
+            }
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            int interruptionFilter = getCurrentInterruptionFilter();
-            Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
-            if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
-                Logger.d(TAG, "starting SetRingerService");
+            if (Build.VERSION.SDK_INT >= 21) {
+                int interruptionFilter = getCurrentInterruptionFilter();
+                Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
+                if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
+                    Logger.d(TAG, "starting SetRingerService");
+                    startService(i2);
+                }
+            } else {
                 startService(i2);
             }
-        } else {
-            startService(i2);
         }
 
         queueMessage(n, this);
@@ -166,71 +164,16 @@ public class mNotificationListener extends NotificationListenerService {
     }
 
     public static String getText(Notification notification, Context context) {
-        if (Build.VERSION.SDK_INT > 19){
-            Bundle extras = notification.extras;
-            String title = extras.getString(Notification.EXTRA_TITLE);
-            String text = extras.getCharSequence(Notification.EXTRA_TEXT).toString();
-            String time = format_time(notification.when, context);
-            return title + " " + text + " " + time;
-        }
+        Bundle extras = notification.extras;
+        String title = extras.getString(Notification.EXTRA_TITLE);
+        String text = extras.getString(Notification.EXTRA_TEXT);
+        String time = format_time(notification.when, context);
 
-        // We have to extract the information from the view
-        RemoteViews views = notification.bigContentView;
-        if (views == null) views = notification.contentView;
-        if (views == null) return null;
-
-        // Use reflection to examine the m_actions member of the given RemoteViews object.
-        // It's not pretty, but it works.
-        String text = "";
-        try {
-            Field field = views.getClass().getDeclaredField("mActions");
-            field.setAccessible(true);
-
-            @SuppressWarnings("unchecked")
-            ArrayList<Parcelable> actions = (ArrayList<Parcelable>) field.get(views);
-
-            // Find the setText() and setTime() reflection actions
-            for (Parcelable p : actions) {
-                Parcel parcel = Parcel.obtain();
-                p.writeToParcel(parcel, 0);
-                parcel.setDataPosition(0);
-
-                // The tag tells which type of action it is (2 is ReflectionAction, from the source)
-                int tag = parcel.readInt();
-                if (tag != 2) continue;
-
-                // View ID
-                parcel.readInt();
-
-                String methodName = parcel.readString();
-                if (methodName == null) continue;
-
-                // Save strings
-                else if (methodName.equals("setText")) {
-                    // Parameter type (10 = Character Sequence)
-                    parcel.readInt();
-                    String t = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel).toString().trim();
-                    text += " " + t;
-                }
-
-                // Save times. Comment this section out if the notification time isn't important
-                else if (methodName.equals("setTime")) {
-                    // Parameter type (5 = Long)
-                    parcel.readInt();
-                    long val = parcel.readLong();
-                    text += " " + format_time(val, context);
-                }
-
-                parcel.recycle();
-            }
-        }
-
-        // It's not usually good style to do this, but then again, neither is the use of reflection...
-        catch (Exception e) {
-            Logger.e("NotificationClassifier", e.toString());
-        }
-
-        return text;
+        String result = "";
+        if (title != null) result += title + " ";
+        if (text != null) result += text + " ";
+        result += time;
+        return result;
     }
 
     private static String format_time(long value, Context context) {
