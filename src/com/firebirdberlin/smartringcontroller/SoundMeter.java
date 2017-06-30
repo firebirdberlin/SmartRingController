@@ -44,7 +44,7 @@ public class SoundMeter {
 
         try{
             mRecorder.prepare();
-        }catch (IOException e) {
+        } catch (IOException e) {
             Logger.e(TAG," > IOEXCEPTION, when preparing SoundMeter: " + e.toString());
             this.release();
             return false;

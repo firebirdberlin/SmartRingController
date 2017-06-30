@@ -167,15 +167,19 @@ public class SetRingerService extends Service implements SensorEventListener {
         sensorManager.unregisterListener(this);
         sensorManager.unregisterListener(inCallActions);
 
-        if (soundmeter != null){
-            soundmeter.release();
-            soundmeter = null;
-        }
+        releaseSoundmeter();
 
         if (wakelock != null && wakelock.isHeld()){
             wakelock.release();
         }
         Logger.d(TAG,"onDestroy()");
+    }
+
+    private void releaseSoundmeter() {
+        if (soundmeter != null){
+            soundmeter.release();
+            soundmeter = null;
+        }
     }
 
     private void registerListenerForSensor(Sensor sensor) {
@@ -211,12 +215,13 @@ public class SetRingerService extends Service implements SensorEventListener {
             if (error_on_microphone || settings.controlRingerVolume == false) {
                 setVolume(0.);
             } else {
-                setVolume(soundmeter.getAmplitude());
-                if ( soundmeter != null ) soundmeter.stop();
+                if ( soundmeter != null ) {
+                    setVolume(soundmeter.getAmplitude());
+                    soundmeter.stop();
+                }
             }
 
-            soundmeter.release();
-            soundmeter = null;
+            releaseSoundmeter();
             System.gc();
         }
     };

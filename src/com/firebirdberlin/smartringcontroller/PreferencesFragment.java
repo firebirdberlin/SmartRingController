@@ -73,7 +73,7 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
         Preference prefSendTestNotification2 = (Preference) findPreference("sendTestNotification2");
-        prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        prefSendTestNotification2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 sendTestNotification();
                 return true;

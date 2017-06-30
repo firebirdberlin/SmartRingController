@@ -364,9 +364,9 @@ public class TTSService extends Service {
 
 
     public static void queueMessage(String message, Context context) {
-        Logger.i(TAG, "Trying to Queue message: " + message);
+        Logger.i(TAG, "Trying to queue message: " + message);
         if (shouldRead(false, context) == false) return;
-        Logger.i(TAG, "Queueing message: " + message);
+        Logger.i(TAG, " > success, message: " + message);
         sendIntent(TTSService.QUEUE_MESSAGE_EXTRA, message, context);
     }
 

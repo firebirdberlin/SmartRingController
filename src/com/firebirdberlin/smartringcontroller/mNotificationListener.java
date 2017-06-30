@@ -166,7 +166,12 @@ public class mNotificationListener extends NotificationListenerService {
     public static String getText(Notification notification, Context context) {
         Bundle extras = notification.extras;
         String title = extras.getString(Notification.EXTRA_TITLE);
-        String text = extras.getString(Notification.EXTRA_TEXT);
+        String text = "";
+        if (notification.tickerText != null) {
+            text = notification.tickerText.toString();
+        } else {
+            text = extras.getString(Notification.EXTRA_TEXT);
+        }
         String time = format_time(notification.when, context);
 
         String result = "";
