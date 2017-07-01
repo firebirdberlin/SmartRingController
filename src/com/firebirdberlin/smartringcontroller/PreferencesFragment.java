@@ -56,15 +56,6 @@ public class PreferencesFragment extends PreferenceFragment {
         seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
         seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
 
-        Preference goToSettings = (Preference) findPreference("openNotificationListenerSettings");
-        goToSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                startActivityForResult(intent, 0);
-                return true;
-            }
-        });
-
         Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
         prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
