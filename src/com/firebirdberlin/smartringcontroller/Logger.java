@@ -11,7 +11,6 @@ public class Logger {
 
     private static boolean debug = true;
 
-
     public static void setDebugging(boolean on){
         debug = on;
     }

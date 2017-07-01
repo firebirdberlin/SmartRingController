@@ -73,7 +73,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     @Override
     public void onCreate(){
 //        Logger.setDebugging( true );
-//        Logger.setDebugging( Utility.isDebuggable(this) );
+        Logger.setDebugging( Utility.isDebuggable(this) );
 
         IntentFilter filter = new IntentFilter();
         //filter.addAction("android.provider.Telephony.SMS_RECEIVED");

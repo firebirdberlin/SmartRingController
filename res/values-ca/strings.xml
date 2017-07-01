@@ -4,8 +4,8 @@
     <string name="btnTestNotification">Envia una notificació de prova</string>
     <string name="msgRestoreRingerMode">Feu clic per restaurar la manera normal.</string>
     <string name="msgTestNotification">Aquesta és una notificació de prova.</string>
-    <string name="radio.TTS.always"> ... always via speakerphone.</string>
-    <string name="radio.TTS.headphones"> ... with headphones.</string>
+    <string name="radio_TTS_always"> ... always via speakerphone.</string>
+    <string name="radio_TTS_headphones"> ... with headphones.</string>
     <string name="setting_max_amplitude">Màxim</string>
     <string name="setting_min_amplitude">Mínim</string>
     <string name="setting_min_ringer_volume">Volum mínim del to de trucada</string>

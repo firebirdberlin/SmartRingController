@@ -1,10 +1,8 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
@@ -19,27 +17,20 @@ import java.util.Date;
 
 public class mNotificationListener extends NotificationListenerService {
 
-    private String TAG = SmartRingController.TAG +"." + this.getClass().getSimpleName();
+    private String TAG = SmartRingController.TAG + "." + this.getClass().getSimpleName();
     private long last_notification_posted = 0;
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
-    private NLServiceReceiver nlservicereciver;
-
 
     @Override
     public void onCreate() {
         super.onCreate();
-        nlservicereciver = new NLServiceReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER_SERVICE_EXAMPLE");
-        registerReceiver(nlservicereciver,filter);
         settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(nlservicereciver);
     }
 
     @Override
@@ -50,10 +41,6 @@ public class mNotificationListener extends NotificationListenerService {
         if (sbn.getPackageName().equals("com.android.phone")) return;
         Notification n = sbn.getNotification();
 
-
-        if (sbn.getPackageName().equals("com.whatsapp")){
-            // whatsapp sends no sound ... wtf ?
-        } else // no sound, no action
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
             // this is a notification with default sound
@@ -62,11 +49,10 @@ public class mNotificationListener extends NotificationListenerService {
                 // determine music volume
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 if (am.isMusicActive()){
-                    SharedPreferences.Editor prefEditor = settings.edit();
                     int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    Logger.d(TAG, "media volume " + String.valueOf(vol));
-
+                    Logger.d(TAG, String.format("media volume: %d", vol));
                     if (vol > 0){
+                        SharedPreferences.Editor prefEditor = settings.edit();
                         prefEditor.putInt("lastMusicVolume", vol);
                         prefEditor.commit();
                     }
@@ -87,10 +73,6 @@ public class mNotificationListener extends NotificationListenerService {
         Logger.i(TAG,"**********  onNotificationPosted");
         Logger.i(TAG,"********** " + sbn.getPackageName());
         Logger.i(TAG,"********** " + sbn.getNotification().tickerText);
-
-        Intent i = new  Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-        i.putExtra("notification_event","notification :" + sbn.getPackageName());
-        sendBroadcast(i);
 
         boolean handleNotification = settings.getBoolean("handle_notification", true);
         if (handleNotification) {
@@ -118,31 +100,6 @@ public class mNotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-    }
-
-    class NLServiceReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra("command").equals("clearall")){
-                    mNotificationListener.this.cancelAllNotifications();
-            }
-            else if(intent.getStringExtra("command").equals("list")){
-                Intent i1 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-                i1.putExtra("notification_event","=====================");
-                sendBroadcast(i1);
-                int i=1;
-                for (StatusBarNotification sbn : mNotificationListener.this.getActiveNotifications()) {
-                    Intent i2 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-                    i2.putExtra("notification_event",i +" " + sbn.getPackageName() + "n");
-                    sendBroadcast(i2);
-                    i++;
-                }
-                Intent i3 = new Intent("com.firebirdberlin.smartringcontroller.NOTIFICATION_LISTENER");
-                i3.putExtra("notification_event","===== Notification List ====");
-                sendBroadcast(i3);
-            }
-        }
     }
 
     public static void queueMessage(Notification n, Context context){

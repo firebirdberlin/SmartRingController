@@ -7,7 +7,7 @@
 
 
     <string-array name="tts_modes">
-        <item>@string/radio.TTS.headphones</item>
-        <item>@string/radio.TTS.always</item>
+        <item>@string/radio_TTS_headphones</item>
+        <item>@string/radio_TTS_always</item>
     </string-array>
 </resources>

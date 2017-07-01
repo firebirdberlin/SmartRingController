@@ -7,6 +7,8 @@
 <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
 <string name="notification_listeners">Benachrichtigungszugriff</string>
 <string name="notificationSoundUri">Benachrichtigungston</string>
+<string name="radio_TTS_always"> ... immer über Lautsprecher.</string>
+<string name="radio_TTS_headphones"> ... über Kopfhörer.</string>
 <string name="read_out_notifications">Benachrichtigungen vorlesen</string>
 <string name="setting_max_amplitude">Maximum</string>
 <string name="setting_min_amplitude">Minimum</string>
