@@ -1,20 +1,19 @@
-package com.firebirdberlin.smartringcontrollerpro;
+package com.firebirdberlin.smartringcontrollerpro.pebble;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.media.AudioManager;
 import android.os.Bundle;
-import de.greenrobot.event.EventBus;
+
+import com.firebirdberlin.smartringcontrollerpro.Logger;
+
 import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PebbleMessageReceiver extends BroadcastReceiver {
-    private final static String TAG = SmartRingController.TAG + ".PebbleMessageReceiver";
+    private final static String TAG = "PebbleMessageReceiver";
     private final static UUID PEBBLE_APP_UUID = UUID.fromString("7100dca9-2d97-4ea9-a1a9-f27aae08d144");
     private static int TAG_WATCH_IS_PLUGGED = 4;
     private static int VALUE_WATCH_IS_PLUGGED = 1;

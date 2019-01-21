@@ -3,7 +3,10 @@ package com.firebirdberlin.smartringcontrollerpro;
 
 import android.media.MediaRecorder;
 import android.os.Handler;
-import de.greenrobot.event.EventBus;
+
+import com.firebirdberlin.smartringcontrollerpro.events.OnNewAmbientNoiseValue;
+
+import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.lang.RuntimeException;
 

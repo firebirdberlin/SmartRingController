@@ -1,12 +1,11 @@
-package com.firebirdberlin.smartringcontrollerpro;
+package com.firebirdberlin.smartringcontrollerpro.pebble;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
-import android.os.Bundle;
+
+import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
+import com.firebirdberlin.smartringcontrollerpro.mAudioManager;
 
 public class PebbleActions {
 

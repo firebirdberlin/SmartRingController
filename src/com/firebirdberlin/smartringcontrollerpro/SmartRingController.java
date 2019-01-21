@@ -6,11 +6,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 
 public class SmartRingController extends Activity {

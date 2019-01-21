@@ -1,0 +1,2 @@
+include ':android-preferences'
+project(':android-preferences').projectDir = new File('externals/android-preferences')

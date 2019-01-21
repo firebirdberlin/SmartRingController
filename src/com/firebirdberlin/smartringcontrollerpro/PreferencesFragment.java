@@ -8,15 +8,20 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
-import de.greenrobot.event.EventBus;
+
+import com.firebirdberlin.smartringcontrollerpro.events.OnNewAmbientNoiseValue;
+import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleConnectionReceiver;
+import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleDisconnectionReceiver;
+import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleMessageReceiver;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import de.firebirdberlin.preference.InlineProgressPreference;
 import de.firebirdberlin.preference.InlineSeekBarPreference;
 
@@ -136,6 +141,7 @@ public class PreferencesFragment extends PreferenceFragment {
         }
     }
 
+    @Subscribe
     public void onEvent(OnNewAmbientNoiseValue event) {
         seekBarMinAmplitude.setSecondaryProgress((int) event.value);
         seekBarMaxAmplitude.setSecondaryProgress((int) event.value);

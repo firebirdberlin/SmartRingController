@@ -8,12 +8,13 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
-import de.greenrobot.event.EventBus;
+
+import com.firebirdberlin.smartringcontrollerpro.events.OnSilentModeActivated;
+
+import org.greenrobot.eventbus.EventBus;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 
 public class EnjoyTheSilenceService extends Service {
     private static String TAG = SmartRingController.TAG + ".EnjoyTheSilenceService";

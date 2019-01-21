@@ -1,9 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
-import android.os.Build;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 
 public class Settings {
     public static final String PREFS_KEY = SmartRingController.PREFS_KEY;

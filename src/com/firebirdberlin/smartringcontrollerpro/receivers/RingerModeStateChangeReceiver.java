@@ -1,4 +1,4 @@
-package com.firebirdberlin.smartringcontrollerpro;
+package com.firebirdberlin.smartringcontrollerpro.receivers;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,9 +11,12 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
+import com.firebirdberlin.smartringcontrollerpro.EnjoyTheSilenceService;
+import com.firebirdberlin.smartringcontrollerpro.R;
+
 
 public class RingerModeStateChangeReceiver extends BroadcastReceiver {
-    private final static String TAG = SmartRingController.TAG + ".RingerModeStateChangeReceiver";
+    private final static String TAG = "RingerModeStateChangeReceiver";
     private final static int NOTIFICATION_ID = 627;
     private Context mContext;
     @Override

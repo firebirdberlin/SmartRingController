@@ -1,4 +1,4 @@
-package com.firebirdberlin.smartringcontrollerpro;
+package com.firebirdberlin.smartringcontrollerpro.events;
 
 public class OnRingerModeChanged {
 
