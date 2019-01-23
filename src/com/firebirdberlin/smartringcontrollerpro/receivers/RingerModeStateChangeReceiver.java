@@ -13,6 +13,8 @@ import android.support.v4.app.NotificationCompat;
 
 import com.firebirdberlin.smartringcontrollerpro.EnjoyTheSilenceService;
 import com.firebirdberlin.smartringcontrollerpro.R;
+import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
+import com.firebirdberlin.smartringcontrollerpro.Utility;
 
 
 public class RingerModeStateChangeReceiver extends BroadcastReceiver {
@@ -45,20 +47,19 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
     }
 
     private void postNotification() {
+        Utility.createNotificationChannels(mContext);
         Intent IntentUnmute = new Intent(mContext, EnjoyTheSilenceService.class);
         IntentUnmute.putExtra("action", "unmute");
         IntentUnmute.putExtra("systemRingerMode", AudioManager.RINGER_MODE_NORMAL);
         PendingIntent pIntentUnmute = PendingIntent.getService(mContext, 0, IntentUnmute, 0);
 
-        Notification note  = new NotificationCompat.Builder(mContext)
+        Notification note  = Utility.buildNotification(mContext, SmartRingController.NOTIFICATION_CHANNEL_ID_STATUS)
             .setContentTitle(mContext.getString(R.string.titleSilenceMode))
             .setContentText(mContext.getString(R.string.msgRestoreRingerMode))
             .setSmallIcon(R.drawable.ic_logo_bw)
             .setColor(Color.RED)
             .setContentIntent(pIntentUnmute)
             .setAutoCancel(true)
-            //.addAction(R.drawable.ic_launcher, "unmute", pIntentUnmute)
-            //.addAction(R.drawable.ic_launcher_gray, "More", pIntentUnmute)
             .build();
         note.flags |= Notification.FLAG_NO_CLEAR;
         note.flags |= Notification.FLAG_ONGOING_EVENT;

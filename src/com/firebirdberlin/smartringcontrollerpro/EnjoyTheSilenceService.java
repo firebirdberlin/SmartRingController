@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 
 public class EnjoyTheSilenceService extends Service {
     private static String TAG = SmartRingController.TAG + ".EnjoyTheSilenceService";
-    private boolean running = false;
 
     private WifiManager wifiManager;
     private PowerManager pm;
@@ -38,7 +37,7 @@ public class EnjoyTheSilenceService extends Service {
         wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakelock.acquire();
 
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audiomanager = new mAudioManager(this);
     }
 

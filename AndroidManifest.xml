@@ -67,7 +67,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".PebbleConnectionReceiver"
+        <receiver android:name=".pebble.PebbleConnectionReceiver"
             android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
@@ -75,7 +75,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".PebbleDisconnectionReceiver"
+        <receiver android:name=".pebble.PebbleDisconnectionReceiver"
             android:enabled="false"
             android:priority="1000">
             <intent-filter android:priority="1000">
@@ -83,7 +83,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".PebbleMessageReceiver"
+        <receiver android:name=".pebble.PebbleMessageReceiver"
             android:enabled="false"
             android:priority="1000">
 
@@ -92,8 +92,8 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="receivers.RingerModeStateChangeReceiver"
-            android:enabled="false"
+        <receiver android:name=".receivers.RingerModeStateChangeReceiver"
+            android:enabled="true"
             android:priority="1000">
 
             <intent-filter>

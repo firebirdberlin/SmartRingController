@@ -230,7 +230,7 @@
         <Preference
             android:title="@string/titlePrivacyPolicy">
             <intent android:action="android.intent.action.VIEW"
-                android:data="http://fhain.zzzz.io/apps/SmartRingController/privacy.html"/>
+                android:data="http://nightclock.duckdns.org/apps/SmartRingController/privacy.html"/>
 
         </Preference>
 
@@ -239,7 +239,7 @@
             android:summary="Please add or update the translation for your language."
             android:title="Translations wanted !">
             <intent android:action="android.intent.action.VIEW"
-                android:data="https://fhain.zzzz.io/apps/SmartRingController/translation/"/>
+                android:data="https://nightclock.duckdns.org/apps/SmartRingController/translation/"/>
         </Preference>
 
         <Preference

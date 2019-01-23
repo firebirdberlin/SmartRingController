@@ -19,6 +19,7 @@ public class SmartRingController extends Activity {
     public static final String PREFS_KEY = "SmartRingController preferences";
     public static final String TTS_MODE_HEADPHONES = "headphones";
     public static final String TTS_MODE_ALWAYS = "always";
+    public static final String NOTIFICATION_CHANNEL_ID_STATUS = "notification channel id status";
 
     private ActionBar actionbar;
     private Context mContext = null;

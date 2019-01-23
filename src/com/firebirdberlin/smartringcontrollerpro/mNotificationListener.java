@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class mNotificationListener extends NotificationListenerService {
 
-    private String TAG = SmartRingController.TAG + "." + this.getClass().getSimpleName();
+    private String TAG = this.getClass().getSimpleName();
     private long last_notification_posted = 0;
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
@@ -36,10 +36,15 @@ public class mNotificationListener extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
 
-        if (settings.getBoolean("enabled", false) == false) return;
+        if (!settings.getBoolean("enabled", false)) return;
         // phone call is handled elsewhere
         if (sbn.getPackageName().equals("com.android.phone")) return;
         Notification n = sbn.getNotification();
+        /*
+        if ( sbn.isClearable() ) {
+            queueMessage(n, this);
+        }
+        */
 
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
@@ -54,7 +59,7 @@ public class mNotificationListener extends NotificationListenerService {
                     if (vol > 0){
                         SharedPreferences.Editor prefEditor = settings.edit();
                         prefEditor.putInt("lastMusicVolume", vol);
-                        prefEditor.commit();
+                        prefEditor.apply();
                     }
                 }
                 return;
@@ -104,6 +109,7 @@ public class mNotificationListener extends NotificationListenerService {
 
     public static void queueMessage(Notification n, Context context){
         String text = getText(n, context);
+        if (text == null ) return;
         text = text.replace('#',' '); // replace hashtags
         text = text.replaceAll("\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]"," "); // remove urls
         text = truncate(text, 1000); // truncate after 1000 chars
@@ -123,17 +129,18 @@ public class mNotificationListener extends NotificationListenerService {
     public static String getText(Notification notification, Context context) {
         Bundle extras = notification.extras;
         String title = extras.getString(Notification.EXTRA_TITLE);
-        String text = "";
-        if (notification.tickerText != null) {
+        String text = extras.getString(Notification.EXTRA_TEXT);
+        if (text == null && notification.tickerText != null) {
             text = notification.tickerText.toString();
-        } else {
-            text = extras.getString(Notification.EXTRA_TEXT);
         }
-        String time = format_time(notification.when, context);
 
         String result = "";
         if (title != null) result += title + " ";
         if (text != null) result += text + " ";
+        if (result.isEmpty()) {
+            return null;
+        }
+        String time = format_time(notification.when, context);
         result += time;
         return result;
     }

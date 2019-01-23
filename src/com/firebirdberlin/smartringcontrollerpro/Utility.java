@@ -1,11 +1,16 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -81,5 +86,46 @@ public class Utility{
         TelephonyManager telephone = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         return telephone.getCallState();
     }
+
+    public static void createNotificationChannels(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+
+        NotificationManager notificationManager =
+                context.getSystemService(NotificationManager.class);
+
+        NotificationChannel channelAlarms = prepareNotificationChannel(
+                context,
+                SmartRingController.NOTIFICATION_CHANNEL_ID_STATUS,
+                R.string.notificationChannelNameStatus,
+                R.string.notificationChannelDescStatus,
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        notificationManager.createNotificationChannel(channelAlarms);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static NotificationChannel prepareNotificationChannel(
+            Context context, String channelName, int idName, int idDesc, int importance) {
+        String name = context.getString(idName);
+        String description = context.getString(idDesc);
+        NotificationChannel mChannel = new NotificationChannel(channelName, name, importance);
+        mChannel.setDescription(description);
+        mChannel.enableLights(false);
+        mChannel.enableVibration(false);
+        mChannel.setSound(null, null);
+        mChannel.setShowBadge(false);
+        return mChannel;
+    }
+
+    public static NotificationCompat.Builder buildNotification(Context context, String channel_id) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return new NotificationCompat.Builder(context);
+        } else {
+            return new NotificationCompat.Builder(context, channel_id);
+        }
+    }
+
 }
 
