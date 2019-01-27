@@ -1,6 +1,12 @@
 bin
-gen
-*.sw*
+build
 *.class
+gen
+gradle
+.gradle
+.idea
 local.properties
-smartringcontroller-release-key.keystore
+release
+smartringcontroller*-release-key.keystore
+*.sw*
+SmartRingController.iml
