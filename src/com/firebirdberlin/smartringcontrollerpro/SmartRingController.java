@@ -1,11 +1,11 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
-import android.app.ActionBar; // >= api level 11
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CompoundButton;
@@ -20,7 +20,10 @@ public class SmartRingController extends Activity {
     public static final String TTS_MODE_HEADPHONES = "headphones";
     public static final String TTS_MODE_ALWAYS = "always";
     public static final String NOTIFICATION_CHANNEL_ID_STATUS = "notification channel id status";
+    public static final String NOTIFICATION_CHANNEL_ID_TTS = "notification channel id tts";
 
+    public static final int NOTIFICATION_ID_STATUS = 10;
+    public static final int NOTIFICATION_ID_TTS = 11;
     private ActionBar actionbar;
     private Context mContext = null;
 
@@ -28,6 +31,7 @@ public class SmartRingController extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        Utility.createNotificationChannels(this);
 
         actionbar = getActionBar();
         actionbar.setDisplayShowTitleEnabled(true);

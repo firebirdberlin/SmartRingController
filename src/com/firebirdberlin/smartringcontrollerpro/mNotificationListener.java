@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,31 +39,31 @@ public class mNotificationListener extends NotificationListenerService {
         // phone call is handled elsewhere
         if (sbn.getPackageName().equals("com.android.phone")) return;
         Notification n = sbn.getNotification();
-        /*
-        if ( sbn.isClearable() ) {
-            queueMessage(n, this);
-        }
-        */
 
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
             // this is a notification with default sound
-        } else {
-            if (n.sound == null) {
-                // determine music volume
-                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                if (am.isMusicActive()){
-                    int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    Logger.d(TAG, String.format("media volume: %d", vol));
-                    if (vol > 0){
-                        SharedPreferences.Editor prefEditor = settings.edit();
-                        prefEditor.putInt("lastMusicVolume", vol);
-                        prefEditor.apply();
-                    }
+        } else
+        if (n.sound == null) {
+            Logger.i(TAG, "Notification sound is null");
+            // determine music volume
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if (am.isMusicActive()){
+                int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+                Logger.d(TAG, String.format("media volume: %d", vol));
+                if (vol > 0){
+                    SharedPreferences.Editor prefEditor = settings.edit();
+                    prefEditor.putInt("lastMusicVolume", vol);
+                    prefEditor.apply();
                 }
-                return;
             }
+            //return;
         }
+
+        if (! sbn.isClearable() ) {
+            return;
+        }
+
 
         // if the last notification was within the last 3s
         // just queue the message but play no sound

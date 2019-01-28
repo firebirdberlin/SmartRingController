@@ -4,6 +4,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -12,9 +14,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageInfo;
-import java.lang.Exception;
 
 public class Utility{
 
@@ -103,6 +102,14 @@ public class Utility{
                 NotificationManager.IMPORTANCE_DEFAULT
         );
         notificationManager.createNotificationChannel(channelAlarms);
+        NotificationChannel channelTTS = prepareNotificationChannel(
+                context,
+                SmartRingController.NOTIFICATION_CHANNEL_ID_TTS,
+                R.string.notificationChannelNameTTS,
+                R.string.notificationChannelDescTTS,
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        notificationManager.createNotificationChannel(channelTTS);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

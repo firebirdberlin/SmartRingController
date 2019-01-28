@@ -4,10 +4,13 @@
     <string name="btnTest">Measure ambient noise</string>
     <string name="btnTestNotification">Send a test notification</string>
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
+    <string name="managePermissions">Manage permissions</string>
     <string name="msgTestNotification">This is a test notification.</string>
     <string name="notification_listeners">Notification listeners</string>
     <string name="notificationChannelNameStatus">Status messages</string>
     <string name="notificationChannelDescStatus">Notification channel for status messages</string>
+    <string name="notificationChannelNameTTS">TTS Service</string>
+    <string name="notificationChannelDescTTS">Notification indication that text-to-speech is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
     <string name="radio_TTS_always"> ... always via speakerphone.</string>
     <string name="radio_TTS_headphones"> ... with headphones.</string>

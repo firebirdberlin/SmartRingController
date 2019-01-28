@@ -4,26 +4,23 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
-import android.os.Vibrator;
-
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
-    private final static String TAG = SmartRingController.TAG + ".IncomingCallReceiver";
+    private final static String TAG = "IncomingCallReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
+        Logger.d(TAG, "onReceive");
+
         SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         if (settings.getBoolean("enabled", false) == false) return;
 
-        AudioManager am=(AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         String msg = "Phone state changed to " + state;
@@ -31,7 +28,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);  // 5
             msg += ". Incoming number is " + incomingNumber;
-
+            Logger.d(TAG, msg);
             Intent i =  new Intent(context, SetRingerService.class);
             i.putExtra("PHONE_STATE", state);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -53,10 +50,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
 
         if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
-            // Using a bluetooth headset the media volume reminas muted.
+            // Using a bluetooth headset the media volume remains muted.
             // It seems to be a bug in android 4.3. The problem appears
             // also when Smart Ring Controller is disabled.
-            // So we reset thhe volume manually ...
+            // So we reset the volume manually ...
             int vol = settings.getInt("lastMusicVolume", 7);
             am.setStreamVolume(AudioManager.STREAM_MUSIC, vol, AudioManager.FLAG_SHOW_UI);
             Logger.d(TAG, "setting media volume " + String.valueOf(vol));

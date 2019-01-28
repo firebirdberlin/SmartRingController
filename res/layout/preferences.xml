@@ -201,6 +201,10 @@
     </PreferenceCategory>
 
     <Preference
+        android:key="prefPermissions"
+        android:title="@string/managePermissions" />
+
+    <Preference
         android:key="openNotificationListenerSettings"
         android:title="@string/notification_listeners" >
         <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"/>

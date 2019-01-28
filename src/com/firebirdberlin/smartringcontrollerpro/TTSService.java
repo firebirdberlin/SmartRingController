@@ -1,5 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +16,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
-import java.util.HashMap;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -32,26 +35,20 @@ public class TTSService extends Service {
 
     private static final String TAG = SmartRingController.TAG + "." + TTSService.class.getSimpleName();
 
-    private static int SENSOR_DELAY = 50000;     // us = 50 ms
     private SensorManager sensorManager;
     private Sensor accelerometerSensor = null;
     private boolean accelerometerPresent;
 
     private final LocalBinder binder = new LocalBinder();
-    private Queue<String> messageQueue = new LinkedList<String>();
+    private final Queue<String> messageQueue = new LinkedList<>();
     private TimerTask bluetoothTimerTask;
 
     private TextToSpeech tts;
-    private SharedPreferences settings;
 
     private AudioManager audioManager;
     private int systemVolume;
 
-    // settings
     public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
-    //public static final int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
-    private boolean preferSco = false;
-    private int desiredVolume = -1;
 
     public class LocalBinder extends Binder {
         TTSService getService() {
@@ -64,8 +61,61 @@ public class TTSService extends Service {
         return binder;
     }
 
+    public static boolean shouldRead(boolean canUseSco, Context context) {
+        final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        boolean enabled = settings.getBoolean("enabled", false);
+        boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
+        String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
+
+        Logger.w(TAG, "ttsmode \"" + ttsMode + "\"");
+
+        if (enabled && tts_enabled) {
+            if (Utility.getCallState(context) == TelephonyManager.CALL_STATE_OFFHOOK) {
+                // don't speak, when in call
+                return false;
+            }
+
+
+            if (ttsMode != null && ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS)) {
+                return true;
+            }
+
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+            if (canUseSco && audioManager.isBluetoothScoAvailableOffCall()) {
+                return true;
+            }
+
+            return audioManager.isBluetoothA2dpOn() || mAudioManager.isWiredHeadsetOn(context);
+        }
+
+        return false;
+    }
+
+    public static void queueMessage(String message, Context context) {
+        Logger.i(TAG, "Trying to queue message: " + message);
+        if (!shouldRead(false, context)) return;
+        Logger.i(TAG, " > success, message: " + message);
+        sendIntent(TTSService.QUEUE_MESSAGE_EXTRA, message, context);
+    }
+
+    private static void sendIntent(String extraName, String extraValue, Context context) {
+        Intent readIntent = new Intent(context, TTSService.class);
+        readIntent.putExtra(extraName, extraValue);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(readIntent);
+        } else {
+            context.startService(readIntent);
+        }
+    }
+
     @Override
     public void onCreate() {
+
+        Notification note = buildNotification(getString(R.string.notificationChannelNameTTS));
+        startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
+
         audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
@@ -78,6 +128,30 @@ public class TTSService extends Service {
         }
     }
 
+    private Notification buildNotification(String message) {
+        NotificationCompat.Builder noteBuilder =
+                Utility.buildNotification(this, SmartRingController.NOTIFICATION_CHANNEL_ID_TTS)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(message)
+                        .setSmallIcon(R.drawable.ic_voice)
+                        .setPriority(NotificationCompat.PRIORITY_MIN);
+
+        Notification note = noteBuilder.build();
+
+        note.flags |= Notification.FLAG_NO_CLEAR;
+        note.flags |= Notification.FLAG_FOREGROUND_SERVICE;
+
+        return note;
+    }
+
+    private void updateNotification(String message) {
+        Notification notification = buildNotification(message);
+
+        NotificationManagerCompat mNotificationManager =
+                NotificationManagerCompat.from(getApplicationContext());
+        mNotificationManager.notify(SmartRingController.NOTIFICATION_ID_TTS, notification);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
@@ -85,7 +159,6 @@ public class TTSService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
-        settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
 
         synchronized(messageQueue) {
             if (intent.hasExtra(BLUETOOTH_TIMEOUT_EXTRA)) {
@@ -104,7 +177,7 @@ public class TTSService extends Service {
                 }
             } else if (intent.hasExtra(STOP_READING_EXTRA)) {
                 boolean stop = (tts != null);
-                if (stop == true) {
+                if (stop) {
                     // This will trigger onUtteranceCompleted, so we don't have to worry about cleaning up.
                     tts.stop();
                 }
@@ -116,7 +189,9 @@ public class TTSService extends Service {
 
                 // if the TTS service is already running, just queue the message
                 if (tts == null) {
-                    if (! preferSco &&
+                    //public static final int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
+                    boolean preferSco = false;
+                    if (!preferSco &&
                             (audioManager.isBluetoothA2dpOn() ||
                                 mAudioManager.isWiredHeadsetOn(getApplicationContext()))) {
                         // We prefer to use non-sco if it's available. The logic is that if you have your
@@ -163,6 +238,7 @@ public class TTSService extends Service {
 
                                 @Override
                                 public void onDone(String utteranceId) {
+                                    updateNotification("...");
                                     restoreAudio();
                                     synchronized (messageQueue) {
                                         messageQueue.poll(); // retrieves and removes head of the queue
@@ -198,119 +274,22 @@ public class TTSService extends Service {
         }
     }
 
-    public static boolean shouldRead(boolean canUseSco, Context context){
-        final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
-        boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
-        String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
-
-        Logger.w(TAG, "ttsmode \"" + ttsMode + "\"");
-
-        if ( enabled && tts_enabled) {
-            if (Utility.getCallState(context) == TelephonyManager.CALL_STATE_OFFHOOK ) {
-                // don't speak, when in call
-                return false;
-            }
-
-
-            if ( ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS) ){
-                return true;
-            }
-
-            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-            if ( canUseSco && audioManager.isBluetoothScoAvailableOffCall() ) {
-                return true;
-            }
-
-            if ( audioManager.isBluetoothA2dpOn() || mAudioManager.isWiredHeadsetOn(context) ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private void speak(final String text) {
+        updateNotification(text);
         // The first message should clear the queue so we can start speaking right away.
         Logger.i(TAG, "speaking \"" + text + "\"");
 
         prepareAudio();
 
         if (accelerometerPresent){
-            sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY/2);
+            // us = 50 ms
+            int SENSOR_DELAY = 50000;
+            sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY / 2);
         }
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            Bundle ttsParams = new Bundle();
-            ttsParams.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, READING_AUDIO_STREAM);
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, "SRC1");
-        } else {
-            deprecated_speak(text);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private void deprecated_speak(final String text) {
-        if (Build.VERSION.SDK_INT < 21) {
-            final HashMap<String, String> params = new HashMap<String, String>();
-            params.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(READING_AUDIO_STREAM));
-            params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "SRC1");
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
-        }
-    }
-
-    private void prepareAudio() {
-        final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
-        final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
-
-        audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
-        audioManager.setSpeakerphoneOn(false);
-
-        if ( ttsEnabled && ttsMode == SmartRingController.TTS_MODE_ALWAYS ) {
-            audioManager.setSpeakerphoneOn(true);
-        }
-
-        // -1 means use the system volume.
-        if (desiredVolume != -1) {
-            systemVolume = audioManager.getStreamVolume(READING_AUDIO_STREAM);
-            int boudedDesiredVolume = Math.min(desiredVolume,
-                    audioManager.getStreamMaxVolume(READING_AUDIO_STREAM));
-
-            Logger.i(TAG, "Temporarily setting volume to " + boudedDesiredVolume);
-            audioManager.setStreamVolume(READING_AUDIO_STREAM, boudedDesiredVolume, 0);
-        } else {
-            systemVolume = -1;
-        }
-
-        int result = audioManager.requestAudioFocus(audioFocusChangeListener,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            // start playing
-        }
-    }
-
-    private void restoreAudio() {
-        final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
-        final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
-
-        sensorManager.unregisterListener(ShakeActions); // disable shake action
-
-        // restore system setting of the speakerphone
-        if ( ttsEnabled && (ttsMode == SmartRingController.TTS_MODE_ALWAYS) ) {
-            audioManager.setSpeakerphoneOn(false);
-        }
-
-        if (systemVolume != -1) {
-            Logger.i(TAG, "Resetting volume to " + systemVolume);
-            audioManager.setStreamVolume(READING_AUDIO_STREAM, systemVolume, 0);
-        }
-        audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        Bundle ttsParams = new Bundle();
+        ttsParams.putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, READING_AUDIO_STREAM);
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, "SRC1");
     }
 
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
@@ -361,12 +340,24 @@ public class TTSService extends Service {
             }
         };
 
+    private void prepareAudio() {
+        final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
+        final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 
-    public static void queueMessage(String message, Context context) {
-        Logger.i(TAG, "Trying to queue message: " + message);
-        if (shouldRead(false, context) == false) return;
-        Logger.i(TAG, " > success, message: " + message);
-        sendIntent(TTSService.QUEUE_MESSAGE_EXTRA, message, context);
+        //audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
+        audioManager.setSpeakerphoneOn(false);
+
+        if (ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode)) {
+            audioManager.setSpeakerphoneOn(true);
+        }
+
+        systemVolume = -1;
+        audioManager.requestAudioFocus(
+                audioFocusChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK
+        );
     }
 
     public static void startReading(Context context) {
@@ -384,9 +375,23 @@ public class TTSService extends Service {
         sendIntent(TTSService.BLUETOOTH_TIMEOUT_EXTRA, null, context);
     }
 
-    private static void sendIntent(String extraName, String extraValue, Context context) {
-        Intent readSmsIntent = new Intent(context, TTSService.class);
-        readSmsIntent.putExtra(extraName, extraValue);
-        context.startService(readSmsIntent);
+    private void restoreAudio() {
+        final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
+        final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
+
+        sensorManager.unregisterListener(ShakeActions); // disable shake action
+
+        // restore system setting of the speakerphone
+        if (ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode)) {
+            audioManager.setSpeakerphoneOn(false);
+        }
+
+        if (systemVolume != -1) {
+            Logger.i(TAG, "Resetting volume to " + systemVolume);
+            audioManager.setStreamVolume(READING_AUDIO_STREAM, systemVolume, 0);
+        }
+        //audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
     }
 }

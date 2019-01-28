@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 
 import com.firebirdberlin.smartringcontrollerpro.EnjoyTheSilenceService;
 import com.firebirdberlin.smartringcontrollerpro.R;
@@ -24,8 +23,11 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) return;
-        mContext = context;
         Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            return;
+        }
+        mContext = context;
         int newRingerMode = bundle.getInt(AudioManager.EXTRA_RINGER_MODE, -1);
         switch (newRingerMode) {
             case AudioManager.RINGER_MODE_NORMAL:
@@ -47,7 +49,6 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
     }
 
     private void postNotification() {
-        Utility.createNotificationChannels(mContext);
         Intent IntentUnmute = new Intent(mContext, EnjoyTheSilenceService.class);
         IntentUnmute.putExtra("action", "unmute");
         IntentUnmute.putExtra("systemRingerMode", AudioManager.RINGER_MODE_NORMAL);

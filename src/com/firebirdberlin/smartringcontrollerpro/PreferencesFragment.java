@@ -1,18 +1,20 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.firebirdberlin.smartringcontrollerpro.events.OnNewAmbientNoiseValue;
 import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleConnectionReceiver;
@@ -61,14 +63,21 @@ public class PreferencesFragment extends PreferenceFragment {
         seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
         seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
 
-        Preference prefSendTestNotification = (Preference) findPreference("sendTestNotification");
+        Preference prefPermissions = findPreference("prefPermissions");
+        prefPermissions.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                openPermssionSettings();
+                return true;
+            }
+        });
+        Preference prefSendTestNotification = findPreference("sendTestNotification");
         prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 sendTestNotification();
                 return true;
             }
         });
-        Preference prefSendTestNotification2 = (Preference) findPreference("sendTestNotification2");
+        Preference prefSendTestNotification2 = findPreference("sendTestNotification2");
         prefSendTestNotification2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 sendTestNotification();
@@ -76,7 +85,7 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        Preference prefSystemSounds = (Preference) findPreference("systemSoundPreferences");
+        Preference prefSystemSounds = findPreference("systemSoundPreferences");
         prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
@@ -84,7 +93,7 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        Preference prefSilentWhilePebbleConnected = (Preference) findPreference("SilentWhilePebbleConnected");
+        Preference prefSilentWhilePebbleConnected = findPreference("SilentWhilePebbleConnected");
         boolean installed = Utility.isPackageInstalled(getActivity(), "com.getpebble.android") ||
                             Utility.isPackageInstalled(getActivity(), "com.getpebble.android.basalt");
 
@@ -166,18 +175,19 @@ public class PreferencesFragment extends PreferenceFragment {
         PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         // build notification
-        Notification n = new Notification.Builder(context)
-            .setContentTitle("SmartRingController")
-            .setContentText(getString(R.string.msgTestNotification))
-            .setSmallIcon(R.drawable.ic_logo_bw)
-            .setContentIntent(pIntent)
-            .setAutoCancel(true)
-            .build();
+        NotificationCompat.Builder builder = Utility.buildNotification(context, SmartRingController.NOTIFICATION_CHANNEL_ID_TTS)
+                .setContentTitle("SmartRingController")
+                .setContentText(getString(R.string.msgTestNotification))
+                .setSmallIcon(R.drawable.ic_logo_bw)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true);
+
+        Notification n = builder.build();
 
         n.defaults |= Notification.DEFAULT_SOUND;
         //n.defaults |= Notification.DEFAULT_ALL;
-        NotificationManager notificationManager =
-            (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+//            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
     }
@@ -188,5 +198,13 @@ public class PreferencesFragment extends PreferenceFragment {
         int new_state = (on) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                             : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
+    }
+
+    private void openPermssionSettings() {
+        Intent intent = new Intent();
+        intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 }
