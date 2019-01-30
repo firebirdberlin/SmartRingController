@@ -1,5 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -61,6 +62,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     }
 
     private String getContactNameFromNumber(String number, ContentResolver contentResolver) {
+        if (!Utility.hasPermission(this, Manifest.permission.READ_CONTACTS)) {
+            return number;
+        }
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 
         Cursor cursor = null;

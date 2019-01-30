@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 
 public class Utility{
@@ -132,6 +133,11 @@ public class Utility{
         } else {
             return new NotificationCompat.Builder(context, channel_id);
         }
+    }
+
+    public static boolean hasPermission(Context context, String permission) {
+        return (ContextCompat.checkSelfPermission(context, permission)
+                == PackageManager.PERMISSION_GRANTED);
     }
 
 }

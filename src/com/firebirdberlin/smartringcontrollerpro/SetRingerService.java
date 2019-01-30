@@ -1,5 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -191,12 +191,13 @@ public class SetRingerService extends Service implements SensorEventListener {
     private Runnable startListening = new Runnable() {
         @Override
         public void run() {
-            if (settings.controlRingerVolume == false) {
+            if (! Utility.hasPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO)
+                || !settings.controlRingerVolume) {
                 handler.postDelayed(stopListening, measurementMillis/2);
                 return;
             }
 
-            boolean success = false;
+            boolean success;
             try {
                 success = soundmeter.start();
             } catch (Exception e){

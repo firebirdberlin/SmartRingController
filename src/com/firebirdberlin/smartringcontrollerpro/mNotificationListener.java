@@ -40,6 +40,16 @@ public class mNotificationListener extends NotificationListenerService {
         if (sbn.getPackageName().equals("com.android.phone")) return;
         Notification n = sbn.getNotification();
 
+        Logger.i(TAG,"**********  onNotificationPosted");
+        Logger.i(TAG,"********** " + sbn.getPackageName());
+        Logger.i(TAG,"********** " + sbn.getNotification().tickerText);
+        Logger.i(TAG,"********** " + n.sound);
+
+        if (sbn.isClearable() ) {
+            queueMessage(n, this);
+        }
+
+
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
             // this is a notification with default sound
@@ -57,10 +67,6 @@ public class mNotificationListener extends NotificationListenerService {
                     prefEditor.apply();
                 }
             }
-            //return;
-        }
-
-        if (! sbn.isClearable() ) {
             return;
         }
 
@@ -68,15 +74,11 @@ public class mNotificationListener extends NotificationListenerService {
         // if the last notification was within the last 3s
         // just queue the message but play no sound
         if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
-            queueMessage(n, this);
+            //queueMessage(n, this);
             return;
         }
 
         last_notification_posted = System.currentTimeMillis();
-
-        Logger.i(TAG,"**********  onNotificationPosted");
-        Logger.i(TAG,"********** " + sbn.getPackageName());
-        Logger.i(TAG,"********** " + sbn.getNotification().tickerText);
 
         boolean handleNotification = settings.getBoolean("handle_notification", true);
         if (handleNotification) {
@@ -99,7 +101,7 @@ public class mNotificationListener extends NotificationListenerService {
             }
         }
 
-        queueMessage(n, this);
+        //queueMessage(n, this);
     }
 
     @Override
