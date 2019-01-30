@@ -68,6 +68,6 @@ android {
         unitTests.returnDefaultValues = true
     }
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 22
     }
 }

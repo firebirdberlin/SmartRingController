@@ -20,6 +20,7 @@ public class mNotificationListener extends NotificationListenerService {
     private long last_notification_posted = 0;
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
+    public static boolean isRunning = false;
 
     @Override
     public void onCreate() {
@@ -30,6 +31,17 @@ public class mNotificationListener extends NotificationListenerService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+
+    @Override
+    public void onListenerConnected() {
+        isRunning = true;
+    }
+
+    @Override
+    public void onListenerDisconnected() {
+        isRunning = false;
     }
 
     @Override

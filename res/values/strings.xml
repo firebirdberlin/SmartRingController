@@ -6,14 +6,16 @@
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="managePermissions">Manage permissions</string>
     <string name="msgTestNotification">This is a test notification.</string>
-    <string name="notification_listeners">Notification listeners</string>
+    <string name="notification_listener">Notification listener</string>
+    <string name="notification_listeners">Notification access</string>
+    <string name="notification_listener_message">Please grant access to notifications.</string>
     <string name="notificationChannelNameStatus">Status messages</string>
     <string name="notificationChannelDescStatus">Notification channel for status messages</string>
     <string name="notificationChannelNameTTS">TTS Service</string>
     <string name="notificationChannelDescTTS">Notification indication that text-to-speech is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
-    <string name="radio_TTS_always"> ... always via speakerphone.</string>
-    <string name="radio_TTS_headphones"> ... with headphones.</string>
+    <string name="radio_TTS_always"> … always via speakerphone.</string>
+    <string name="radio_TTS_headphones"> … with headphones.</string>
     <string name="read_out_notifications">Read out notifications</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_amplitude">Minimum</string>
@@ -33,18 +35,17 @@
     <string name="tvAutoReactivateRingerMode">Automagically reactivate ringer mode (increased battery usage).</string>
     <string name="tvBrokenProximitySensor">Additionally use light sensor for pocket detection.</string>
     <string name="tvCalculatedVolume">Resulting ringer volume</string>
-    <string name="tvControllers">Control ...</string>
     <string name="tvFlipAction">Flip device to mute ringer.</string>
     <string name="tvInCallActions">Actions</string>
     <string name="tvNoiseLevels">Noise levels</string>
     <string name="tvPocketVolume">Increase volume in pocket by </string>
-    <string name="tvPullOutAction"> ...is uncovered.</string>
-    <string name="tvReduceVolume">Reduce the ringer volume when the device ...</string>
-    <string name="tvShakeAction"> ... is shaken.</string>
+    <string name="tvPullOutAction"> … is uncovered.</string>
+    <string name="tvReduceVolume">Reduce the ringer volume when the device …</string>
+    <string name="tvShakeAction"> … is shaken.</string>
     <string name="tvSilenceVolume">Mute the ringer</string>
     <string name="tvSilentWhilePebbleConnected">Pebble connected</string>
     <string name="tvTTSenabled">text-to-speech engine</string>
-    <string name="tvTTSmode">Enable TTS ...</string>
+    <string name="tvTTSmode">Enable TTS …</string>
     <string name="systemSoundSummary">
         For best results you should disable the default notification sound.
     </string>

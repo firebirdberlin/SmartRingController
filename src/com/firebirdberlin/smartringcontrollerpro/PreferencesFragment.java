@@ -1,9 +1,12 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -13,6 +16,8 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -29,6 +34,8 @@ import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
 public class PreferencesFragment extends PreferenceFragment {
+    private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
+
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
     private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
     private final SoundMeter soundMeter = new SoundMeter();
@@ -38,8 +45,6 @@ public class PreferencesFragment extends PreferenceFragment {
 
     private InlineSeekBarPreference seekBarMinAmplitude = null;
     private InlineSeekBarPreference seekBarMaxAmplitude = null;
-    private InlineSeekBarPreference seekBarMinRingerVolume = null;
-    private InlineSeekBarPreference seekBarAddPocketVolume = null;
     private InlineProgressPreference progressBarRingerVolume = null;
 
     @Override
@@ -52,14 +57,62 @@ public class PreferencesFragment extends PreferenceFragment {
         // Define the settings file to use by this settings fragment
         getPreferenceManager().setSharedPreferencesName(SmartRingController.PREFS_KEY);
 
-        addPreferencesFromResource(R.layout.preferences);
+        addPreferencesFromResource(R.xml.preferences);
 
+        SwitchPreference ctrlRingerVolume = (SwitchPreference) findPreference("Ctrl.RingerVolume");
+        SwitchPreference ctrlNotification = (SwitchPreference) findPreference("handleNotification");
+        SwitchPreference ctrlTTS = (SwitchPreference) findPreference("TTS.enabled");
+        InlineSeekBarPreference seekBarMinRingerVolume = (InlineSeekBarPreference) findPreference("minRingerVolume");
+        InlineSeekBarPreference seekBarAddPocketVolume = (InlineSeekBarPreference) findPreference("Ctrl.PocketVolume");
         seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
         seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
-        seekBarMinRingerVolume = (InlineSeekBarPreference) findPreference("minRingerVolume");
-        seekBarAddPocketVolume = (InlineSeekBarPreference) findPreference("Ctrl.PocketVolume");
         progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
 
+        ctrlRingerVolume.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                boolean ischecked = ((SwitchPreference) preference).isChecked();
+                if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{
+                                    Manifest.permission.RECORD_AUDIO,
+                                    Manifest.permission.READ_PHONE_STATE
+                            }, PERMISSION_REQUEST_RECORD_AUDIO);
+                }
+
+                return true;
+            }
+        });
+
+        ctrlNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                boolean ischecked = ((SwitchPreference) preference).isChecked();
+                if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            PERMISSION_REQUEST_RECORD_AUDIO);
+                }
+
+                if (!ischecked && !isNotificationListenerServiceRunning()) {
+                    requestNotificationListenerGrants();
+                }
+
+                return true;
+            }
+        });
+
+        ctrlTTS.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                boolean ischecked = ((SwitchPreference) preference).isChecked();
+                if (!ischecked && !isNotificationListenerServiceRunning()) {
+                    requestNotificationListenerGrants();
+                }
+
+                return true;
+            }
+        });
         seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
         seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
 
@@ -114,6 +167,29 @@ public class PreferencesFragment extends PreferenceFragment {
                 }
             });
         }
+    }
+
+    private void requestNotificationListenerGrants() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.notification_listener) //
+                .setMessage(R.string.notification_listener_message) //
+                .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+                        dialog.dismiss();
+                    }
+                }) //
+                .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // TODO
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+    }
+
+    private boolean isNotificationListenerServiceRunning() {
+        return mNotificationListener.isRunning;
     }
 
     @Override

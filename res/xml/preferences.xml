@@ -1,0 +1,279 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="main_screen">
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_speaker"
+        android:key="Ctrl.RingerVolumePreferenceScreen"
+        android:title="@string/title_handle_ambient_noise">
+
+        <SwitchPreference
+            android:key="Ctrl.RingerVolume"
+            android:icon="@drawable/ic_speaker"
+            android:title="@string/title_handle_ambient_noise"
+            android:summary="@string/switch_handle_ambient_noise"
+            android:defaultValue="false"/>
+
+        <Preference
+            android:dependency="Ctrl.RingerVolume"
+            android:enabled="true"
+            android:selectable="false"
+            android:summary="@string/tvExplanationNoiseLevels"
+            android:title="@string/tvNoiseLevels" />
+
+        <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            android:defaultValue="1"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="minRingerVolume"
+            android:max="7"
+            android:title="@string/setting_min_ringer_volume"
+            seekbar:interval="1"
+            seekbar:min="1"
+            seekbar:unitsLeft=""
+            seekbar:unitsRight="" />
+
+        <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            android:defaultValue="0"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="minAmplitude"
+            android:max="5000"
+            android:summary="@string/tvExplanationMinimumLevel"
+            android:title="@string/setting_min_amplitude"
+            seekbar:interval="50"
+            seekbar:min="0"
+            seekbar:unitsLeft=""
+            seekbar:unitsRight="" />
+
+        <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            android:defaultValue="7000"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="maxAmplitude"
+            android:max="32767"
+            android:summary="@string/tvExplanationMaximumLevel"
+            android:title="@string/setting_max_amplitude"
+            seekbar:interval="50"
+            seekbar:min="50"
+            seekbar:unitsLeft=""
+            seekbar:unitsRight="" />
+
+        <de.firebirdberlin.preference.InlineProgressPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="currentRingerVolumeValue"
+            android:selectable="false"
+            android:title="@string/tvCalculatedVolume" />
+
+        <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            android:defaultValue="0"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="Ctrl.PocketVolume"
+            android:max="7"
+            android:title="@string/tvPocketVolume"
+            seekbar:interval="1"
+            seekbar:min="0"
+            seekbar:unitsLeft=""
+            seekbar:unitsRight="" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="Ctrl.RingerVolume"
+            android:key="increasingRingerVolume"
+            android:title="@string/title_increasing_ringer_volume" />
+
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:icon="@drawable/ic_menu"
+        android:title="@string/switch_handle_notification">
+
+        <PreferenceCategory
+            android:key="categoryNotification"
+            android:title="@string/switch_handle_notification">
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="handleNotification"
+                android:title="@string/switch_handle_notification" />
+
+            <RingtonePreference
+                android:dependency="handleNotification"
+                android:key="defaultNotificationUri"
+                android:ringtoneType="notification"
+                android:showDefault="false"
+                android:showSilent="false"
+                android:title="@string/notificationSoundUri" />
+
+            <Preference
+                android:key="systemSoundPreferences"
+                android:summary="@string/systemSoundSummary"
+                android:title="@string/soundSettings" />
+
+            <Preference
+                android:key="sendTestNotification"
+                android:title="@string/btnTestNotification" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_phone"
+        android:title="@string/switch_handle_vibration">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_phone"
+            android:key="handle_vibration"
+            android:title="@string/switch_handle_vibration" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="handle_vibration"
+            android:key="Ctrl.BrokenProximitySensor"
+            android:summary="@string/tvBrokenProximitySensor" />
+
+        <Preference
+            android:clickable="false"
+            android:dependency="handle_vibration"
+            android:summary="@string/systemVibrationSummary" />
+
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_menu"
+        android:title="@string/read_out_notifications">
+
+        <SwitchPreference
+            android:clickable="false"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_voice"
+            android:key="TTS.enabled"
+            android:summary="@string/tvTTSenabled"
+            android:title="@string/tabTTS" />
+
+        <ListPreference
+            android:defaultValue="headphones"
+            android:dependency="TTS.enabled"
+            android:entries="@array/tts_modes"
+            android:entryValues="@array/tts_modes_data"
+            android:key="TTSmode"
+            android:title="@string/tvTTSmode" />
+
+        <Preference
+            android:key="tts_settings"
+            android:title="@string/tts_settings">
+            <intent android:action="com.android.settings.TTS_SETTINGS" />
+        </Preference>
+
+        <Preference
+            android:key="sendTestNotification2"
+            android:title="@string/btnTestNotification" />
+
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_call"
+        android:key="preferenceScreenActions"
+        android:title="@string/tvInCallActions">
+
+        <PreferenceCategory android:title="@string/tvReduceVolume">
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="ShakeAction"
+                android:summary="@string/tvShakeAction" />
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="PullOutAction"
+                android:summary="@string/tvPullOutAction" />
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="CategoryMuteActions"
+            android:title="@string/tvSilenceVolume">
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="SilentWhilePebbleConnected"
+                android:summary="@string/tvSilentWhilePebbleConnected" />
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="FlipAction"
+                android:summary="@string/tvFlipAction" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="FlipAction"
+                android:key="disconnectWhenFaceDown"
+                android:summary="@string/disconnectWhenFaceDown" />
+
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:key="about_screen"
+        android:icon="@drawable/ic_about"
+        android:title="@string/tabAbout">
+
+        <de.firebirdberlin.preference.VersionPreference
+            android:key="version"
+            android:title="SmartRingController"
+            android:summary="@string/summaryAboutCredits">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://play.google.com/store/apps/details?id=com.firebirdberlin.smartringcontrollerpro"/>
+
+        </de.firebirdberlin.preference.VersionPreference>
+
+        <Preference
+            android:key="prefPermissions"
+            android:title="@string/managePermissions" />
+
+        <Preference
+            android:key="openNotificationListenerSettings"
+            android:title="@string/notification_listeners">
+            <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
+        </Preference>
+
+        <Preference
+            android:selectable="false"
+            android:enabled="true"
+            android:key="example_key"
+            android:title="@string/tabAbout"
+            android:summary="@string/tvAbout" />
+
+        <Preference
+            android:title="@string/titlePrivacyPolicy">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://nightclock.duckdns.org/apps/SmartRingController/privacy.html"/>
+
+        </Preference>
+
+        <Preference
+            android:icon="@drawable/ic_globe"
+            android:summary="Please add or update the translation for your language."
+            android:title="Translations wanted !">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://nightclock.duckdns.org/apps/SmartRingController/translation/"/>
+        </Preference>
+
+        <Preference
+            android:icon="@drawable/ic_github"
+            android:title="@string/titleContribute">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/firebirdberlin/SmartRingController"/>
+
+        </Preference>
+
+        <Preference
+            android:selectable="false"
+            android:enabled="true"
+            android:title="@string/titleAboutLanguages"
+            android:summary="@string/summaryAboutLanguages"/>
+
+        <Preference
+            android:icon="@drawable/ic_icons8"
+            android:key="about_icons8"
+            android:title="Icons"
+            android:summary="icons8" >
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://icons8.com"/>
+        </Preference>
+    </PreferenceScreen>
+</PreferenceScreen>
