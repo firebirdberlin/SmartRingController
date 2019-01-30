@@ -38,14 +38,14 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             // activate tts
             if (am.isBluetoothA2dpOn() == false){
                 TTSService.stopReading(context);
-                String from = getContactNameFromNumber(incomingNumber, context.getContentResolver());
+                String from = getContactNameFromNumber(context, incomingNumber, context.getContentResolver());
 
                 String text = context.getString(R.string.TTS_AnnounceCall) +
                                 " " + from + ".";
                 TTSService.queueMessage(text, context);
             }
 
-        } else{ // OFFHOOK or IDLE
+        } else { // OFFHOOK or IDLE
             TTSService.stopReading(context);
         }
 
@@ -61,8 +61,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         }
     }
 
-    private String getContactNameFromNumber(String number, ContentResolver contentResolver) {
-        if (!Utility.hasPermission(this, Manifest.permission.READ_CONTACTS)) {
+    private String getContactNameFromNumber(Context context, String number, ContentResolver contentResolver) {
+        if (!Utility.hasPermission(context, Manifest.permission.READ_CONTACTS)) {
             return number;
         }
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
