@@ -1,7 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,7 +13,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 
-public class SmartRingController extends Activity {
+public class SmartRingController extends BillingHelperActivity {
     public static final String TAG = "SmartRingController";
     public static final String PREFS_KEY = "SmartRingController preferences";
     public static final String TTS_MODE_HEADPHONES = "headphones";
@@ -26,6 +25,7 @@ public class SmartRingController extends Activity {
     public static final int NOTIFICATION_ID_TTS = 11;
     private ActionBar actionbar;
     private Context mContext = null;
+    private PreferencesFragment preferencesFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class SmartRingController extends Activity {
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 SharedPreferences.Editor prefEditor = settings.edit();
                 prefEditor.putBoolean("enabled", isChecked);
-                prefEditor.commit();
+                prefEditor.apply();
 
                 toggleComponentState(mContext, RingerModeStateChangeReceiver.class, isChecked);
                 toggleComponentState(mContext, TTSService.class, isChecked);
@@ -71,7 +71,7 @@ public class SmartRingController extends Activity {
                 toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
                 toggleComponentState(mContext, EnjoyTheSilenceService.class, isChecked);
 
-                if (isChecked){
+                if (isChecked) {
                     setupMainPage();
                 } else {
                     setupWelcomePage();
@@ -83,20 +83,34 @@ public class SmartRingController extends Activity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
     }
 
-    private void setupWelcomePage(){
+    private void setupWelcomePage() {
+        preferencesFragment = null;
         getFragmentManager().beginTransaction()
             .replace(android.R.id.content, new WelcomeFragment())
             .commit();
     }
 
     private void setupMainPage() {
+        preferencesFragment = new PreferencesFragment();
         getFragmentManager().beginTransaction()
-            .replace(android.R.id.content, new PreferencesFragment())
+            .replace(android.R.id.content, preferencesFragment)
             .commit();
+    }
+
+    @Override
+    protected void updateAllPurchases() {
+        super.updateAllPurchases();
+        if (preferencesFragment != null) {
+            if (isPurchased("donation")) {
+                preferencesFragment.onItemPurchased("donation");
+            } else if ( isPurchased("pro") ) {
+                preferencesFragment.onItemPurchased("pro");
+            }
+        }
     }
 
     public void toggleComponentState(Context context, Class component, boolean on){

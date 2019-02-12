@@ -3,6 +3,9 @@
     <string name="app_name">SmartRingController</string>
     <string name="btnTest">Umgebungslautstärke messen</string>
     <string name="btnTestNotification">Testbenachrichtigung senden</string>
+    <string name="buy">Kaufen</string>
+    <string name="buyDonation">Spenden</string>
+    <string name="buyPro">Vollversion kaufen</string>
     <string name="disconnectWhenFaceDown">… und trenne Datenverbindung.</string>
     <string name="managePermissions">Berechtigungen verwalten</string>
     <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
@@ -10,6 +13,9 @@
     <string name="notification_listeners">Benachrichtigungszugriff</string>
     <string name="notification_listener_message">Bitte erlauben Sie den Zugriff auf Benachrichtigungen.</string>
     <string name="notificationSoundUri">Benachrichtigungston</string>
+    <string name="product_name_donation">Spende</string>
+    <string name="product_name_pro">Vollversion</string>
+    <string name="product_name_trial">Testversion</string>
     <string name="radio_TTS_always"> … immer über Lautsprecher.</string>
     <string name="radio_TTS_headphones"> … über Kopfhörer.</string>
     <string name="read_out_notifications">Benachrichtigungen vorlesen</string>
@@ -46,9 +52,15 @@
     <string name="systemVibrationSummary">Hinweis: Um ein optimales Ergebnis zu erzielen, sollten Sie die Vibration für Anrufe und Benachrichtigungen deaktivieren.</string>
     <string name="titleSilenceMode">Lautlos Modus.</string>
     <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>
-    <string name="tvWelcome">SmartRingController regelt die Klingeltonlautstärke automatisch je nachdem wie laut es in der Umgebung ist. Darüber hinaus können Benachrichtigungen vorgelesen werden.
-\n
-\nDer Service läuft zur Zeit NICHT. Um ihn zu aktivieren, betätigen Sie bitte den Schalter oben rechts.</string>
+    <string name="tvWelcome">
+       <![CDATA[
+        <p>
+        SmartRingController regelt die Klingeltonlautstärke automatisch je nachdem wie laut es in
+        der Umgebung ist. Darüber hinaus können Benachrichtigungen vorgelesen werden.
+        </p>
+        <p>Der Service läuft zur Zeit <em>NICHT</em>. Um ihn zu aktivieren, betätigen Sie bitte den Schalter oben rechts.</p>
+        ]]>
+    </string>
     <string name="titleContribute">Beitragen</string>
     <string name="titleDonate">Spenden</string>
     <string name="tvAbout">Wenn Sie die App mögen, geben Sie bitte eine positive Bewertung. Haben Sie einen Fehler gefunden ? Fehlt Ihnen eine Funktion ? Zögern Sie nicht, mich zu kontaktieren (stefan.fruhner@gmail.com).

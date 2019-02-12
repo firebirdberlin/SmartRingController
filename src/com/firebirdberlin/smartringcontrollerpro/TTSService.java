@@ -112,9 +112,7 @@ public class TTSService extends Service {
 
     @Override
     public void onCreate() {
-
-        Notification note = buildNotification(getString(R.string.notificationChannelNameTTS));
-        startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
+        callStartForground();
 
         audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -126,6 +124,12 @@ public class TTSService extends Service {
         } else {
             accelerometerPresent = false;
         }
+    }
+
+    void callStartForground() {
+        Utility.createNotificationChannels(getApplicationContext());
+        Notification note = buildNotification(getString(R.string.notificationChannelNameTTS));
+        startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
     }
 
     private Notification buildNotification(String message) {
@@ -154,6 +158,7 @@ public class TTSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        callStartForground();
         if (intent == null) {
             // Service restarted after suspension. Nothing to do.
             stopSelf();

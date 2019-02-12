@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
@@ -33,7 +35,7 @@ import de.firebirdberlin.preference.InlineProgressPreference;
 import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
-public class PreferencesFragment extends PreferenceFragment {
+public class PreferencesFragment extends PreferenceFragment implements BillingHelperActivity.ItemPurchaseListener {
     private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
 
     public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
@@ -67,6 +69,23 @@ public class PreferencesFragment extends PreferenceFragment {
         seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
         seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
         progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
+        Preference buyDonation = findPreference("buyDonation");
+        final PreferencesFragment listener = this;
+        buyDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ((SmartRingController) getActivity()).showPurchaseDialog(listener);
+                return true;
+            }
+        });
+        Preference buyPro = findPreference("buyPro");
+        buyPro.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ((SmartRingController) getActivity()).showPurchaseDialog(listener);
+                return true;
+            }
+        });
 
         ctrlRingerVolume.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -167,6 +186,8 @@ public class PreferencesFragment extends PreferenceFragment {
                 }
             });
         }
+
+        ((SmartRingController) getActivity()).updateAllPurchases();
     }
 
     private void requestNotificationListenerGrants() {
@@ -283,4 +304,52 @@ public class PreferencesFragment extends PreferenceFragment {
         intent.setData(uri);
         startActivity(intent);
     }
+
+    public void onItemPurchased(String sku) {
+        // no matter which item was purchased, we enable everything
+        enablePreference("preferenceScreenNotifications");
+        enablePreference("preferenceScreenTTS");
+        enablePreference("preferenceScreenVibration");
+        enablePreference("preferenceScreenActions");
+        removePreference("buyPro");
+    }
+
+    private void removePreference(String key) {
+        Preference preference = findPreference(key);
+        removePreference(preference);
+    }
+
+    private void removePreference(Preference preference) {
+        if (preference == null) {
+            return;
+        }
+        PreferenceGroup parent = getParent(getPreferenceScreen(), preference);
+        if ( parent != null ) {
+            parent.removePreference(preference);
+        }
+    }
+
+    private void enablePreference(String key) {
+        Preference preference = findPreference(key);
+
+        if (preference != null) {
+            preference.setEnabled(true);
+        }
+    }
+    private PreferenceGroup getParent(PreferenceGroup root, Preference preference) {
+        for (int i = 0; i < root.getPreferenceCount(); i++) {
+            Preference p = root.getPreference(i);
+            if (p == preference) {
+                return root;
+            }
+            if (PreferenceGroup.class.isInstance(p)) {
+                PreferenceGroup parent = getParent((PreferenceGroup)p, preference);
+                if (parent != null) {
+                    return parent;
+                }
+            }
+        }
+        return null;
+    }
+
 }

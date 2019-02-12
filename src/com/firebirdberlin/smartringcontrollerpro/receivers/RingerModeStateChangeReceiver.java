@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 
 import com.firebirdberlin.smartringcontrollerpro.EnjoyTheSilenceService;
+import com.firebirdberlin.smartringcontrollerpro.Logger;
 import com.firebirdberlin.smartringcontrollerpro.R;
 import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
 import com.firebirdberlin.smartringcontrollerpro.Utility;
@@ -22,6 +23,7 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
     private Context mContext;
     @Override
     public void onReceive(Context context, Intent intent) {
+        Logger.d(TAG, "onReceive");
         if (intent == null) return;
         Bundle bundle = intent.getExtras();
         if (bundle == null) {

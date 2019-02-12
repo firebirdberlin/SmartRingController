@@ -3,6 +3,7 @@ package com.firebirdberlin.smartringcontrollerpro;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.format.DateFormat;
+
+import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +23,7 @@ public class mNotificationListener extends NotificationListenerService {
     private long last_notification_posted = 0;
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
+    private RingerModeStateChangeReceiver ringerModeStateChangeReceiver;
     public static boolean isRunning = false;
 
     @Override
@@ -37,11 +41,17 @@ public class mNotificationListener extends NotificationListenerService {
     @Override
     public void onListenerConnected() {
         isRunning = true;
+        ringerModeStateChangeReceiver = new RingerModeStateChangeReceiver();
+        registerReceiver(ringerModeStateChangeReceiver, new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION));
     }
 
     @Override
     public void onListenerDisconnected() {
         isRunning = false;
+        if (ringerModeStateChangeReceiver != null) {
+            unregisterReceiver(ringerModeStateChangeReceiver);
+            ringerModeStateChangeReceiver = null;
+        }
     }
 
     @Override

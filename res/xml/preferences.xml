@@ -80,8 +80,16 @@
             android:title="@string/title_increasing_ringer_volume" />
 
     </PreferenceScreen>
+
+    <Preference
+        android:key="buyPro"
+        android:title="@string/buyPro"
+        />
+
     <PreferenceScreen
         android:icon="@drawable/ic_menu"
+        android:key="preferenceScreenNotifications"
+        android:enabled="false"
         android:title="@string/switch_handle_notification">
 
         <PreferenceCategory
@@ -89,7 +97,7 @@
             android:title="@string/switch_handle_notification">
 
             <SwitchPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:key="handleNotification"
                 android:title="@string/switch_handle_notification" />
 
@@ -114,6 +122,8 @@
 
     <PreferenceScreen
         android:icon="@drawable/ic_phone"
+        android:key="preferenceScreenVibration"
+        android:enabled="false"
         android:title="@string/switch_handle_vibration">
         <SwitchPreference
             android:defaultValue="false"
@@ -122,7 +132,7 @@
             android:title="@string/switch_handle_vibration" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:dependency="handle_vibration"
             android:key="Ctrl.BrokenProximitySensor"
             android:summary="@string/tvBrokenProximitySensor" />
@@ -136,6 +146,8 @@
 
     <PreferenceScreen
         android:icon="@drawable/ic_menu"
+        android:key="preferenceScreenTTS"
+        android:enabled="false"
         android:title="@string/read_out_notifications">
 
         <SwitchPreference
@@ -169,6 +181,7 @@
     <PreferenceScreen
         android:icon="@drawable/ic_call"
         android:key="preferenceScreenActions"
+        android:enabled="false"
         android:title="@string/tvInCallActions">
 
         <PreferenceCategory android:title="@string/tvReduceVolume">
@@ -241,7 +254,11 @@
             android:title="@string/titlePrivacyPolicy">
             <intent android:action="android.intent.action.VIEW"
                 android:data="http://nightclock.duckdns.org/apps/SmartRingController/privacy.html"/>
+        </Preference>
 
+        <Preference
+            android:key="buyDonation"
+            android:title="@string/buyDonation">
         </Preference>
 
         <Preference

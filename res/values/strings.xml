@@ -3,6 +3,11 @@
     <string name="app_name">Smart Ring Controller</string>
     <string name="btnTest">Measure ambient noise</string>
     <string name="btnTestNotification">Send a test notification</string>
+    <string name="buy">Buy</string>
+    <string name="buyDonation">Donate</string>
+    <string name="buyPro">Buy full version</string>
+    <string name="dialog_message_thank_you">Thank you very much!</string>
+    <string name="dialog_title_thank_you">Thanks</string>
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="managePermissions">Manage permissions</string>
     <string name="msgTestNotification">This is a test notification.</string>
@@ -14,6 +19,9 @@
     <string name="notificationChannelNameTTS">TTS Service</string>
     <string name="notificationChannelDescTTS">Notification indication that text-to-speech is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
+    <string name="product_name_donation">Donation</string>
+    <string name="product_name_pro">Full version</string>
+    <string name="product_name_trial">Trial version</string>
     <string name="radio_TTS_always"> … always via speakerphone.</string>
     <string name="radio_TTS_headphones"> … with headphones.</string>
     <string name="read_out_notifications">Read out notifications</string>
@@ -55,22 +63,25 @@
     <string name="titleSilenceMode">Silence mode.</string>
     <string name="msgRestoreRingerMode">Click to restore normal mode.</string>
     <string name="tvWelcome">
+       <![CDATA[
+        <p>
         SmartRingController adjusts the ringer volume
-        automatically according to the ambient noise level. It also reads out notifications.\n\n
-
-        The service is currently NOT enabled. To enable the service
-        use the switch in the action bar.
+        automatically according to the ambient noise level. It also reads out notifications.</p>
+        <p>
+        The service is currently <em>INACTIVE</em>. To enable the service
+        use the switch in the action bar.</p>
+        ]]>
     </string>
     <string name="titleContribute">Contribute</string>
     <string name="titleDonate">Donate</string>
     <string name="tvAbout">
-        If you like this app, please rate it. If you find errors or
-        if you are missing any feature, please contact the author
-        rather than giving a negative rating.\n\n
+If you like this app, please rate it. If you find errors or
+if you are missing any feature, please contact the author
+rather than giving a negative rating.\n\n
 
-        This software may not be free from defects. It is used on
-        your own risk. The author is not liable for
-        direct, indirect, incidential or consequential damage.
+This software may not be free from defects. It is used on
+your own risk. The author is not liable for
+direct, indirect, incidential or consequential damage.
     </string>
     <string name="titleAboutCredits">Author</string>
     <string name="titlePrivacyPolicy">Privacy Policy</string>
