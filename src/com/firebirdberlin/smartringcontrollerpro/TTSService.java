@@ -137,7 +137,7 @@ public class TTSService extends Service {
                 Utility.buildNotification(this, SmartRingController.NOTIFICATION_CHANNEL_ID_TTS)
                         .setContentTitle(getString(R.string.app_name))
                         .setContentText(message)
-                        .setSmallIcon(R.drawable.ic_voice)
+                        .setSmallIcon(R.drawable.ic_speaker_phone_30dp)
                         .setPriority(NotificationCompat.PRIORITY_MIN);
 
         Notification note = noteBuilder.build();

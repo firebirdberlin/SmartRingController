@@ -3,13 +3,13 @@
     android:key="main_screen">
 
     <PreferenceScreen
-        android:icon="@drawable/ic_speaker"
+        android:icon="@drawable/ic_ring_volume_30dp"
         android:key="Ctrl.RingerVolumePreferenceScreen"
         android:title="@string/title_handle_ambient_noise">
 
         <SwitchPreference
             android:key="Ctrl.RingerVolume"
-            android:icon="@drawable/ic_speaker"
+            android:icon="@drawable/ic_ring_volume_30dp"
             android:title="@string/title_handle_ambient_noise"
             android:summary="@string/switch_handle_ambient_noise"
             android:defaultValue="false"/>
@@ -83,11 +83,12 @@
 
     <Preference
         android:key="buyPro"
+        android:icon="@drawable/ic_shop_30dp"
         android:title="@string/buyPro"
         />
 
     <PreferenceScreen
-        android:icon="@drawable/ic_menu"
+        android:icon="@drawable/ic_notifications_30dp"
         android:key="preferenceScreenNotifications"
         android:enabled="false"
         android:title="@string/switch_handle_notification">
@@ -121,13 +122,13 @@
     </PreferenceScreen>
 
     <PreferenceScreen
-        android:icon="@drawable/ic_phone"
+        android:icon="@drawable/ic_vibration_30dp"
         android:key="preferenceScreenVibration"
         android:enabled="false"
         android:title="@string/switch_handle_vibration">
         <SwitchPreference
             android:defaultValue="false"
-            android:icon="@drawable/ic_phone"
+            android:icon="@drawable/ic_vibration_30dp"
             android:key="handle_vibration"
             android:title="@string/switch_handle_vibration" />
 
@@ -145,7 +146,7 @@
     </PreferenceScreen>
 
     <PreferenceScreen
-        android:icon="@drawable/ic_menu"
+        android:icon="@drawable/ic_speaker_phone_30dp"
         android:key="preferenceScreenTTS"
         android:enabled="false"
         android:title="@string/read_out_notifications">
@@ -153,7 +154,7 @@
         <SwitchPreference
             android:clickable="false"
             android:defaultValue="false"
-            android:icon="@drawable/ic_voice"
+            android:icon="@drawable/ic_speaker_phone_30dp"
             android:key="TTS.enabled"
             android:summary="@string/tvTTSenabled"
             android:title="@string/tabTTS" />
@@ -179,7 +180,7 @@
     </PreferenceScreen>
 
     <PreferenceScreen
-        android:icon="@drawable/ic_call"
+        android:icon="@drawable/ic_phone_30dp"
         android:key="preferenceScreenActions"
         android:enabled="false"
         android:title="@string/tvInCallActions">
@@ -221,7 +222,7 @@
 
     <PreferenceScreen
         android:key="about_screen"
-        android:icon="@drawable/ic_about"
+        android:icon="@drawable/ic_info_outline_30dp"
         android:title="@string/tabAbout">
 
         <de.firebirdberlin.preference.VersionPreference
@@ -258,11 +259,12 @@
 
         <Preference
             android:key="buyDonation"
+            android:icon="@drawable/ic_shop_30dp"
             android:title="@string/buyDonation">
         </Preference>
 
         <Preference
-            android:icon="@drawable/ic_globe"
+            android:icon="@drawable/ic_language_30dp"
             android:summary="Please add or update the translation for your language."
             android:title="Translations wanted !">
             <intent android:action="android.intent.action.VIEW"
@@ -283,14 +285,5 @@
             android:title="@string/titleAboutLanguages"
             android:summary="@string/summaryAboutLanguages"/>
 
-        <Preference
-            android:icon="@drawable/ic_icons8"
-            android:key="about_icons8"
-            android:title="Icons"
-            android:summary="icons8" >
-
-            <intent android:action="android.intent.action.VIEW"
-                android:data="https://icons8.com"/>
-        </Preference>
     </PreferenceScreen>
 </PreferenceScreen>
