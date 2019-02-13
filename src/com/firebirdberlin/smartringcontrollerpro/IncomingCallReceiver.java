@@ -1,19 +1,17 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.media.AudioManager;
-import android.net.Uri;
-import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.TelephonyManager;
+
+import com.firebirdberlin.smartringcontrollerpro.R;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
     private final static String TAG = "IncomingCallReceiver";
+    public static String currentCallState = "None";
     @Override
     public void onReceive(Context context, Intent intent) {
         Logger.d(TAG, "onReceive");
@@ -24,6 +22,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+        currentCallState = state;
         String msg = "Phone state changed to " + state;
         if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
 
@@ -36,14 +35,16 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             context.startService(i);
 
             // activate tts
-            if (am.isBluetoothA2dpOn() == false){
+            /*
+            if (am.isBluetoothA2dpOn() == false && incomingNumber != null){
                 TTSService.stopReading(context);
-                String from = getContactNameFromNumber(context, incomingNumber, context.getContentResolver());
+                String from = Utility.getContactNameFromNumber(context, incomingNumber, context.getContentResolver());
 
-                String text = context.getString(R.string.TTS_AnnounceCall) +
-                                " " + from + ".";
+                String text = String.format(
+                        "%s %s.", context.getString(R.string.TTS_AnnounceCall), from);
                 TTSService.queueMessage(text, context);
             }
+            */
 
         } else { // OFFHOOK or IDLE
             TTSService.stopReading(context);
@@ -60,32 +61,4 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             Logger.d(TAG, "setting media volume " + String.valueOf(vol));
         }
     }
-
-    private String getContactNameFromNumber(Context context, String number, ContentResolver contentResolver) {
-        if (!Utility.hasPermission(context, Manifest.permission.READ_CONTACTS)) {
-            return number;
-        }
-        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
-
-        Cursor cursor = null;
-        try {
-          cursor = contentResolver.query(uri, new String[]{ PhoneLookup.DISPLAY_NAME }, null, null, null);
-
-          if (cursor.isAfterLast()) {
-            // If nothing was found, return the number....
-            Logger.w(TAG, "Unable to look up incoming number in contacts");
-            return number;
-          }
-
-          // ...otherwise return the first entry.
-          cursor.moveToFirst();
-          int nameFieldColumnIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);
-          String contactName = cursor.getString(nameFieldColumnIndex);
-          return contactName;
-        } finally {
-          cursor.close();
-        }
-    }
-
-
 }

@@ -1,22 +1,28 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 
-public class Utility{
+public class Utility {
+
+    private static final String TAG = "Utility";
 
     public static void playNotification(Context context){
         try {
@@ -140,5 +146,30 @@ public class Utility{
                 == PackageManager.PERMISSION_GRANTED);
     }
 
+    public static String getContactNameFromNumber(Context context, String number, ContentResolver contentResolver) {
+        if (!Utility.hasPermission(context, Manifest.permission.READ_CONTACTS)) {
+            return number;
+        }
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(uri, new String[]{ ContactsContract.PhoneLookup.DISPLAY_NAME }, null, null, null);
+
+            if (cursor.isAfterLast()) {
+                // If nothing was found, return the number....
+                Logger.w(TAG, "Unable to look up incoming number in contacts");
+                return number;
+            }
+
+            // ...otherwise return the first entry.
+            cursor.moveToFirst();
+            int nameFieldColumnIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
+            String contactName = cursor.getString(nameFieldColumnIndex);
+            return contactName;
+        } finally {
+            cursor.close();
+        }
+    }
 }
 

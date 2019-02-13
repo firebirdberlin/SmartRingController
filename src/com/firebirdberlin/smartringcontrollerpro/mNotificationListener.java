@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
 
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
@@ -25,6 +26,9 @@ public class mNotificationListener extends NotificationListenerService {
     private SharedPreferences settings;
     private RingerModeStateChangeReceiver ringerModeStateChangeReceiver;
     public static boolean isRunning = false;
+
+    String lastNotificationKey;
+    String lastText;
 
     @Override
     public void onCreate() {
@@ -58,17 +62,47 @@ public class mNotificationListener extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn) {
 
         if (!settings.getBoolean("enabled", false)) return;
-        // phone call is handled elsewhere
-        if (sbn.getPackageName().equals("com.android.phone")) return;
         Notification n = sbn.getNotification();
 
-        Logger.i(TAG,"**********  onNotificationPosted");
-        Logger.i(TAG,"********** " + sbn.getPackageName());
-        Logger.i(TAG,"********** " + sbn.getNotification().tickerText);
-        Logger.i(TAG,"********** " + n.sound);
+        Logger.i(TAG,"**********  onNotificationPosted  ************************************");
+        Logger.i(TAG,"**********   package " + sbn.getPackageName());
+        Logger.i(TAG,"**********       key " + sbn.getKey());
+        Logger.i(TAG,"********** group_key " + sbn.getGroupKey());
+        if (Build.VERSION.SDK_INT >= 24) {
+            Logger.i(TAG, "********** override group key " + sbn.getOverrideGroupKey());
+        }
+        String text = getText(n, this);
+        Logger.i(TAG,"**********      text " + text);
+        Logger.i(TAG,"**********     sound " + n.sound);
+        Logger.i(TAG,"********** clearable " + sbn.isClearable());
+
+        // phone call is handled elsewhere
+        if (sbn.getPackageName().equals("com.android.phone")) return;
+
+        // Notifications sometimes appear twice. We identify successive notifications be equality
+        // of their keys and ignore them.
+        if ((lastNotificationKey != null && lastNotificationKey.equals(sbn.getKey()))
+            || (lastText != null && lastText.equals(text)))  {
+            return;
+        }
+
+        if (sbn.getPackageName().equals("com.google.android.dialer") && ! sbn.isClearable()
+                && TelephonyManager.EXTRA_STATE_RINGING.equals(IncomingCallReceiver.currentCallState)) {
+            String number = getTitle(this, n);
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            if (!am.isBluetoothA2dpOn()){
+                String from = Utility.getContactNameFromNumber(this, number, this.getContentResolver());
+                String text = String.format("%s %s.", getString(R.string.TTS_AnnounceCall), from);
+                queueMessage(text, this);
+            }
+            lastNotificationKey = sbn.getKey();
+            return;
+        }
 
         if (sbn.isClearable() ) {
             queueMessage(n, this);
+            lastNotificationKey = sbn.getKey();
+            lastText = text;
         }
 
 
@@ -96,7 +130,6 @@ public class mNotificationListener extends NotificationListenerService {
         // if the last notification was within the last 3s
         // just queue the message but play no sound
         if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
-            //queueMessage(n, this);
             return;
         }
 
@@ -111,23 +144,21 @@ public class mNotificationListener extends NotificationListenerService {
                 i2.putExtra("Sound", n.sound.toString() );
             }
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                int interruptionFilter = getCurrentInterruptionFilter();
-                Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
-                if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
-                    Logger.d(TAG, "starting SetRingerService");
-                    startService(i2);
-                }
-            } else {
+            int interruptionFilter = getCurrentInterruptionFilter();
+            Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
+            if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
+                Logger.d(TAG, "starting SetRingerService");
                 startService(i2);
             }
         }
-
-        //queueMessage(n, this);
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
+    }
+
+    public static void queueMessage(String msg, Context context){
+        TTSService.queueMessage(msg, context);
     }
 
     public static void queueMessage(Notification n, Context context){
@@ -149,16 +180,22 @@ public class mNotificationListener extends NotificationListenerService {
         return result;
     }
 
-    public static String getText(Notification notification, Context context) {
+    private static String getTitle(Context context, Notification notification) {
         Bundle extras = notification.extras;
-        String title = extras.getString(Notification.EXTRA_TITLE);
-        String text = extras.getString(Notification.EXTRA_TEXT);
+        CharSequence title = extras.getCharSequence(Notification.EXTRA_TITLE);
+        return (title == null) ? "" : title.toString();
+    }
+
+    public static String getText(Notification notification, Context context) {
+        String title = getTitle(context, notification);
+        Bundle extras = notification.extras;
+        CharSequence sequence = extras.getCharSequence(Notification.EXTRA_TEXT);
+        String text = (sequence != null) ? sequence.toString() : null;
         if (text == null && notification.tickerText != null) {
             text = notification.tickerText.toString();
         }
 
-        String result = "";
-        if (title != null) result += title + " ";
+        String result = title + " ";
         if (text != null) result += text + " ";
         if (result.isEmpty()) {
             return null;
