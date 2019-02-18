@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 
@@ -102,13 +103,36 @@ public class SmartRingController extends BillingHelperActivity {
     }
 
     @Override
+    protected void onPurchasesInitialized() {
+        super.onPurchasesInitialized();
+
+        if (preferencesFragment != null) {
+            if (! isPurchased(BillingHelper.ITEM_PRO) &&
+                    ! isPurchased(BillingHelper.ITEM_DONATION)) {
+                // disable pro features
+                SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putBoolean("handleNotification", false);
+                prefEditor.putBoolean("handle_vibration", false);
+                prefEditor.putBoolean("TTS.enabled", false);
+                prefEditor.putBoolean("ShakeAction", false);
+                prefEditor.putBoolean("FlipAction", false);
+                prefEditor.putBoolean("PullOutAction", false);
+                prefEditor.putBoolean("SilentWhilePebbleConnected", false);
+                prefEditor.apply();
+                setupMainPage();
+            }
+        }
+    }
+
+    @Override
     protected void updateAllPurchases() {
         super.updateAllPurchases();
         if (preferencesFragment != null) {
-            if (isPurchased("donation")) {
-                preferencesFragment.onItemPurchased("donation");
-            } else if ( isPurchased("pro") ) {
-                preferencesFragment.onItemPurchased("pro");
+            if (isPurchased(BillingHelper.ITEM_DONATION)) {
+                preferencesFragment.onItemPurchased(BillingHelper.ITEM_DONATION);
+            } else if ( isPurchased(BillingHelper.ITEM_PRO) ) {
+                preferencesFragment.onItemPurchased(BillingHelper.ITEM_PRO);
             }
         }
     }

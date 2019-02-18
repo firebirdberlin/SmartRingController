@@ -55,6 +55,7 @@ public abstract class BillingHelperActivity extends Activity {
             mService = IInAppBillingService.Stub.asInterface(service);
             billingHelper = new BillingHelper(getApplicationContext(), mService);
             updateAllPurchases();
+            onPurchasesInitialized();
         }
     };
 
@@ -237,6 +238,10 @@ public abstract class BillingHelperActivity extends Activity {
         if (billingHelper != null) {
             purchases = billingHelper.getPurchases();
         }
+    }
+
+    protected void onPurchasesInitialized() {
+
     }
 
     public void showThankYouDialog() {

@@ -13,6 +13,7 @@ import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -48,6 +49,13 @@ public class TTSService extends Service {
     private AudioManager audioManager;
     private int systemVolume;
 
+    Handler handler = new Handler();
+    Runnable shutdownRunnable = new Runnable() {
+        @Override
+        public void run() {
+            stopTTSService();
+        }
+    };
     public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
 
     public class LocalBinder extends Binder {
@@ -178,15 +186,12 @@ public class TTSService extends Service {
                     } else {
                         // Otherwise clear the queue.
                         messageQueue.clear();
+                        stopTTSService();
                     }
                 }
             } else if (intent.hasExtra(STOP_READING_EXTRA)) {
-                boolean stop = (tts != null);
-                if (stop) {
-                    // This will trigger onUtteranceCompleted, so we don't have to worry about cleaning up.
-                    tts.stop();
-                }
                 messageQueue.clear();
+                stopTTSService();
 
             } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
                 String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
@@ -233,17 +238,18 @@ public class TTSService extends Service {
                             tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                                 @Override
                                 public void onError(String utteranceId) {
-
+                                    stopTTSService();
                                 }
 
                                 @Override
                                 public void onStart(String utteranceId) {
-
+                                    handler.removeCallbacks(shutdownRunnable);
                                 }
 
                                 @Override
                                 public void onDone(String utteranceId) {
                                     updateNotification("...");
+                                    handler.postDelayed(shutdownRunnable, 15000);
                                     restoreAudio();
                                     synchronized (messageQueue) {
                                         messageQueue.poll(); // retrieves and removes head of the queue
@@ -255,10 +261,8 @@ public class TTSService extends Service {
                                                 Logger.w(TAG, e.toString());
                                             }
                                             audioManager.stopBluetoothSco();
-                                            tts.shutdown();
-                                            tts = null;
                                             Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
-                                            TTSService.this.stopSelf();
+                                            stopTTSService();
                                         } else {
                                             Logger.i(TAG, "Speaking next message.");
                                             speak(messageQueue.peek());
@@ -272,6 +276,8 @@ public class TTSService extends Service {
                             }
                         }
                     });
+                } else {
+                    stopTTSService();
                 }
             }
 
@@ -335,8 +341,7 @@ public class TTSService extends Service {
                     if ((shake_left >= 1 && shake_right >= 2) ||
                             (shake_left >= 2 && shake_right >= 1)){
 
-                        tts.stop(); // stop reading current message
-                        stopSelf();
+                        stopTTSService();
                         shake_left = shake_right = 0;
                     }
 
@@ -344,6 +349,15 @@ public class TTSService extends Service {
 
             }
         };
+
+    private void stopTTSService() {
+        if (tts != null) {
+            tts.stop(); // stop reading current message
+            tts.shutdown();
+            tts = null;
+        }
+        stopSelf();
+    }
 
     private void prepareAudio() {
         final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);

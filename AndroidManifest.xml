@@ -58,49 +58,32 @@
 
         <service android:enabled="false" android:name=".EnjoyTheSilenceService" />
 
-        <receiver android:name=".IncomingCallReceiver"
-            android:enabled="false"
-            android:priority="1000">
-
+        <receiver android:name=".receivers.RingerModeStateChangeReceiver" android:enabled="true"/>
+        <receiver android:name=".receivers.BluetoothScoReceiver" android:enabled="true"/>
+        <receiver android:name=".receivers.HeadsetPlugReceiver" android:enabled="true"/>
+        <receiver android:name=".receivers.IncomingCallReceiver" android:enabled="false">
             <intent-filter android:priority="1000">
                  <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".pebble.PebbleConnectionReceiver"
-            android:enabled="false"
-            android:priority="1000">
+        <receiver android:name=".pebble.PebbleConnectionReceiver" android:enabled="false">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_CONNECTED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".pebble.PebbleDisconnectionReceiver"
-            android:enabled="false"
-            android:priority="1000">
+        <receiver android:name=".pebble.PebbleDisconnectionReceiver" android:enabled="false">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.PEBBLE_DISCONNECTED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".pebble.PebbleMessageReceiver"
-            android:enabled="false"
-            android:priority="1000">
-
+        <receiver android:name=".pebble.PebbleMessageReceiver" android:enabled="false">
             <intent-filter android:priority="1000">
                  <action android:name="com.getpebble.action.app.RECEIVE"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receivers.RingerModeStateChangeReceiver"
-            android:enabled="true"
-            android:priority="1000">
-        </receiver>
-
-        <receiver android:name=".BluetoothScoReceiver" android:enabled="true">
-            <intent-filter>
-                <action android:name="android.media.ACTION_SCO_AUDIO_STATE_UPDATED" /> <!-- sdk 14+ -->
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

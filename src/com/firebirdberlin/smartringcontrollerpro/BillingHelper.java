@@ -6,8 +6,6 @@ import android.os.RemoteException;
 
 import com.android.vending.billing.IInAppBillingService;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

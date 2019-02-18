@@ -1,4 +1,4 @@
-package com.firebirdberlin.smartringcontrollerpro;
+package com.firebirdberlin.smartringcontrollerpro.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +7,11 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.telephony.TelephonyManager;
 
+import com.firebirdberlin.smartringcontrollerpro.Logger;
 import com.firebirdberlin.smartringcontrollerpro.R;
+import com.firebirdberlin.smartringcontrollerpro.SetRingerService;
+import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
+import com.firebirdberlin.smartringcontrollerpro.TTSService;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
     private final static String TAG = "IncomingCallReceiver";

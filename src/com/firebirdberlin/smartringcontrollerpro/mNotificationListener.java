@@ -1,6 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,11 +9,15 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
 
+import com.firebirdberlin.smartringcontrollerpro.receivers.BluetoothScoReceiver;
+import com.firebirdberlin.smartringcontrollerpro.receivers.HeadsetPlugReceiver;
+import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 import java.text.SimpleDateFormat;
@@ -25,10 +30,20 @@ public class mNotificationListener extends NotificationListenerService {
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
     private RingerModeStateChangeReceiver ringerModeStateChangeReceiver;
+    private BluetoothScoReceiver bluetoothScoReceiver;
+    private HeadsetPlugReceiver headsetPlugReceiver;
     public static boolean isRunning = false;
 
     String lastNotificationKey;
     String lastText;
+    Runnable dropLastMessage = new Runnable() {
+        @Override
+        public void run() {
+            new Handler().removeCallbacks(dropLastMessage);
+            lastText = null;
+            lastNotificationKey = null;
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -47,14 +62,31 @@ public class mNotificationListener extends NotificationListenerService {
         isRunning = true;
         ringerModeStateChangeReceiver = new RingerModeStateChangeReceiver();
         registerReceiver(ringerModeStateChangeReceiver, new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION));
+
+        bluetoothScoReceiver = new BluetoothScoReceiver();
+        registerReceiver(ringerModeStateChangeReceiver, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
+
+        headsetPlugReceiver = new HeadsetPlugReceiver();
+        registerReceiver(headsetPlugReceiver, new IntentFilter(AudioManager.ACTION_HEADSET_PLUG));
     }
 
     @Override
     public void onListenerDisconnected() {
         isRunning = false;
-        if (ringerModeStateChangeReceiver != null) {
-            unregisterReceiver(ringerModeStateChangeReceiver);
-            ringerModeStateChangeReceiver = null;
+        unregisterReceiver(bluetoothScoReceiver);
+        unregisterReceiver(headsetPlugReceiver);
+        unregisterReceiver(ringerModeStateChangeReceiver);
+        bluetoothScoReceiver = null;
+        headsetPlugReceiver = null;
+        ringerModeStateChangeReceiver = null;
+    }
+
+    @Override
+    public void unregisterReceiver(BroadcastReceiver receiver) {
+        if (receiver != null) {
+            try {
+                super.unregisterReceiver(receiver);
+            } catch (IllegalArgumentException e) { }
         }
     }
 
@@ -63,18 +95,20 @@ public class mNotificationListener extends NotificationListenerService {
 
         if (!settings.getBoolean("enabled", false)) return;
         Notification n = sbn.getNotification();
-
-        Logger.i(TAG,"**********  onNotificationPosted  ************************************");
-        Logger.i(TAG,"**********   package " + sbn.getPackageName());
-        Logger.i(TAG,"**********       key " + sbn.getKey());
-        Logger.i(TAG,"********** group_key " + sbn.getGroupKey());
-        if (Build.VERSION.SDK_INT >= 24) {
-            Logger.i(TAG, "********** override group key " + sbn.getOverrideGroupKey());
-        }
         String text = getText(n, this);
-        Logger.i(TAG,"**********      text " + text);
-        Logger.i(TAG,"**********     sound " + n.sound);
-        Logger.i(TAG,"********** clearable " + sbn.isClearable());
+        if (!"com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) {
+            Logger.i(TAG, "**********  onNotificationPosted  ************************************");
+            Logger.i(TAG, "**********   package " + sbn.getPackageName());
+            Logger.i(TAG, "**********       key " + sbn.getKey());
+            Logger.i(TAG, "********** group_key " + sbn.getGroupKey());
+            if (Build.VERSION.SDK_INT >= 24) {
+                Logger.i(TAG, "********** override group key " + sbn.getOverrideGroupKey());
+            }
+            Logger.i(TAG, "**********      text " + text);
+            Logger.i(TAG, "**********     sound " + n.sound);
+            Logger.i(TAG, "********** clearable " + sbn.isClearable());
+            Logger.i(TAG, "**********   ongoing " + sbn.isOngoing());
+        }
 
         // phone call is handled elsewhere
         if (sbn.getPackageName().equals("com.android.phone")) return;
@@ -83,6 +117,7 @@ public class mNotificationListener extends NotificationListenerService {
         // of their keys and ignore them.
         if ((lastNotificationKey != null && lastNotificationKey.equals(sbn.getKey()))
             || (lastText != null && lastText.equals(text)))  {
+            Logger.i(TAG, "********  Duplicate notification !");
             return;
         }
 
@@ -92,17 +127,21 @@ public class mNotificationListener extends NotificationListenerService {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             if (!am.isBluetoothA2dpOn()){
                 String from = Utility.getContactNameFromNumber(this, number, this.getContentResolver());
-                String text = String.format("%s %s.", getString(R.string.TTS_AnnounceCall), from);
-                queueMessage(text, this);
+                String msg = String.format("%s %s.", getString(R.string.TTS_AnnounceCall), from);
+                queueMessage(msg, this);
             }
             lastNotificationKey = sbn.getKey();
+            new Handler().postDelayed(dropLastMessage, 5000);
             return;
         }
 
-        if (sbn.isClearable() ) {
+        if (sbn.isClearable() && !sbn.isOngoing()) {
             queueMessage(n, this);
             lastNotificationKey = sbn.getKey();
             lastText = text;
+
+            int delayMillis = ("com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) ? 2000 : 60000;
+            new Handler().postDelayed(dropLastMessage, delayMillis);
         }
 
 
