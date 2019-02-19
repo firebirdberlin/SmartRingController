@@ -187,7 +187,11 @@ public class mNotificationListener extends NotificationListenerService {
             Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
             if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
                 Logger.d(TAG, "starting SetRingerService");
-                startService(i2);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(i2);
+                } else {
+                    startService(i2);
+                }
             }
         }
     }

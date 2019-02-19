@@ -21,10 +21,11 @@ public class SmartRingController extends BillingHelperActivity {
     public static final String TTS_MODE_ALWAYS = "always";
     public static final String NOTIFICATION_CHANNEL_ID_STATUS = "notification channel id status";
     public static final String NOTIFICATION_CHANNEL_ID_TTS = "notification channel id tts";
+    public static final String NOTIFICATION_CHANNEL_ID_RINGER_SERVICE = "notification channel id ringer service";
 
     public static final int NOTIFICATION_ID_STATUS = 10;
     public static final int NOTIFICATION_ID_TTS = 11;
-    private ActionBar actionbar;
+    public static final int NOTIFICATION_ID_RINGER_SERVICE = 12;
     private Context mContext = null;
     private PreferencesFragment preferencesFragment = null;
 
@@ -34,10 +35,12 @@ public class SmartRingController extends BillingHelperActivity {
         mContext = this;
         Utility.createNotificationChannels(this);
 
-        actionbar = getActionBar();
-        actionbar.setDisplayShowTitleEnabled(true);
-        actionbar.setDisplayShowHomeEnabled(true);
-        //actionBar.setTitle("");
+        ActionBar actionbar = getActionBar();
+        if (actionbar != null) {
+            actionbar.setDisplayShowTitleEnabled(true);
+            actionbar.setDisplayShowHomeEnabled(true);
+            //actionBar.setTitle("");
+        }
 
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", false);

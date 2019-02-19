@@ -109,6 +109,7 @@ public class Utility {
                 NotificationManager.IMPORTANCE_DEFAULT
         );
         notificationManager.createNotificationChannel(channelAlarms);
+
         NotificationChannel channelTTS = prepareNotificationChannel(
                 context,
                 SmartRingController.NOTIFICATION_CHANNEL_ID_TTS,
@@ -117,6 +118,14 @@ public class Utility {
                 NotificationManager.IMPORTANCE_DEFAULT
         );
         notificationManager.createNotificationChannel(channelTTS);
+        NotificationChannel channelRingerService = prepareNotificationChannel(
+                context,
+                SmartRingController.NOTIFICATION_CHANNEL_ID_RINGER_SERVICE,
+                R.string.notificationChannelNameRingerService,
+                R.string.notificationChannelDescRingerService,
+                NotificationManager.IMPORTANCE_MIN
+        );
+        notificationManager.createNotificationChannel(channelRingerService);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -17,7 +17,9 @@
     <string name="notificationChannelNameStatus">Status messages</string>
     <string name="notificationChannelDescStatus">Notification channel for status messages</string>
     <string name="notificationChannelNameTTS">TTS Service</string>
-    <string name="notificationChannelDescTTS">Notification indication that text-to-speech is active.</string>
+    <string name="notificationChannelDescTTS">Notification indicating that text-to-speech is active.</string>
+    <string name="notificationChannelNameRingerService">Volume Service</string>
+    <string name="notificationChannelDescRingerService">Notification indicating that the microphone is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
     <string name="product_name_donation">Donation</string>
     <string name="product_name_pro">Full version</string>

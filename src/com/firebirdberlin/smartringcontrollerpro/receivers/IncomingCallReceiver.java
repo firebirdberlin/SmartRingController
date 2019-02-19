@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 
 import com.firebirdberlin.smartringcontrollerpro.Logger;
-import com.firebirdberlin.smartringcontrollerpro.R;
 import com.firebirdberlin.smartringcontrollerpro.SetRingerService;
 import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
 import com.firebirdberlin.smartringcontrollerpro.TTSService;
@@ -36,7 +36,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             Intent i =  new Intent(context, SetRingerService.class);
             i.putExtra("PHONE_STATE", state);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startService(i);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(i);
+            } else {
+                context.startService(i);
+            }
 
             // activate tts
             /*

@@ -1,6 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,9 +21,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import java.lang.Math;
+
 import java.util.List;
 
 
@@ -70,8 +72,61 @@ public class SetRingerService extends Service implements SensorEventListener {
     private static float MAX_POCKET_BRIGHTNESS = 10.f; // proximity sensor fix
     private static final int INCREASING_RINGER_VOLUME_STEP_DELAY = 3000; // ms
 
+    /**
+     * The listener that listens to events connected to incoming calls
+     */
+    private final SensorEventListener inCallActions =
+            new SensorEventListener() {
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                }
+
+                public void onSensorChanged(SensorEvent event) {
+                    if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                        float x_value = event.values[0];
+                        float z_value = event.values[2];
+                        // if acceleration in x and y direction is too strong, device is moving
+                        if (settings.ShakeAction == true) {
+                            if (x_value < -12.) shake_left++;
+                            if (x_value > 12.) shake_right++;
+
+                            // shake to silence
+                            if ((shake_left >= 1 && shake_right >= 2) ||
+                                    (shake_left >= 2 && shake_right >= 1)) {
+                                handler.removeCallbacks(handleIncreasingRingerVolume);
+                                audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
+                                vibrator.cancel();
+                                shake_left = shake_right = 0;
+                            }
+                        }
+
+                        if (settings.FlipAction) {
+                            if (z_value > -10.3 && z_value < -9.3) { // display face down
+                                handler.removeCallbacks(handleIncreasingRingerVolume);
+                                audiomanager.mute();
+                                vibrator.cancel();
+                            }
+                        }
+
+                    } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                        DeviceUnCovered = (event.values[0] > 0.f);
+
+                    } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                        if ((settings.PullOutAction) && isCovered()) {
+                            // Attention do not choose the value to low,
+                            // noise produces values up to 12 lux on my GNex
+                            if (event.values[0] >= 15.f) { // uncovered
+                                handler.removeCallbacks(handleIncreasingRingerVolume);
+                                audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
+                                vibrator.cancel();
+                            }
+                        }
+                    }
+                }
+            };
+
     @Override
     public void onCreate(){
+        callStartForeground();
 //        Logger.setDebugging( true );
         Logger.setDebugging( Utility.isDebuggable(this) );
 
@@ -100,58 +155,26 @@ public class SetRingerService extends Service implements SensorEventListener {
         telephone = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() ( running = " + String.valueOf(running) +" )");
-        // no action needed
-        if (audiomanager.isSilent() || audiomanager.isVibration() || (settings.enabled == false)){
-            stopSelf();
-            return Service.START_NOT_STICKY;
-        }
+    void callStartForeground() {
+        Utility.createNotificationChannels(getApplicationContext());
+        Notification note = buildNotification(getString(R.string.notificationChannelNameRingerService));
+        startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
+    }
 
-        // force to stop the service after 3 minutes
-        handler.postDelayed(stopService, 180000);
+    private Notification buildNotification(String message) {
+        NotificationCompat.Builder noteBuilder =
+                Utility.buildNotification(this, SmartRingController.NOTIFICATION_CHANNEL_ID_RINGER_SERVICE)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(message)
+                        .setSmallIcon(R.drawable.ic_phone_30dp)
+                        .setPriority(NotificationCompat.PRIORITY_MIN);
 
-        if (running) {
-            // Don't bother the service while already running.
-            // The volume is beeing set right now.
-            Logger.i(TAG,"Declined ! Service already running");
-            return Service.START_NOT_STICKY;
-        }
-        running = true;
+        Notification note = noteBuilder.build();
 
-        // store the initial call state for later use
-        initialPhoneState = telephone.getCallState();
-        DeviceIsCovered = false;
-        PhoneState = "None";
-        targetVolume = settings.minRingerVolume;
+        note.flags |= Notification.FLAG_NO_CLEAR;
+        note.flags |= Notification.FLAG_FOREGROUND_SERVICE;
 
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            PhoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
-            if (PhoneState.equals("Notification") && intent.hasExtra("Sound")) {
-                // store the sound URI
-                String sound = intent.getStringExtra("Sound");
-                soundUri = Uri.parse(sound);
-                Logger.i(TAG, "The notification ships this sound uri " + soundUri);
-            }
-        }
-
-        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-
-        registerListenerForSensor(proximitySensor);
-        registerListenerForSensor(lightSensor);
-        registerListenerForSensor(accelerometerSensor);
-
-        audiomanager.mute();
-        if ( PhoneState.equals("Notification") ){
-            handler.postDelayed(startListening, waitMillis);
-        } else { // phone call
-            handler.post(startListening);
-        }
-
-        return Service.START_NOT_STICKY;
+        return note;
     }
 
     @Override
@@ -429,55 +452,60 @@ public class SetRingerService extends Service implements SensorEventListener {
     private int shake_left = 0;
     private int shake_right = 0;
 
-    /**
-     * The listener that listens to events connected to incoming calls
-     */
-    private final SensorEventListener inCallActions =
-    new SensorEventListener()  {
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                float x_value = event.values[0];
-                float z_value = event.values[2];
-                // if acceleration in x and y direction is too strong, device is moving
-                if (settings.ShakeAction == true) {
-                    if (x_value < -12.) shake_left++;
-                    if (x_value > 12.) shake_right++;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand() ( running = " + String.valueOf(running) + " )");
+        callStartForeground();
+        // no action needed
+        if (audiomanager.isSilent() || audiomanager.isVibration() || (settings.enabled == false)) {
+            stopSelf();
+            return Service.START_NOT_STICKY;
+        }
 
-                    // shake to silence
-                    if ( (shake_left >= 1 && shake_right >= 2) ||
-                         (shake_left >= 2 && shake_right >= 1) ) {
-                        handler.removeCallbacks(handleIncreasingRingerVolume);
-                        audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
-                        vibrator.cancel();
-                        shake_left = shake_right = 0;
-                    }
-                }
+        // force to stop the service after 3 minutes
+        handler.postDelayed(stopService, 180000);
 
-                if (settings.FlipAction) {
-                    if (z_value > -10.3 && z_value < -9.3 ) { // display face down
-                        handler.removeCallbacks(handleIncreasingRingerVolume);
-                        audiomanager.mute();
-                        vibrator.cancel();
-                    }
-                }
+        if (running) {
+            // Don't bother the service while already running.
+            // The volume is beeing set right now.
+            Logger.i(TAG, "Declined ! Service already running");
+            return Service.START_NOT_STICKY;
+        }
+        running = true;
 
-            } else if(event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                DeviceUnCovered = (event.values[0] > 0.f);
+        // store the initial call state for later use
+        initialPhoneState = telephone.getCallState();
+        DeviceIsCovered = false;
+        PhoneState = "None";
+        targetVolume = settings.minRingerVolume;
 
-            } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                if ((settings.PullOutAction) && isCovered()) {
-                    // Attention do not choose the value to low,
-                    // noise produces values up to 12 lux on my GNex
-                    if(event.values[0] >= 15.f) { // uncovered
-                        handler.removeCallbacks(handleIncreasingRingerVolume);
-                        audiomanager.setRingerVolume(settings.minRingerVolume); // lowest volume possible
-                        vibrator.cancel();
-                    };
-                }
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            PhoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
+            if (PhoneState.equals("Notification") && intent.hasExtra("Sound")) {
+                // store the sound URI
+                String sound = intent.getStringExtra("Sound");
+                soundUri = Uri.parse(sound);
+                Logger.i(TAG, "The notification ships this sound uri " + soundUri);
             }
         }
-    };
+
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        registerListenerForSensor(proximitySensor);
+        registerListenerForSensor(lightSensor);
+        registerListenerForSensor(accelerometerSensor);
+
+        audiomanager.mute();
+        if (PhoneState.equals("Notification")) {
+            handler.postDelayed(startListening, waitMillis);
+        } else { // phone call
+            handler.post(startListening);
+        }
+
+        return Service.START_NOT_STICKY;
+    }
 
     private final BroadcastReceiver PhoneStateReceiver = new BroadcastReceiver() {
         @Override
