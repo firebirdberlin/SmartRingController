@@ -13,7 +13,6 @@ import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -49,13 +48,6 @@ public class TTSService extends Service {
     private AudioManager audioManager;
     private int systemVolume;
 
-    Handler handler = new Handler();
-    Runnable shutdownRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopTTSService();
-        }
-    };
     public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
 
     public class LocalBinder extends Binder {
@@ -84,17 +76,17 @@ public class TTSService extends Service {
             }
 
 
-            if (ttsMode != null && ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS)) {
+            if (ttsMode.equals(SmartRingController.TTS_MODE_ALWAYS)) {
                 return true;
             }
 
             AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-            if (canUseSco && audioManager.isBluetoothScoAvailableOffCall()) {
+            if (canUseSco && audioManager != null && audioManager.isBluetoothScoAvailableOffCall()) {
                 return true;
             }
 
-            return audioManager.isBluetoothA2dpOn() || mAudioManager.isWiredHeadsetOn(context);
+            return (audioManager != null && audioManager.isBluetoothA2dpOn())
+                    || mAudioManager.isWiredHeadsetOn(context);
         }
 
         return false;
@@ -124,9 +116,12 @@ public class TTSService extends Service {
 
         audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-
+        if (sensorManager == null) {
+            accelerometerPresent = false;
+            return;
+        }
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-        if( sensorList.size() > 0 ){
+        if (sensorList.size() > 0) {
             accelerometerPresent = true;
             accelerometerSensor = sensorList.get(0);
         } else {
@@ -243,13 +238,11 @@ public class TTSService extends Service {
 
                                 @Override
                                 public void onStart(String utteranceId) {
-                                    handler.removeCallbacks(shutdownRunnable);
                                 }
 
                                 @Override
                                 public void onDone(String utteranceId) {
                                     updateNotification("...");
-                                    handler.postDelayed(shutdownRunnable, 15000);
                                     restoreAudio();
                                     synchronized (messageQueue) {
                                         messageQueue.poll(); // retrieves and removes head of the queue
