@@ -19,6 +19,7 @@ import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TTSService extends Service {
+public class TTSService extends Service implements TextToSpeech.OnInitListener {
 
     private static final String BLUETOOTH_TIMEOUT_EXTRA = "com.firebirdberlin.smartringcontrollerpro.BLUETOOTH_TIMEOUT";
     private static final String QUEUE_MESSAGE_EXTRA = "com.firebirdberlin.smartringcontrollerpro.QUEUE_MESSAGE";
@@ -112,7 +113,7 @@ public class TTSService extends Service {
 
     @Override
     public void onCreate() {
-        callStartForground();
+        callStartForeground();
 
         audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -129,7 +130,7 @@ public class TTSService extends Service {
         }
     }
 
-    void callStartForground() {
+    void callStartForeground() {
         Utility.createNotificationChannels(getApplicationContext());
         Notification note = buildNotification(getString(R.string.notificationChannelNameTTS));
         startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
@@ -161,7 +162,7 @@ public class TTSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        callStartForground();
+        callStartForeground();
         if (intent == null) {
             // Service restarted after suspension. Nothing to do.
             stopSelf();
@@ -227,54 +228,63 @@ public class TTSService extends Service {
                 }
 
                 if (tts == null && !messageQueue.isEmpty()) {
-                    tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                        @Override
-                        public void onInit(int status) {
-                            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                                @Override
-                                public void onError(String utteranceId) {
-                                    stopTTSService();
-                                }
-
-                                @Override
-                                public void onStart(String utteranceId) {
-                                }
-
-                                @Override
-                                public void onDone(String utteranceId) {
-                                    updateNotification("...");
-                                    restoreAudio();
-                                    synchronized (messageQueue) {
-                                        messageQueue.poll(); // retrieves and removes head of the queue
-                                        if (messageQueue.isEmpty()) { //another message to speak ?
-                                            // Sleep a little to give the bluetooth device a bit longer to finish.
-                                            try {
-                                                Thread.sleep(1000);
-                                            } catch (InterruptedException e) {
-                                                Logger.w(TAG, e.toString());
-                                            }
-                                            audioManager.stopBluetoothSco();
-                                            Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
-                                            stopTTSService();
-                                        } else {
-                                            Logger.i(TAG, "Speaking next message.");
-                                            speak(messageQueue.peek());
-                                        }
-                                    }
-                                }
-                            });
-
-                            synchronized (messageQueue) {
-                                speak(messageQueue.peek());
-                            }
-                        }
-                    });
+                    tts = new TextToSpeech(this, this);
                 } else {
                     stopTTSService();
                 }
             }
 
             return START_STICKY;
+        }
+    }
+
+    public void onInit(int status) {
+        if (status == TextToSpeech.ERROR) {
+            Toast.makeText(
+                    this,
+                    "Sorry! Text To Speech failed...",
+                    Toast.LENGTH_LONG
+            ).show();
+            stopTTSService();
+            return;
+        }
+
+        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onError(String utteranceId) {
+                stopTTSService();
+            }
+
+            @Override
+            public void onStart(String utteranceId) {
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                updateNotification("...");
+                restoreAudio();
+                synchronized (messageQueue) {
+                    messageQueue.poll(); // retrieves and removes head of the queue
+                    if (messageQueue.isEmpty()) { //another message to speak ?
+                        // Sleep a little to give the bluetooth device a bit longer to finish.
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Logger.w(TAG, e.toString());
+                        }
+                        audioManager.stopBluetoothSco();
+                        Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
+                        stopTTSService();
+                    } else {
+                        Logger.i(TAG, "Speaking next message.");
+                        speak(messageQueue.peek());
+                    }
+                }
+            }
+        });
+
+        synchronized (messageQueue) {
+            speak(messageQueue.peek());
         }
     }
 
