@@ -25,6 +25,7 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -50,7 +51,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     private boolean DeviceIsCovered = false;
     private int targetVolume = 1;
     private float ambientLight = 0;//SensorManager.LIGHT_SUNLIGHT_MAX;
-    private String PhoneState;
+    private String phoneState;
     private int initialPhoneState = TelephonyManager.CALL_STATE_IDLE;
     private long vibrationEndTime = 0;
     private Uri soundUri = null;
@@ -358,7 +359,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             EnjoyTheSilenceService.start(this, settings.disconnectWhenFaceDown);
         }
 
-        if ( PhoneState.equals("RINGING") ) { // expecting that a call is runnning
+        if ( phoneState.equals("RINGING") ) { // expecting that a call is runnning
             int callState = telephone.getCallState();
             // call has stopped, while we were waiting for measurements
             if (callState != TelephonyManager.CALL_STATE_RINGING) {
@@ -376,7 +377,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                                                     audiomanager.isWiredHeadsetOn());
         }
 
-        if ( PhoneState.equals("Notification") ) {
+        if ( phoneState.equals("Notification") ) {
             audiomanager.setRingerVolume(targetVolume);
             if ( shouldRing() && ! TTSService.shouldRead(false, this) ) {
                 // the service is stopped on NotificationCompleted
@@ -387,7 +388,7 @@ public class SetRingerService extends Service implements SensorEventListener {
                 return;
             }
 
-        } else if ( PhoneState.equals("RINGING") ){
+        } else if ( phoneState.equals("RINGING") ){
             if ( settings.increasingRingerVolume ) {
                 handler.postDelayed(handleIncreasingRingerVolume, INCREASING_RINGER_VOLUME_STEP_DELAY);
             } else {
@@ -476,13 +477,13 @@ public class SetRingerService extends Service implements SensorEventListener {
         // store the initial call state for later use
         initialPhoneState = telephone.getCallState();
         DeviceIsCovered = false;
-        PhoneState = "None";
+        phoneState = "None";
         targetVolume = settings.minRingerVolume;
 
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            PhoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
-            if (PhoneState.equals("Notification") && intent.hasExtra("Sound")) {
+            phoneState = intent.getStringExtra("PHONE_STATE"); // Ringing or notification
+            if (phoneState.equals("Notification") && intent.hasExtra("Sound")) {
                 // store the sound URI
                 String sound = intent.getStringExtra("Sound");
                 soundUri = Uri.parse(sound);
@@ -498,7 +499,7 @@ public class SetRingerService extends Service implements SensorEventListener {
         registerListenerForSensor(accelerometerSensor);
 
         audiomanager.mute();
-        if (PhoneState.equals("Notification")) {
+        if (phoneState.equals("Notification")) {
             handler.postDelayed(startListening, waitMillis);
         } else { // phone call
             handler.post(startListening);
@@ -543,6 +544,15 @@ public class SetRingerService extends Service implements SensorEventListener {
         MediaPlayer mp = new MediaPlayer();
         try {
             mp.setDataSource(this, uri);
+        } catch (SecurityException| IOException e){
+            try {
+                mp.setDataSource(this, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI);
+            } catch (IOException ignored) {
+                return;
+            }
+        }
+
+       try {
             if (audiomanager.isWiredHeadsetOn() || audiomanager.isBluetoothA2dpOn()) {
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             } else {
@@ -552,6 +562,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             mp.start();
             mp.setOnCompletionListener(NotificationCompleted);
         } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 

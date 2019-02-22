@@ -1,12 +1,14 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,14 +36,12 @@ public class mNotificationListener extends NotificationListenerService {
     private HeadsetPlugReceiver headsetPlugReceiver;
     public static boolean isRunning = false;
 
-    String lastNotificationKey;
     String lastText;
     Runnable dropLastMessage = new Runnable() {
         @Override
         public void run() {
             new Handler().removeCallbacks(dropLastMessage);
             lastText = null;
-            lastNotificationKey = null;
         }
     };
 
@@ -95,6 +95,7 @@ public class mNotificationListener extends NotificationListenerService {
 
         if (!settings.getBoolean("enabled", false)) return;
         Notification n = sbn.getNotification();
+        Uri notificationSound = getNotificationSound(sbn);
         String text = getText(n, this);
         if (!"com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) {
             Logger.i(TAG, "**********  onNotificationPosted  ************************************");
@@ -105,9 +106,22 @@ public class mNotificationListener extends NotificationListenerService {
                 Logger.i(TAG, "********** override group key " + sbn.getOverrideGroupKey());
             }
             Logger.i(TAG, "**********      text " + text);
-            Logger.i(TAG, "**********     sound " + n.sound);
+            Logger.i(TAG, "**********     sound " + ((notificationSound != null) ? notificationSound.toString() : ""));
             Logger.i(TAG, "********** clearable " + sbn.isClearable());
             Logger.i(TAG, "**********   ongoing " + sbn.isOngoing());
+
+        }
+
+        int importance = getImportance(sbn);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            RankingMap rankingMap = getCurrentRanking();
+            Logger.i(TAG, "rankingMap");
+            for (String key: rankingMap.getOrderedKeys()){
+                Ranking ranking = new Ranking();
+                rankingMap.getRanking(key, ranking);
+                Logger.i(TAG, String.format(">>> %s | %d", key, ranking.getImportance()));
+            }
         }
 
         // phone call is handled elsewhere
@@ -115,8 +129,7 @@ public class mNotificationListener extends NotificationListenerService {
 
         // Notifications sometimes appear twice. We identify successive notifications be equality
         // of their keys and ignore them.
-        if ((lastNotificationKey != null && lastNotificationKey.equals(sbn.getKey()))
-            || (lastText != null && lastText.equals(text)))  {
+        if (lastText != null && lastText.equals(text))  {
             Logger.i(TAG, "********  Duplicate notification !");
             return;
         }
@@ -130,14 +143,16 @@ public class mNotificationListener extends NotificationListenerService {
                 String msg = String.format("%s %s.", getString(R.string.TTS_AnnounceCall), from);
                 queueMessage(msg, this);
             }
-            lastNotificationKey = sbn.getKey();
             new Handler().postDelayed(dropLastMessage, 5000);
             return;
         }
 
-        if (sbn.isClearable() && !sbn.isOngoing()) {
+        if (!sbn.isClearable()) {
+            return;
+        }
+
+        if (sbn.isClearable() && !sbn.isOngoing() && importance >= 2) {
             queueMessage(n, this);
-            lastNotificationKey = sbn.getKey();
             lastText = text;
 
             int delayMillis = ("com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) ? 2000 : 60000;
@@ -148,8 +163,9 @@ public class mNotificationListener extends NotificationListenerService {
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
             // this is a notification with default sound
+            Logger.i(TAG, "Default notification sound detected");
         } else
-        if (n.sound == null) {
+        if (notificationSound == null) {
             Logger.i(TAG, "Notification sound is null");
             // determine music volume
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -165,7 +181,6 @@ public class mNotificationListener extends NotificationListenerService {
             return;
         }
 
-
         // if the last notification was within the last 3s
         // just queue the message but play no sound
         if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
@@ -179,8 +194,8 @@ public class mNotificationListener extends NotificationListenerService {
             Intent i2 = new Intent(this, SetRingerService.class);
             // potentially add data to the intent
             i2.putExtra("PHONE_STATE", "Notification");
-            if (n.sound != null) {
-                i2.putExtra("Sound", n.sound.toString() );
+            if (notificationSound != null) {
+                i2.putExtra("Sound", notificationSound.toString());
             }
 
             int interruptionFilter = getCurrentInterruptionFilter();
@@ -193,6 +208,35 @@ public class mNotificationListener extends NotificationListenerService {
                     startService(i2);
                 }
             }
+        }
+    }
+
+    Ranking getRanking(StatusBarNotification sbn) {
+        String notificationKey = sbn.getKey();
+        RankingMap rankingMap = getCurrentRanking();
+        Ranking ranking = new Ranking();
+        rankingMap.getRanking(notificationKey, ranking);
+        return ranking;
+    }
+
+    int getImportance(StatusBarNotification sbn) {
+        Ranking ranking = getRanking(sbn);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return ranking.getImportance();
+        } else {
+            return 2;
+        }
+    }
+
+    Uri getNotificationSound(StatusBarNotification sbn) {
+        Ranking ranking = getRanking(sbn);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            Notification n = sbn.getNotification();
+            return n.sound;
+        } else {
+            NotificationChannel channel = ranking.getChannel();
+            return channel.getSound();
         }
     }
 
