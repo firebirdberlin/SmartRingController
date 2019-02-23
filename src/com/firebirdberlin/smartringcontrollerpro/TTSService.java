@@ -169,73 +169,71 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
             return START_NOT_STICKY;
         }
 
-        synchronized(messageQueue) {
-            if (intent.hasExtra(BLUETOOTH_TIMEOUT_EXTRA)) {
-                if (bluetoothTimerTask != null) {
-                    audioManager.stopBluetoothSco();
-                    bluetoothTimerTask.cancel();
-                    bluetoothTimerTask = null;
+        if (intent.hasExtra(BLUETOOTH_TIMEOUT_EXTRA)) {
+            if (bluetoothTimerTask != null) {
+                audioManager.stopBluetoothSco();
+                bluetoothTimerTask.cancel();
+                bluetoothTimerTask = null;
 
-                    if (shouldRead(false, this)) {
-                        // If SCO failed but we have another method we can read through, do so.
-                        startReading(this);
-                    } else {
-                        // Otherwise clear the queue.
-                        messageQueue.clear();
-                        stopTTSService();
-                    }
-                }
-            } else if (intent.hasExtra(STOP_READING_EXTRA)) {
-                messageQueue.clear();
-                stopTTSService();
-
-            } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
-                String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
-                messageQueue.add(message);
-
-                // if the TTS service is already running, just queue the message
-                if (tts == null) {
-                    //public static final int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
-                    boolean preferSco = false;
-                    if (!preferSco &&
-                            (audioManager.isBluetoothA2dpOn() ||
-                                mAudioManager.isWiredHeadsetOn(getApplicationContext()))) {
-                        // We prefer to use non-sco if it's available. The logic is that if you have your
-                        // headphones on in the car, the whole car shouldn't hear your messages.
-                        TTSService.startReading(this);
-                    } else if (audioManager.isBluetoothScoAvailableOffCall()) {
-                        Logger.i(TAG, "Starting SCO, will wait until it is connected. sco on: " +
-                                 audioManager.isBluetoothScoOn());
-                        audioManager.startBluetoothSco();
-                        bluetoothTimerTask = new TimerTask() {
-                            @Override
-                            public void run() {
-                                TTSService.bluetoothTimeout(TTSService.this);
-                            }
-                        };
-                        Timer timer = new Timer("bluetoothTimeoutTimer");
-                        timer.schedule(bluetoothTimerTask, 5000);
-                    } else if (shouldRead(false, this)) {
-                        // In case we should read anyway (reading is always on)
-                        TTSService.startReading(this);
-                    }
-                }
-            } else if (intent.hasExtra(START_READING_EXTRA)) {
-                if (bluetoothTimerTask != null) {
-                    // Probably triggered by a bluetooth connection. reset;
-                    bluetoothTimerTask.cancel();
-                    bluetoothTimerTask = null;
-                }
-
-                if (tts == null && !messageQueue.isEmpty()) {
-                    tts = new TextToSpeech(this, this);
+                if (shouldRead(false, this)) {
+                    // If SCO failed but we have another method we can read through, do so.
+                    startReading(this);
                 } else {
+                    // Otherwise clear the queue.
+                    messageQueue.clear();
                     stopTTSService();
                 }
             }
+        } else if (intent.hasExtra(STOP_READING_EXTRA)) {
+            messageQueue.clear();
+            stopTTSService();
 
-            return START_STICKY;
+        } else if (intent.hasExtra(QUEUE_MESSAGE_EXTRA)) {
+            String message = intent.getStringExtra(QUEUE_MESSAGE_EXTRA);
+            messageQueue.add(message);
+
+            // if the TTS service is already running, just queue the message
+            if (tts == null) {
+                //public static final int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
+                boolean preferSco = false;
+                if (!preferSco &&
+                        (audioManager.isBluetoothA2dpOn() ||
+                                mAudioManager.isWiredHeadsetOn(getApplicationContext()))) {
+                    // We prefer to use non-sco if it's available. The logic is that if you have your
+                    // headphones on in the car, the whole car shouldn't hear your messages.
+                    TTSService.startReading(this);
+                } else if (audioManager.isBluetoothScoAvailableOffCall()) {
+                    Logger.i(TAG, "Starting SCO, will wait until it is connected. sco on: " +
+                            audioManager.isBluetoothScoOn());
+                    audioManager.startBluetoothSco();
+                    bluetoothTimerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            TTSService.bluetoothTimeout(TTSService.this);
+                        }
+                    };
+                    Timer timer = new Timer("bluetoothTimeoutTimer");
+                    timer.schedule(bluetoothTimerTask, 5000);
+                } else if (shouldRead(false, this)) {
+                    // In case we should read anyway (reading is always on)
+                    TTSService.startReading(this);
+                }
+            }
+        } else if (intent.hasExtra(START_READING_EXTRA)) {
+            if (bluetoothTimerTask != null) {
+                // Probably triggered by a bluetooth connection. reset;
+                bluetoothTimerTask.cancel();
+                bluetoothTimerTask = null;
+            }
+
+            if (tts == null && !messageQueue.isEmpty()) {
+                tts = new TextToSpeech(this, this);
+            } else {
+                stopTTSService();
+            }
         }
+
+        return START_STICKY;
     }
 
     public void onInit(int status) {
@@ -263,29 +261,25 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
             public void onDone(String utteranceId) {
                 updateNotification("...");
                 restoreAudio();
-                synchronized (messageQueue) {
-                    messageQueue.poll(); // retrieves and removes head of the queue
-                    if (messageQueue.isEmpty()) { //another message to speak ?
-                        // Sleep a little to give the bluetooth device a bit longer to finish.
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Logger.w(TAG, e.toString());
-                        }
-                        audioManager.stopBluetoothSco();
-                        Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
-                        stopTTSService();
-                    } else {
-                        Logger.i(TAG, "Speaking next message.");
-                        speak(messageQueue.peek());
+                messageQueue.poll(); // retrieves and removes head of the queue
+                if (messageQueue.isEmpty()) { //another message to speak ?
+                    // Sleep a little to give the bluetooth device a bit longer to finish.
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Logger.w(TAG, e.toString());
                     }
+                    audioManager.stopBluetoothSco();
+                    Logger.i(TAG, "Nothing else to speak. Shutting down TTS, stopping service.");
+                    stopTTSService();
+                } else {
+                    Logger.i(TAG, "Speaking next message.");
+                    speak(messageQueue.peek());
                 }
             }
         });
 
-        synchronized (messageQueue) {
-            speak(messageQueue.peek());
-        }
+        speak(messageQueue.peek());
     }
 
     private void speak(final String text) {
