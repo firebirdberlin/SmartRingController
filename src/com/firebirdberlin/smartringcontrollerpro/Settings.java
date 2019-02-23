@@ -9,17 +9,18 @@ public class Settings {
     Context mContext;
     SharedPreferences settings;
 
-    public boolean brokenProximitySensor = false;
-    public boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
-    public boolean increasingRingerVolume = false;
-    public boolean disconnectWhenFaceDown = false;
-    public boolean enabled = false;
     public boolean FlipAction = false;
-    public boolean handleNotification = false;
-    public boolean handleVibration = false;
     public boolean PullOutAction = false;
     public boolean ShakeAction = false;
     public boolean TTSenabled = false;
+    public boolean brokenProximitySensor = false;
+    public boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
+    public boolean disconnectWhenFaceDown = false;
+    public boolean enabled = false;
+    public boolean handleNotification = false;
+    public boolean handleVibration = false;
+    public boolean increasingRingerVolume = false;
+    public boolean showDnDNotification = false;
     public double maxAmplitude = 10000.;
     public double minAmplitude = 1000.;
     public int addPocketVolume = 0; // increase in pocket
@@ -36,22 +37,23 @@ public class Settings {
     }
 
     public void reload() {
-        addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
-        brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
-        controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
-        increasingRingerVolume = settings.getBoolean("increasingRingerVolume", false);
-        enabled = settings.getBoolean("enabled", false);
         FlipAction = settings.getBoolean("FlipAction", false);
-        disconnectWhenFaceDown = settings.getBoolean("disconnectWhenFaceDown", false);
-        handleNotification = settings.getBoolean("handle_notification", true);
-        handleVibration = settings.getBoolean("handle_vibration", false);
-        maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
-        minAmplitude = (double) settings.getInt("minAmplitude", 500);
-        maxRingerVolume = audiomanager.getMaxRingerVolume();
-        minRingerVolume = settings.getInt("minRingerVolume", 1);
         PullOutAction = settings.getBoolean("PullOutAction", false);
         ShakeAction = settings.getBoolean("ShakeAction", false);
         TTSenabled = settings.getBoolean("TTS.enabled", false);
+        addPocketVolume = settings.getInt("Ctrl.PocketVolume", 0);
+        brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
+        controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
+        disconnectWhenFaceDown = settings.getBoolean("disconnectWhenFaceDown", false);
+        enabled = settings.getBoolean("enabled", false);
+        handleNotification = settings.getBoolean("handle_notification", true);
+        handleVibration = settings.getBoolean("handle_vibration", false);
+        increasingRingerVolume = settings.getBoolean("increasingRingerVolume", false);
+        maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
+        maxRingerVolume = audiomanager.getMaxRingerVolume();
+        minAmplitude = (double) settings.getInt("minAmplitude", 500);
+        minRingerVolume = settings.getInt("minRingerVolume", 1);
+        showDnDNotification = settings.getBoolean("showDnDNotification", false);
         defaultNotificationUri = settings.getString("defaultNotificationUri",
                                                     android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString());
     }

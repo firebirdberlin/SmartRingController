@@ -5,7 +5,8 @@
     <PreferenceScreen
         android:icon="@drawable/ic_ring_volume_30dp"
         android:key="Ctrl.RingerVolumePreferenceScreen"
-        android:title="@string/title_handle_ambient_noise">
+        android:title="@string/screenVolume"
+        android:summary="@string/screenVolumeSummary">
 
         <SwitchPreference
             android:key="Ctrl.RingerVolume"
@@ -91,41 +92,38 @@
         android:icon="@drawable/ic_notifications_30dp"
         android:key="preferenceScreenNotifications"
         android:enabled="false"
-        android:title="@string/switch_handle_notification">
+        android:title="@string/screenNotifications"
+        android:summary="@string/screenNotificationsSummary">
 
-        <PreferenceCategory
-            android:key="categoryNotification"
-            android:title="@string/switch_handle_notification">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="handleNotification"
+            android:title="@string/switch_handle_notification" />
 
-            <SwitchPreference
-                android:defaultValue="false"
-                android:key="handleNotification"
-                android:title="@string/switch_handle_notification" />
+        <RingtonePreference
+            android:dependency="handleNotification"
+            android:key="defaultNotificationUri"
+            android:ringtoneType="notification"
+            android:showDefault="false"
+            android:showSilent="false"
+            android:title="@string/notificationSoundUri" />
 
-            <RingtonePreference
-                android:dependency="handleNotification"
-                android:key="defaultNotificationUri"
-                android:ringtoneType="notification"
-                android:showDefault="false"
-                android:showSilent="false"
-                android:title="@string/notificationSoundUri" />
+        <Preference
+            android:key="systemSoundPreferences"
+            android:summary="@string/systemSoundSummary"
+            android:title="@string/soundSettings" />
 
-            <Preference
-                android:key="systemSoundPreferences"
-                android:summary="@string/systemSoundSummary"
-                android:title="@string/soundSettings" />
-
-            <Preference
-                android:key="sendTestNotification"
-                android:title="@string/btnTestNotification" />
-        </PreferenceCategory>
+        <Preference
+            android:key="sendTestNotification"
+            android:title="@string/btnTestNotification" />
     </PreferenceScreen>
 
     <PreferenceScreen
         android:icon="@drawable/ic_vibration_30dp"
         android:key="preferenceScreenVibration"
         android:enabled="false"
-        android:title="@string/switch_handle_vibration">
+        android:title="@string/screenVibration"
+        android:summary="@string/screenVibrationSummary">
         <SwitchPreference
             android:defaultValue="false"
             android:icon="@drawable/ic_vibration_30dp"
@@ -149,7 +147,8 @@
         android:icon="@drawable/ic_speaker_phone_30dp"
         android:key="preferenceScreenTTS"
         android:enabled="false"
-        android:title="@string/read_out_notifications">
+        android:title="@string/screenTTS"
+        android:summary="@string/screenTTSSummary">
 
         <SwitchPreference
             android:clickable="false"
@@ -183,7 +182,8 @@
         android:icon="@drawable/ic_phone_30dp"
         android:key="preferenceScreenActions"
         android:enabled="false"
-        android:title="@string/tvInCallActions">
+        android:title="@string/screenOptions"
+        android:summary="@string/screenOptionsSummary">
 
         <PreferenceCategory android:title="@string/tvReduceVolume">
             <SwitchPreference
@@ -216,6 +216,17 @@
                 android:dependency="FlipAction"
                 android:key="disconnectWhenFaceDown"
                 android:summary="@string/disconnectWhenFaceDown" />
+
+        </PreferenceCategory>
+        <PreferenceCategory
+            android:key="CategoryDnD"
+            android:title="@string/categoryBehaviour">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="showDnDNotification"
+                android:title="@string/showDnDNotification"
+                android:summary="@string/showDnDNotificationSummary" />
 
         </PreferenceCategory>
     </PreferenceScreen>

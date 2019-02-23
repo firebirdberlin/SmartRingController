@@ -6,6 +6,7 @@
     <string name="buy">Buy</string>
     <string name="buyDonation">Donate</string>
     <string name="buyPro">Buy full version</string>
+    <string name="categoryBehaviour">Behaviour</string>
     <string name="dialog_message_thank_you">Thank you very much!</string>
     <string name="dialog_title_thank_you">Thanks</string>
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
@@ -16,17 +17,18 @@
     <string name="notification_listener_message">Please grant access to notifications.</string>
     <string name="notificationChannelNameStatus">Status messages</string>
     <string name="notificationChannelDescStatus">Notification channel for status messages</string>
-    <string name="notificationChannelNameTTS">TTS Service</string>
-    <string name="notificationChannelDescTTS">Notification indicating that text-to-speech is active.</string>
-    <string name="notificationChannelNameRingerService">Volume Service</string>
-    <string name="notificationChannelDescRingerService">Notification indicating that the microphone is active.</string>
+    <string name="notificationChannelNameTTS">Text-to-speech service</string>
+    <string name="notificationChannelDescTTS">This notification indicates when text-to-speech is active.</string>
+    <string name="notificationChannelNameRingerService">Volume service</string>
+    <string name="notificationChannelDescRingerService">This notification indicates when the automatic volume controller is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
     <string name="product_name_donation">Donation</string>
     <string name="product_name_pro">Full version</string>
     <string name="product_name_trial">Trial version</string>
     <string name="radio_TTS_always"> … always via speakerphone.</string>
     <string name="radio_TTS_headphones"> … with headphones.</string>
-    <string name="read_out_notifications">Read out notifications</string>
+    <string name="showDnDNotification">Notification</string>
+    <string name="showDnDNotificationSummary">Show a persistent notification while "Do not disturb" is activated.</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_min_ringer_volume">Minimum ringer volume</string>
@@ -56,6 +58,16 @@
     <string name="tvSilentWhilePebbleConnected">Pebble connected</string>
     <string name="tvTTSenabled">text-to-speech engine</string>
     <string name="tvTTSmode">Enable TTS …</string>
+    <string name="screenNotifications">Notifications</string>
+    <string name="screenNotificationsSummary">Control the volume of notifications.</string>
+    <string name="screenOptions">Do not disturb actions</string>
+    <string name="screenOptionsSummary">Actions to mute the ringer, e.g. flip to silence.</string>
+    <string name="screenTTS">Text-to-speech</string>
+    <string name="screenTTSSummary">Read out notifications and incoming caller names.</string>
+    <string name="screenVibration">Vibration</string>
+    <string name="screenVibrationSummary">Turn on vibration when appropriate.</string>
+    <string name="screenVolume">Automatic volume control</string>
+    <string name="screenVolumeSummary">Control how the ringer volume is determined.</string>
     <string name="systemSoundSummary">
         For best results you should disable the default notification sound.
     </string>

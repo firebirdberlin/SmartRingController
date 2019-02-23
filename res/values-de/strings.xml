@@ -6,6 +6,7 @@
     <string name="buy">Kaufen</string>
     <string name="buyDonation">Spenden</string>
     <string name="buyPro">Vollversion kaufen</string>
+    <string name="categoryBehaviour">Verhalten</string>
     <string name="disconnectWhenFaceDown">… und trenne Datenverbindung.</string>
     <string name="managePermissions">Berechtigungen verwalten</string>
     <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
@@ -18,7 +19,8 @@
     <string name="product_name_trial">Testversion</string>
     <string name="radio_TTS_always"> … immer über Lautsprecher.</string>
     <string name="radio_TTS_headphones"> … über Kopfhörer.</string>
-    <string name="read_out_notifications">Benachrichtigungen vorlesen</string>
+    <string name="showDnDNotification">Benachrichtigung</string>
+    <string name="showDnDNotificationSummary">Eine permanante Benachrichtigung anzeigen, solange der Nicht stören Modus aktiviert ist.</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_min_ringer_volume">Minimale Klingeltonlautstärke</string>
@@ -48,7 +50,17 @@
     <string name="tvSilentWhilePebbleConnected">Pebble verbunden</string>
     <string name="tvTTSenabled">Sprachausgabe</string>
     <string name="tvTTSmode">Modus</string>
-    <string name="systemSoundSummary">Hinweis: Deaktivieren Sie den Standardtonfür Benachrichtigungen.</string>
+    <string name="screenNotifications">Benachrichtigungen</string>
+    <string name="screenNotificationsSummary">Die Lautstärke von Benachrichtigungen regeln.</string>
+    <string name="screenOptions">Nicht stören</string>
+    <string name="screenOptionsSummary">Einstellungen für Nicht stören aktivieren, z.B. durch Umdrehen stumm schalten</string>
+    <string name="screenTTS">Text-to-speech</string>
+    <string name="screenTTSSummary">Benachrichtigungen und Anrufernamen vorlesen</string>
+    <string name="screenVibration">Vibration</string>
+    <string name="screenVibrationSummary">Vibrationsalarm automatisch steuern</string>
+    <string name="screenVolume">automatische Lautstärke</string>
+    <string name="screenVolumeSummary">Einstellungen, die die Lautstärke des Klingeltons bestimmen</string>
+    <string name="systemSoundSummary">Hinweis: Deaktivieren Sie den Standardtonfür Benachrichtigungen</string>
     <string name="systemVibrationSummary">Hinweis: Um ein optimales Ergebnis zu erzielen, sollten Sie die Vibration für Anrufe und Benachrichtigungen deaktivieren.</string>
     <string name="titleSilenceMode">Lautlos Modus.</string>
     <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>
@@ -75,4 +87,12 @@
     <string name="tvExplanationNoiseLevels">Die Klingeltonlautstärke wird entsprechend der Umgebungslautstärke eingestellt. Die Schwellwerte entsprechen jeweils der Umgebungslautstärke, die der leisesten und der lautesten Lautstärke zugeordnet werden.</string>
     <string name="tvExplanationMinimumLevel">Wählen Sie den Wert der Umgebungslautstärke, für den die leiseste Einstellung gerade noch angemessen ist (Standard: 0).</string>
     <string name="tvExplanationMaximumLevel">Erhöhen Sie den Schwellwert, falls das Telefon in ruhiger Umgebung zu laut klingelt. Reduzieren Sie ihn, wenn es lauter klingeln sollte (Standard: 7000).</string>
+    <string name="dialog_title_thank_you">Danke</string>
+    <string name="dialog_message_thank_you">Vielen Dank für Ihre Unterstützung.</string>
+    <string name="notificationChannelNameTTS">Text-to-speech Service</string>
+    <string name="notificationChannelDescTTS">Diese Benachrichtigung wird angezeigt, wenn der Text-to-speech Service aktiv ist.</string>
+    <string name="notificationChannelNameRingerService">Lautstärkeregelung</string>
+    <string name="notificationChannelDescRingerService">Diese Benachrichtigung wird angezeigt, wenn die automatische Lautstärkeregelung aktiv ist</string>
+    <string name="notificationChannelNameStatus">Statusmeldungen</string>
+    <string name="notificationChannelDescStatus">Benachrichtigungen zum Status, z.B. wenn Nicht stören aktiviert ist.</string>
 </resources>

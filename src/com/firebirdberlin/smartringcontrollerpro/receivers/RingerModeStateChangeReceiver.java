@@ -13,6 +13,7 @@ import android.os.Bundle;
 import com.firebirdberlin.smartringcontrollerpro.EnjoyTheSilenceService;
 import com.firebirdberlin.smartringcontrollerpro.Logger;
 import com.firebirdberlin.smartringcontrollerpro.R;
+import com.firebirdberlin.smartringcontrollerpro.Settings;
 import com.firebirdberlin.smartringcontrollerpro.SmartRingController;
 import com.firebirdberlin.smartringcontrollerpro.Utility;
 
@@ -51,6 +52,10 @@ public class RingerModeStateChangeReceiver extends BroadcastReceiver {
     }
 
     private void postNotification() {
+        Settings settings = new Settings(mContext);
+        if (! settings.showDnDNotification) {
+            return;
+        }
         Intent IntentUnmute = new Intent(mContext, EnjoyTheSilenceService.class);
         IntentUnmute.putExtra("action", "unmute");
         IntentUnmute.putExtra("systemRingerMode", AudioManager.RINGER_MODE_NORMAL);

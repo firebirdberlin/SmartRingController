@@ -147,18 +147,21 @@ public class mNotificationListener extends NotificationListenerService {
             return;
         }
 
-        if (!sbn.isClearable()) {
+        if (!sbn.isClearable() || importance < 2 || sbn.isOngoing()) {
             return;
         }
 
-        if (sbn.isClearable() && !sbn.isOngoing() && importance >= 2) {
-            queueMessage(n, this);
-            lastText = text;
-
-            int delayMillis = ("com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) ? 2000 : 60000;
-            new Handler().postDelayed(dropLastMessage, delayMillis);
+        queueMessage(n, this);
+        if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval) {
+            // if the last notification was within the last 3s
+            // just queue the message but play no sound
+            return;
         }
+        lastText = text;
+        last_notification_posted = System.currentTimeMillis();
 
+        int delayMillis = ("com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) ? 2000 : 60000;
+        new Handler().postDelayed(dropLastMessage, delayMillis);
 
         if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
             // do something--it was set
@@ -180,14 +183,6 @@ public class mNotificationListener extends NotificationListenerService {
             }
             return;
         }
-
-        // if the last notification was within the last 3s
-        // just queue the message but play no sound
-        if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval){
-            return;
-        }
-
-        last_notification_posted = System.currentTimeMillis();
 
         boolean handleNotification = settings.getBoolean("handle_notification", true);
         if (handleNotification) {
