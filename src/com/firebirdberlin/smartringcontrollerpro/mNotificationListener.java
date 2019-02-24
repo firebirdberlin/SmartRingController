@@ -152,6 +152,7 @@ public class mNotificationListener extends NotificationListenerService {
         }
 
         queueMessage(n, this);
+        if (!settings.getBoolean("handleNotification", false)) return;
         if ((System.currentTimeMillis() - last_notification_posted) < min_notification_interval) {
             // if the last notification was within the last 3s
             // just queue the message but play no sound
@@ -225,14 +226,15 @@ public class mNotificationListener extends NotificationListenerService {
     }
 
     Uri getNotificationSound(StatusBarNotification sbn) {
-        Ranking ranking = getRanking(sbn);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
-            Notification n = sbn.getNotification();
-            return n.sound;
-        } else {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Ranking ranking = getRanking(sbn);
             NotificationChannel channel = ranking.getChannel();
-            return channel.getSound();
+            if (channel != null) {
+                return channel.getSound();
+            }
         }
+        Notification n = sbn.getNotification();
+        return n.sound;
     }
 
     @Override

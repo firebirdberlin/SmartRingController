@@ -46,7 +46,7 @@ public class Settings {
         controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         disconnectWhenFaceDown = settings.getBoolean("disconnectWhenFaceDown", false);
         enabled = settings.getBoolean("enabled", false);
-        handleNotification = settings.getBoolean("handle_notification", true);
+        handleNotification = settings.getBoolean("handleNotification", true);
         handleVibration = settings.getBoolean("handle_vibration", false);
         increasingRingerVolume = settings.getBoolean("increasingRingerVolume", false);
         maxAmplitude = (double) settings.getInt("maxAmplitude", 10000);
