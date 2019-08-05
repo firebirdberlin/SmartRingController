@@ -86,7 +86,8 @@ public class mNotificationListener extends NotificationListenerService {
         if (receiver != null) {
             try {
                 super.unregisterReceiver(receiver);
-            } catch (IllegalArgumentException e) { }
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
@@ -117,7 +118,7 @@ public class mNotificationListener extends NotificationListenerService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             RankingMap rankingMap = getCurrentRanking();
             Logger.i(TAG, "rankingMap");
-            for (String key: rankingMap.getOrderedKeys()){
+            for (String key : rankingMap.getOrderedKeys()) {
                 Ranking ranking = new Ranking();
                 rankingMap.getRanking(key, ranking);
                 Logger.i(TAG, String.format(">>> %s | %d", key, ranking.getImportance()));
@@ -129,16 +130,16 @@ public class mNotificationListener extends NotificationListenerService {
 
         // Notifications sometimes appear twice. We identify successive notifications be equality
         // of their keys and ignore them.
-        if (lastText != null && lastText.equals(text))  {
+        if (lastText != null && lastText.equals(text)) {
             Logger.i(TAG, "********  Duplicate notification !");
             return;
         }
 
-        if (sbn.getPackageName().equals("com.google.android.dialer") && ! sbn.isClearable()
+        if (sbn.getPackageName().equals("com.google.android.dialer") && !sbn.isClearable()
                 && TelephonyManager.EXTRA_STATE_RINGING.equals(IncomingCallReceiver.currentCallState)) {
-            String number = getTitle(this, n);
+            String number = getTitle(n);
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            if (!am.isBluetoothA2dpOn()){
+            if (!am.isBluetoothA2dpOn()) {
                 String from = Utility.getContactNameFromNumber(this, number, this.getContentResolver());
                 String msg = String.format("%s %s.", getString(R.string.TTS_AnnounceCall), from);
                 queueMessage(msg, this);
@@ -147,7 +148,7 @@ public class mNotificationListener extends NotificationListenerService {
             return;
         }
 
-        if (!sbn.isClearable() || importance < 2 || sbn.isOngoing()) {
+        if (!sbn.isClearable() || importance <= 2 || sbn.isOngoing()) {
             return;
         }
 
@@ -164,19 +165,18 @@ public class mNotificationListener extends NotificationListenerService {
         int delayMillis = ("com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) ? 2000 : 60000;
         new Handler().postDelayed(dropLastMessage, delayMillis);
 
-        if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND){
+        if ((n.defaults & Notification.DEFAULT_SOUND) == Notification.DEFAULT_SOUND) {
             // do something--it was set
             // this is a notification with default sound
             Logger.i(TAG, "Default notification sound detected");
-        } else
-        if (notificationSound == null) {
+        } else if (notificationSound == null) {
             Logger.i(TAG, "Notification sound is null");
             // determine music volume
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            if (am.isMusicActive()){
+            if (am.isMusicActive()) {
                 int vol = am.getStreamVolume(AudioManager.STREAM_MUSIC);
                 Logger.d(TAG, String.format("media volume: %d", vol));
-                if (vol > 0){
+                if (vol > 0) {
                     SharedPreferences.Editor prefEditor = settings.edit();
                     prefEditor.putInt("lastMusicVolume", vol);
                     prefEditor.apply();
@@ -241,15 +241,15 @@ public class mNotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
 
-    public static void queueMessage(String msg, Context context){
+    public static void queueMessage(String msg, Context context) {
         TTSService.queueMessage(msg, context);
     }
 
-    public static void queueMessage(Notification n, Context context){
+    public static void queueMessage(Notification n, Context context) {
         String text = getText(n, context);
-        if (text == null ) return;
-        text = text.replace('#',' '); // replace hashtags
-        text = text.replaceAll("\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]"," "); // remove urls
+        if (text == null) return;
+        text = text.replace('#', ' '); // replace hashtags
+        text = text.replaceAll("\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", " "); // remove urls
         text = truncate(text, 1000); // truncate after 1000 chars
         TTSService.queueMessage(text, context);
     }
@@ -264,14 +264,14 @@ public class mNotificationListener extends NotificationListenerService {
         return result;
     }
 
-    private static String getTitle(Context context, Notification notification) {
+    private static String getTitle(Notification notification) {
         Bundle extras = notification.extras;
         CharSequence title = extras.getCharSequence(Notification.EXTRA_TITLE);
         return (title == null) ? "" : title.toString();
     }
 
     public static String getText(Notification notification, Context context) {
-        String title = getTitle(context, notification);
+        String title = getTitle(notification);
         Bundle extras = notification.extras;
         CharSequence sequence = extras.getCharSequence(Notification.EXTRA_TEXT);
         String text = (sequence != null) ? sequence.toString() : null;
@@ -291,7 +291,7 @@ public class mNotificationListener extends NotificationListenerService {
 
     private static String format_time(long value, Context context) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a");
-        if ( DateFormat.is24HourFormat(context) ) {
+        if (DateFormat.is24HourFormat(context)) {
             dateFormat = new SimpleDateFormat("H:mm");
         }
 

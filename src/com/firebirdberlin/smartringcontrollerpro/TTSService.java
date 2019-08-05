@@ -47,9 +47,9 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
 
     private AudioManager audioManager;
-    private int systemVolume;
 
-    public static final int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
+    // public static int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
+    public static int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
 
     public class LocalBinder extends Binder {
         TTSService getService() {
@@ -194,7 +194,6 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
 
             // if the TTS service is already running, just queue the message
             if (tts == null) {
-                //public static final int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
                 boolean preferSco = false;
                 if (!preferSco &&
                         (audioManager.isBluetoothA2dpOn() ||
@@ -361,14 +360,8 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
         final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 
-        //audioManager.setStreamSolo(READING_AUDIO_STREAM, true);
-        audioManager.setSpeakerphoneOn(false);
+        audioManager.setSpeakerphoneOn(ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode));
 
-        if (ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode)) {
-            audioManager.setSpeakerphoneOn(true);
-        }
-
-        systemVolume = -1;
         audioManager.requestAudioFocus(
                 audioFocusChangeListener,
                 AudioManager.STREAM_MUSIC,
@@ -403,11 +396,6 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
             audioManager.setSpeakerphoneOn(false);
         }
 
-        if (systemVolume != -1) {
-            Logger.i(TAG, "Resetting volume to " + systemVolume);
-            audioManager.setStreamVolume(READING_AUDIO_STREAM, systemVolume, 0);
-        }
-        //audioManager.setStreamSolo(READING_AUDIO_STREAM, false);
         audioManager.abandonAudioFocus(audioFocusChangeListener);
     }
 }
