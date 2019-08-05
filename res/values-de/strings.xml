@@ -8,6 +8,7 @@
     <string name="buyPro">Vollversion kaufen</string>
     <string name="categoryBehaviour">Verhalten</string>
     <string name="disconnectWhenFaceDown">… und trenne Datenverbindung.</string>
+    <string name="edit">bearbeiten</string>
     <string name="managePermissions">Berechtigungen verwalten</string>
     <string name="msgTestNotification">Dies ist eine Testbenachrichtigung.</string>
     <string name="notification_listener">Benachrichtigungszugriff</string>
@@ -58,7 +59,7 @@
     <string name="screenTTSSummary">Benachrichtigungen und Anrufernamen vorlesen</string>
     <string name="screenVibration">Vibration</string>
     <string name="screenVibrationSummary">Vibrationsalarm automatisch steuern</string>
-    <string name="screenVolume">automatische Lautstärke</string>
+    <string name="screenVolume">automatische Lautstärkeregelung</string>
     <string name="screenVolumeSummary">Einstellungen, die die Lautstärke des Klingeltons bestimmen</string>
     <string name="systemSoundSummary">Hinweis: Deaktivieren Sie den Standardtonfür Benachrichtigungen</string>
     <string name="systemVibrationSummary">Hinweis: Um ein optimales Ergebnis zu erzielen, sollten Sie die Vibration für Anrufe und Benachrichtigungen deaktivieren.</string>

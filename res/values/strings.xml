@@ -10,6 +10,7 @@
     <string name="dialog_message_thank_you">Thank you very much!</string>
     <string name="dialog_title_thank_you">Thanks</string>
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
+    <string name="edit">edit</string>
     <string name="managePermissions">Manage permissions</string>
     <string name="msgTestNotification">This is a test notification.</string>
     <string name="notification_listener">Notification listener</string>

@@ -98,7 +98,7 @@ public class mNotificationListener extends NotificationListenerService {
         Notification n = sbn.getNotification();
         Uri notificationSound = getNotificationSound(sbn);
         String text = getText(n, this);
-        if (!"com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) {
+        if (! "com.firebirdberlin.smartringcontrollerpro".equals(sbn.getPackageName())) {
             Logger.i(TAG, "**********  onNotificationPosted  ************************************");
             Logger.i(TAG, "**********   package " + sbn.getPackageName());
             Logger.i(TAG, "**********       key " + sbn.getKey());
@@ -185,24 +185,21 @@ public class mNotificationListener extends NotificationListenerService {
             return;
         }
 
-        boolean handleNotification = settings.getBoolean("handle_notification", true);
-        if (handleNotification) {
-            Intent i2 = new Intent(this, SetRingerService.class);
-            // potentially add data to the intent
-            i2.putExtra("PHONE_STATE", "Notification");
-            if (notificationSound != null) {
-                i2.putExtra("Sound", notificationSound.toString());
-            }
+        Intent i2 = new Intent(this, SetRingerService.class);
+        // potentially add data to the intent
+        i2.putExtra("PHONE_STATE", "Notification");
+        if (notificationSound != null) {
+            i2.putExtra("Sound", notificationSound.toString());
+        }
 
-            int interruptionFilter = getCurrentInterruptionFilter();
-            Logger.d(TAG, "interruptionFilter = " + String.valueOf(interruptionFilter));
-            if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
-                Logger.d(TAG, "starting SetRingerService");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(i2);
-                } else {
-                    startService(i2);
-                }
+        int interruptionFilter = getCurrentInterruptionFilter();
+        Logger.d(TAG, "interruptionFilter = " + interruptionFilter);
+        if (interruptionFilter == NotificationListenerService.INTERRUPTION_FILTER_ALL) {
+            Logger.d(TAG, "starting SetRingerService");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(i2);
+            } else {
+                startService(i2);
             }
         }
     }

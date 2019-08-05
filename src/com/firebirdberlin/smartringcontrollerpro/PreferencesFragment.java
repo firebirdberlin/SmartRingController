@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,9 +19,12 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
+import android.view.View;
 
 import com.firebirdberlin.smartringcontrollerpro.events.OnNewAmbientNoiseValue;
 import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleConnectionReceiver;
@@ -39,7 +41,7 @@ import de.firebirdberlin.preference.InlineSeekBarPreference;
 public class PreferencesFragment extends PreferenceFragment implements BillingHelperActivity.ItemPurchaseListener {
     private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
 
-    public static final String TAG = SmartRingController.TAG + ".PreferencesFragment";
+    public static final String TAG = "PreferencesFragment";
     private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
     private final SoundMeter soundMeter = new SoundMeter();
 
@@ -49,11 +51,13 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
     private InlineSeekBarPreference seekBarMinAmplitude = null;
     private InlineSeekBarPreference seekBarMaxAmplitude = null;
     private InlineProgressPreference progressBarRingerVolume = null;
+    private Snackbar snackBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getActivity().setTheme(R.style.PreferencesTheme);
         context = getActivity().getApplicationContext();
         Settings settings = new Settings(context);
 
@@ -113,6 +117,7 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
                             new String[]{Manifest.permission.RECORD_AUDIO},
                             PERMISSION_REQUEST_RECORD_AUDIO);
                 }
+
 
                 if (!ischecked && !isNotificationListenerServiceRunning()) {
                     requestNotificationListenerGrants();
@@ -189,6 +194,14 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
         }
 
         ((SmartRingController) getActivity()).updateAllPurchases();
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+
     }
 
     private void requestNotificationListenerGrants() {
@@ -216,10 +229,13 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
 
     @Override
     public void onResume(){
+        Log.d(TAG, "onResume");
         super.onResume();
         EventBus.getDefault().register(this);
         handleAmbientNoiseMeasurement();
+        showSnackBar();
     }
+
 
     @Override
     public void onPause(){
@@ -234,6 +250,7 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
         volumePreferencesDisplayed = false;
         if( preference != null && preference.getKey() != null ) {
             key = preference.getKey();
+            Log.d(TAG, "onPreferenceTreeClick: " + key);
             volumePreferencesDisplayed = key.equals(PREFERENCE_SCREEN_RINGER_VOLUME);
         }
         handleAmbientNoiseMeasurement();
@@ -309,7 +326,6 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
     public void onItemPurchased(String sku) {
         // no matter which item was purchased, we enable everything
         enablePreference("preferenceScreenNotifications");
-        enablePreference("preferenceScreenTTS");
         enablePreference("preferenceScreenVibration");
         enablePreference("preferenceScreenActions");
         removePreference("buyPro");
@@ -353,4 +369,30 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
         return null;
     }
 
+    public void showSnackBar(){
+        final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        boolean enabled = settings.getBoolean("enabled", false);
+        boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
+        boolean notification_volume_enabled = settings.getBoolean("handleNotification", false);
+        if (enabled
+                && (tts_enabled || notification_volume_enabled)
+                && !isNotificationListenerServiceRunning()) {
+            View view = getActivity().findViewById(android.R.id.content);
+            snackBar = Snackbar.make(view, R.string.notification_listener_message, Snackbar.LENGTH_INDEFINITE);
+            snackBar.setAction(R.string.edit, new StartNotificationServiceListener());
+            snackBar.show();
+        } else if (snackBar != null && snackBar.isShown()) {
+            snackBar.dismiss();
+            snackBar = null;
+        }
+    }
+
+    public class StartNotificationServiceListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "StartNotificationServiceListener");
+            startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        }
+    }
 }

@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -28,17 +31,18 @@ public class SmartRingController extends BillingHelperActivity {
     public static final int NOTIFICATION_ID_RINGER_SERVICE = 12;
     private Context mContext = null;
     private PreferencesFragment preferencesFragment = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
         Utility.createNotificationChannels(this);
-
         ActionBar actionbar = getActionBar();
         if (actionbar != null) {
             actionbar.setDisplayShowTitleEnabled(true);
             actionbar.setDisplayShowHomeEnabled(true);
+            actionbar.setHomeButtonEnabled(true);
+            actionbar.setDisplayHomeAsUpEnabled(false);
+
             //actionBar.setTitle("");
         }
 

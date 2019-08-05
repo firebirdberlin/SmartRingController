@@ -1,6 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -16,9 +17,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.view.View;
 
 public class Utility {
 
@@ -179,6 +182,11 @@ public class Utility {
         } finally {
             cursor.close();
         }
+    }
+
+    public static void showSnackBar(View view, String message){
+        Snackbar snackBar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
+        snackBar.show();
     }
 }
 
