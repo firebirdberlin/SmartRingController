@@ -94,7 +94,7 @@ public class mNotificationListener extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
 
-        if (!settings.getBoolean("enabled", false)) return;
+        if (!settings.getBoolean("enabled", true)) return;
         Notification n = sbn.getNotification();
         Uri notificationSound = getNotificationSound(sbn);
         String text = getText(n, this);

@@ -47,7 +47,7 @@ public class SmartRingController extends BillingHelperActivity {
         }
 
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
+        boolean enabled = settings.getBoolean("enabled", true);
 
         if (enabled){
             setupMainPage();
@@ -62,7 +62,7 @@ public class SmartRingController extends BillingHelperActivity {
         getMenuInflater().inflate(R.menu.actions, menu);
 
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
+        boolean enabled = settings.getBoolean("enabled", true);
         final CompoundButton switchEnabled = (CompoundButton) menu.findItem(R.id.sw_enabled).getActionView();
         switchEnabled.setChecked(enabled);
 

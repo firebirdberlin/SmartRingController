@@ -17,11 +17,6 @@
             android:summary="@string/tvTTSenabled"
             android:title="@string/tabTTS" />
 
-        <Preference
-            android:key="tts_notificationservice_status"
-            android:title="@string/tts_settings">
-        </Preference>
-
         <ListPreference
             android:defaultValue="headphones"
             android:dependency="TTS.enabled"

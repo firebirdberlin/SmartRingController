@@ -21,7 +21,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         Logger.d(TAG, "onReceive");
 
         SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        if (settings.getBoolean("enabled", false) == false) return;
+        if (settings.getBoolean("enabled", true) == false) return;
 
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 

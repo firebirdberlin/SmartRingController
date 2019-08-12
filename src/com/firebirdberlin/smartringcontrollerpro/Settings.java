@@ -16,7 +16,7 @@ public class Settings {
     public boolean brokenProximitySensor = false;
     public boolean controlRingerVolume = true; // set the ringer volume based on ambient noise
     public boolean disconnectWhenFaceDown = false;
-    public boolean enabled = false;
+    public boolean enabled = true;
     public boolean handleNotification = false;
     public boolean handleVibration = false;
     public boolean increasingRingerVolume = false;
@@ -45,7 +45,7 @@ public class Settings {
         brokenProximitySensor = settings.getBoolean("Ctrl.BrokenProximitySensor", true);
         controlRingerVolume = settings.getBoolean("Ctrl.RingerVolume", true);
         disconnectWhenFaceDown = settings.getBoolean("disconnectWhenFaceDown", false);
-        enabled = settings.getBoolean("enabled", false);
+        enabled = settings.getBoolean("enabled", true);
         handleNotification = settings.getBoolean("handleNotification", true);
         handleVibration = settings.getBoolean("handle_vibration", false);
         increasingRingerVolume = settings.getBoolean("increasingRingerVolume", false);

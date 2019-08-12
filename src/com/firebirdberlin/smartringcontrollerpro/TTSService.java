@@ -64,7 +64,7 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
 
     public static boolean shouldRead(boolean canUseSco, Context context) {
         final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
+        boolean enabled = settings.getBoolean("enabled", true);
         boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
         String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
 

@@ -371,7 +371,7 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
 
     public void showSnackBar(){
         final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", false);
+        boolean enabled = settings.getBoolean("enabled", true);
         boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
         boolean notification_volume_enabled = settings.getBoolean("handleNotification", false);
         if (enabled
