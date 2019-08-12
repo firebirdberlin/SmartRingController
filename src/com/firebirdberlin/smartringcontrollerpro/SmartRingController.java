@@ -6,10 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -121,7 +118,6 @@ public class SmartRingController extends BillingHelperActivity {
                 SharedPreferences.Editor prefEditor = settings.edit();
                 prefEditor.putBoolean("handleNotification", false);
                 prefEditor.putBoolean("handle_vibration", false);
-                prefEditor.putBoolean("TTS.enabled", false);
                 prefEditor.putBoolean("ShakeAction", false);
                 prefEditor.putBoolean("FlipAction", false);
                 prefEditor.putBoolean("PullOutAction", false);

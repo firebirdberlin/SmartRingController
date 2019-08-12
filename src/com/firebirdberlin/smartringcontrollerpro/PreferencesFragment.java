@@ -359,7 +359,7 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
             if (p == preference) {
                 return root;
             }
-            if (PreferenceGroup.class.isInstance(p)) {
+            if (p instanceof PreferenceGroup) {
                 PreferenceGroup parent = getParent((PreferenceGroup)p, preference);
                 if (parent != null) {
                     return parent;
@@ -391,6 +391,9 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
 
         @Override
         public void onClick(View v) {
+            if (!isAdded()) {
+                return;
+            }
             Log.d(TAG, "StartNotificationServiceListener");
             startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
         }
