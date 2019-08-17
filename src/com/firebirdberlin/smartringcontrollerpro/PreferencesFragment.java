@@ -198,10 +198,9 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-
+    public void onDetach() {
+        super.onDetach();
+        dismissSnackBar();
     }
 
     private void requestNotificationListenerGrants() {
@@ -381,7 +380,13 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
             snackBar = Snackbar.make(view, R.string.notification_listener_message, Snackbar.LENGTH_INDEFINITE);
             snackBar.setAction(R.string.edit, new StartNotificationServiceListener());
             snackBar.show();
-        } else if (snackBar != null && snackBar.isShown()) {
+        } else {
+            dismissSnackBar();
+        }
+    }
+
+    void dismissSnackBar() {
+        if (snackBar != null && snackBar.isShown()) {
             snackBar.dismiss();
             snackBar = null;
         }
