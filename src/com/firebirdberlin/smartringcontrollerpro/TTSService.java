@@ -2,8 +2,10 @@ package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -35,32 +37,64 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
     private static final String STOP_READING_EXTRA = "com.firebirdberlin.smartringcontrollerpro.STOP_READING";
 
     private static final String TAG = SmartRingController.TAG + "." + TTSService.class.getSimpleName();
-
+    // public static int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
+    public static int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
+    private final LocalBinder binder = new LocalBinder();
+    private final Queue<String> messageQueue = new LinkedList<>();
     private SensorManager sensorManager;
     private Sensor accelerometerSensor = null;
     private boolean accelerometerPresent;
-
-    private final LocalBinder binder = new LocalBinder();
-    private final Queue<String> messageQueue = new LinkedList<>();
     private TimerTask bluetoothTimerTask;
-
     private TextToSpeech tts;
-
     private AudioManager audioManager;
+    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                public void onAudioFocusChange(int focusChange) {
+                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                        // Pause playback
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                        // Lower the volume
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                        // Resume playback or raise it back to normal
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        abandonAudioFocus();
+                        // Stop playback
+                    }
+                }
+            };
+    private final SensorEventListener ShakeActions =
+            new SensorEventListener() {
+                // called when sensor value have changed
+                private int shake_left = 0;
+                private int shake_right = 0;
 
-    // public static int READING_AUDIO_STREAM = AudioManager.STREAM_VOICE_CALL;
-    public static int READING_AUDIO_STREAM = AudioManager.STREAM_MUSIC;
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                }
 
-    public class LocalBinder extends Binder {
-        TTSService getService() {
-            return TTSService.this;
-        }
-    }
+                @Override
+                public void onSensorChanged(SensorEvent event) {
+                    if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
-    @Override
-    public IBinder onBind(Intent arg0) {
-        return binder;
-    }
+                        // if acceleration in x and y direction is too strong, device is moving
+
+                        if (event.values[0] < -12.) shake_left++;
+                        if (event.values[0] > 12.) shake_right++;
+
+                        // shake to silence
+                        if ((shake_left >= 1 && shake_right >= 2) ||
+                                (shake_left >= 2 && shake_right >= 1)) {
+
+                            stopTTSService();
+                            shake_left = shake_right = 0;
+                        }
+
+                    }
+
+                }
+            };
+    private IntentFilter myNoisyAudioStreamIntentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+    private BecomingNoisyReceiver myNoisyAudioStreamReceiver;
 
     public static boolean shouldRead(boolean canUseSco, Context context) {
         final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
@@ -111,12 +145,32 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         }
     }
 
+    public static void startReading(Context context) {
+        Logger.i(TAG, "Starting to read message");
+        sendIntent(TTSService.START_READING_EXTRA, null, context);
+    }
+
+    public static void stopReading(Context context) {
+        Logger.i(TAG, "Stopping reading of messages");
+        sendIntent(TTSService.STOP_READING_EXTRA, null, context);
+    }
+
+    public static void bluetoothTimeout(Context context) {
+        Logger.i(TAG, "Timedout waiting for bluetooth.");
+        sendIntent(TTSService.BLUETOOTH_TIMEOUT_EXTRA, null, context);
+    }
+
+    @Override
+    public IBinder onBind(Intent arg0) {
+        return binder;
+    }
+
     @Override
     public void onCreate() {
         callStartForeground();
 
-        audioManager  = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager == null) {
             accelerometerPresent = false;
             return;
@@ -288,7 +342,7 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
 
         prepareAudio();
 
-        if (accelerometerPresent){
+        if (accelerometerPresent) {
             // us = 50 ms
             int SENSOR_DELAY = 50000;
             sensorManager.registerListener(ShakeActions, accelerometerSensor, SENSOR_DELAY, SENSOR_DELAY / 2);
@@ -299,59 +353,13 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, ttsParams, "SRC1");
     }
 
-    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener =
-        new AudioManager.OnAudioFocusChangeListener() {
-            public void onAudioFocusChange(int focusChange) {
-                if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
-                    // Pause playback
-                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-                    // Lower the volume
-                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                    // Resume playback or raise it back to normal
-                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                    audioManager.abandonAudioFocus(audioFocusChangeListener);
-                    // Stop playback
-                }
-            }
-        };
-
-    private final SensorEventListener ShakeActions =
-        new SensorEventListener()  {
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            }
-
-            // called when sensor value have changed
-            private int shake_left = 0;
-            private int shake_right = 0;
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-
-                    // if acceleration in x and y direction is too strong, device is moving
-
-                    if (event.values[0] < -12.) shake_left++;
-                    if (event.values[0] > 12.) shake_right++;
-
-                    // shake to silence
-                    if ((shake_left >= 1 && shake_right >= 2) ||
-                            (shake_left >= 2 && shake_right >= 1)){
-
-                        stopTTSService();
-                        shake_left = shake_right = 0;
-                    }
-
-                }
-
-            }
-        };
-
     private void stopTTSService() {
         if (tts != null) {
             tts.stop(); // stop reading current message
             tts.shutdown();
             tts = null;
         }
+        abandonAudioFocus();
         stopSelf();
     }
 
@@ -359,6 +367,9 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
         final String ttsMode = settings.getString("TTSmode", SmartRingController.TTS_MODE_HEADPHONES);
+
+        myNoisyAudioStreamReceiver = new BecomingNoisyReceiver();
+        registerReceiver(myNoisyAudioStreamReceiver, myNoisyAudioStreamIntentFilter);
 
         audioManager.setSpeakerphoneOn(ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode));
 
@@ -369,21 +380,6 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         );
     }
 
-    public static void startReading(Context context) {
-        Logger.i(TAG, "Starting to read message");
-        sendIntent(TTSService.START_READING_EXTRA, null, context);
-    }
-
-    public static void stopReading(Context context) {
-        Logger.i(TAG, "Stopping reading of messages");
-        sendIntent(TTSService.STOP_READING_EXTRA, null, context);
-    }
-
-    public static void bluetoothTimeout(Context context) {
-        Logger.i(TAG, "Timedout waiting for bluetooth.");
-        sendIntent(TTSService.BLUETOOTH_TIMEOUT_EXTRA, null, context);
-    }
-
     private void restoreAudio() {
         final SharedPreferences settings = this.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         final boolean ttsEnabled = settings.getBoolean("TTS.enabled", false);
@@ -391,11 +387,38 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
 
         sensorManager.unregisterListener(ShakeActions); // disable shake action
 
+        if (myNoisyAudioStreamReceiver != null) {
+            unregisterReceiver(myNoisyAudioStreamReceiver);
+            myNoisyAudioStreamReceiver = null;
+        }
+
         // restore system setting of the speakerphone
         if (ttsEnabled && SmartRingController.TTS_MODE_ALWAYS.equals(ttsMode)) {
             audioManager.setSpeakerphoneOn(false);
         }
 
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        abandonAudioFocus();
     }
+
+    private void abandonAudioFocus() {
+        if (audioManager != null && audioFocusChangeListener != null) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+        }
+    }
+
+    public class LocalBinder extends Binder {
+        TTSService getService() {
+            return TTSService.this;
+        }
+    }
+
+    private class BecomingNoisyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                stopTTSService();
+            }
+        }
+    }
+
 }
