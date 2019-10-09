@@ -9,29 +9,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.SwitchPreference;
 
-import android.util.Log;
-import android.view.View;
-
 import com.firebirdberlin.smartringcontrollerpro.events.OnNewAmbientNoiseValue;
 import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleConnectionReceiver;
 import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleDisconnectionReceiver;
 import com.firebirdberlin.smartringcontrollerpro.pebble.PebbleMessageReceiver;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,27 +72,33 @@ public class PreferencesFragment
         init();
     }
 
+    void initPurchases() {
+        Log.i(TAG, "initPurchases()");
+        final SmartRingController activity = (SmartRingController) getActivity();
+        boolean isPurchased = (activity.isPurchased(BillingHelper.ITEM_DONATION)
+                || activity.isPurchased(BillingHelper.ITEM_PRO));
+        if (rootKey == null) {
+            if (isPurchased) {
+                removePreference("buyPro");
+                enablePreference("preferenceScreenNotifications");
+                enablePreference("preferenceScreenVibration");
+                enablePreference("preferenceScreenActions");
+            } else {
+                disablePreference("preferenceScreenNotifications");
+                disablePreference("preferenceScreenVibration");
+                disablePreference("preferenceScreenActions");
+            }
+        }
+    }
+
     private void init() {
         context = getContext();
 
         final SmartRingController activity = (SmartRingController) getActivity();
 
-
         Settings settings = new Settings(context);
-        if (rootKey == null) {
-
-            if ( activity.isPurchased(BillingHelper.ITEM_DONATION)
-                    || activity.isPurchased(BillingHelper.ITEM_PRO) ) {
-                disablePreference("preferenceScreenNotifications");
-                disablePreference("preferenceScreenVibration");
-                disablePreference("preferenceScreenActions");
-            } else {
-                removePreference("buyPro");
-            }
-        }
         volumePreferencesDisplayed = (PREFERENCE_SCREEN_RINGER_VOLUME.equals(rootKey));
         handleAmbientNoiseMeasurement();
-
 
         final PreferencesFragment listener = this;
         Preference buyDonation = findPreference("buyDonation");
@@ -220,7 +224,7 @@ public class PreferencesFragment
 
         Preference prefSilentWhilePebbleConnected = findPreference("SilentWhilePebbleConnected");
         boolean installed = Utility.isPackageInstalled(context, "com.getpebble.android") ||
-                            Utility.isPackageInstalled(context, "com.getpebble.android.basalt");
+                Utility.isPackageInstalled(context, "com.getpebble.android.basalt");
 
         if ( ! installed ) {
             PreferenceCategory cat = findPreference("CategoryMuteActions");
@@ -283,6 +287,7 @@ public class PreferencesFragment
     public void onResume(){
         Log.d(TAG, "onResume " + rootKey);
         super.onResume();
+        initPurchases();
         EventBus.getDefault().register(this);
         handleAmbientNoiseMeasurement();
         showSnackBar();

@@ -5,21 +5,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.view.MenuItemCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.fragment.app.Fragment;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
@@ -167,6 +164,7 @@ public class SmartRingController extends BillingHelperActivity
                 prefEditor.apply();
                 setupMainPage();
             }
+            preferencesFragment.initPurchases();
         }
     }
 
