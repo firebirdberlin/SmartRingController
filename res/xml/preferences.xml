@@ -1,4 +1,5 @@
 <PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="main_screen">
 
@@ -7,6 +8,7 @@
         android:key="preferenceScreenTTS"
         android:enabled="true"
         android:title="@string/screenTTS"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:summary="@string/screenTTSSummary">
 
         <SwitchPreference
@@ -41,9 +43,11 @@
         android:icon="@drawable/ic_ring_volume_30dp"
         android:key="Ctrl.RingerVolumePreferenceScreen"
         android:title="@string/screenVolume"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:summary="@string/screenVolumeSummary">
 
         <SwitchPreference
+            app:iconSpaceReserved="false"
             android:key="Ctrl.RingerVolume"
             android:icon="@drawable/ic_ring_volume_30dp"
             android:title="@string/title_handle_ambient_noise"
@@ -51,65 +55,73 @@
             android:defaultValue="false"/>
 
         <Preference
+            app:iconSpaceReserved="false"
             android:dependency="Ctrl.RingerVolume"
             android:enabled="true"
             android:selectable="false"
             android:summary="@string/tvExplanationNoiseLevels"
             android:title="@string/tvNoiseLevels" />
 
-        <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+        <de.firebirdberlin.preference.InlineSeekBarPreference
+            xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            app:iconSpaceReserved="false"
             android:defaultValue="1"
             android:dependency="Ctrl.RingerVolume"
             android:key="minRingerVolume"
-            android:max="7"
             android:title="@string/setting_min_ringer_volume"
             seekbar:interval="1"
             seekbar:min="1"
+            seekbar:max="7"
             seekbar:unitsLeft=""
             seekbar:unitsRight="" />
 
         <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            app:iconSpaceReserved="false"
             android:defaultValue="0"
             android:dependency="Ctrl.RingerVolume"
             android:key="minAmplitude"
-            android:max="5000"
             android:summary="@string/tvExplanationMinimumLevel"
             android:title="@string/setting_min_amplitude"
             seekbar:interval="50"
             seekbar:min="0"
+            seekbar:max="5000"
             seekbar:unitsLeft=""
             seekbar:unitsRight="" />
 
         <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            app:iconSpaceReserved="false"
             android:defaultValue="7000"
             android:dependency="Ctrl.RingerVolume"
             android:key="maxAmplitude"
-            android:max="32767"
             android:summary="@string/tvExplanationMaximumLevel"
             android:title="@string/setting_max_amplitude"
             seekbar:interval="50"
             seekbar:min="50"
+            seekbar:max="32767"
             seekbar:unitsLeft=""
             seekbar:unitsRight="" />
 
         <de.firebirdberlin.preference.InlineProgressPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            app:iconSpaceReserved="false"
             android:dependency="Ctrl.RingerVolume"
             android:key="currentRingerVolumeValue"
             android:selectable="false"
             android:title="@string/tvCalculatedVolume" />
 
         <de.firebirdberlin.preference.InlineSeekBarPreference xmlns:seekbar="http://schemas.android.com/apk/lib/android"
+            app:iconSpaceReserved="false"
             android:defaultValue="0"
             android:dependency="Ctrl.RingerVolume"
             android:key="Ctrl.PocketVolume"
-            android:max="7"
             android:title="@string/tvPocketVolume"
             seekbar:interval="1"
             seekbar:min="0"
+            seekbar:max="7"
             seekbar:unitsLeft=""
             seekbar:unitsRight="" />
 
         <SwitchPreference
+            app:iconSpaceReserved="false"
             android:defaultValue="false"
             android:dependency="Ctrl.RingerVolume"
             android:key="increasingRingerVolume"
@@ -126,29 +138,36 @@
     <PreferenceScreen
         android:icon="@drawable/ic_notifications_30dp"
         android:key="preferenceScreenNotifications"
-        android:enabled="false"
         android:title="@string/screenNotifications"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:summary="@string/screenNotificationsSummary">
 
         <SwitchPreference
+            app:iconSpaceReserved="false"
             android:defaultValue="false"
             android:key="handleNotification"
             android:title="@string/switch_handle_notification" />
 
+<!--
+        TODO
+        this needs to be replaced by
+        RingtoneManager.ACTION_RINGTONE_PICKER
         <RingtonePreference
-            android:dependency="handleNotification"
             android:key="defaultNotificationUri"
             android:ringtoneType="notification"
             android:showDefault="false"
             android:showSilent="false"
             android:title="@string/notificationSoundUri" />
+-->
 
         <Preference
+            app:iconSpaceReserved="false"
             android:key="systemSoundPreferences"
             android:summary="@string/systemSoundSummary"
             android:title="@string/soundSettings" />
 
         <Preference
+            app:iconSpaceReserved="false"
             android:key="sendTestNotification"
             android:title="@string/btnTestNotification" />
     </PreferenceScreen>
@@ -156,24 +175,25 @@
     <PreferenceScreen
         android:icon="@drawable/ic_vibration_30dp"
         android:key="preferenceScreenVibration"
-        android:enabled="false"
         android:title="@string/screenVibration"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:summary="@string/screenVibrationSummary">
         <SwitchPreference
+            app:iconSpaceReserved="false"
             android:defaultValue="false"
             android:icon="@drawable/ic_vibration_30dp"
             android:key="handle_vibration"
             android:title="@string/switch_handle_vibration" />
 
         <CheckBoxPreference
+            app:iconSpaceReserved="false"
             android:defaultValue="false"
-            android:dependency="handle_vibration"
             android:key="Ctrl.BrokenProximitySensor"
             android:summary="@string/tvBrokenProximitySensor" />
 
         <Preference
+            app:iconSpaceReserved="false"
             android:clickable="false"
-            android:dependency="handle_vibration"
             android:summary="@string/systemVibrationSummary" />
 
     </PreferenceScreen>
@@ -181,37 +201,45 @@
     <PreferenceScreen
         android:icon="@drawable/ic_phone_30dp"
         android:key="preferenceScreenActions"
-        android:enabled="false"
         android:title="@string/screenOptions"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:summary="@string/screenOptionsSummary">
 
-        <PreferenceCategory android:title="@string/tvReduceVolume">
+        <PreferenceCategory
+            app:iconSpaceReserved="false"
+            android:title="@string/tvReduceVolume">
             <SwitchPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:key="ShakeAction"
                 android:summary="@string/tvShakeAction" />
 
             <SwitchPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:key="PullOutAction"
                 android:summary="@string/tvPullOutAction" />
         </PreferenceCategory>
 
         <PreferenceCategory
+            app:iconSpaceReserved="false"
             android:key="CategoryMuteActions"
             android:title="@string/tvSilenceVolume">
 
             <SwitchPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:key="SilentWhilePebbleConnected"
                 android:summary="@string/tvSilentWhilePebbleConnected" />
 
             <SwitchPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:key="FlipAction"
                 android:summary="@string/tvFlipAction" />
 
             <CheckBoxPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:dependency="FlipAction"
                 android:key="disconnectWhenFaceDown"
@@ -219,10 +247,12 @@
 
         </PreferenceCategory>
         <PreferenceCategory
+            app:iconSpaceReserved="false"
             android:key="CategoryDnD"
             android:title="@string/categoryBehaviour">
 
             <CheckBoxPreference
+                app:iconSpaceReserved="false"
                 android:defaultValue="false"
                 android:key="showDnDNotification"
                 android:title="@string/showDnDNotification"
@@ -234,6 +264,7 @@
     <PreferenceScreen
         android:key="about_screen"
         android:icon="@drawable/ic_info_outline_30dp"
+        app:fragment="com.firebirdberlin.smartringcontrollerpro.PreferencesFragment"
         android:title="@string/tabAbout">
 
         <de.firebirdberlin.preference.VersionPreference
@@ -245,15 +276,14 @@
 
         </de.firebirdberlin.preference.VersionPreference>
 
-        <Preference
+        <de.firebirdberlin.preference.AppDetailsPreference
             android:key="prefPermissions"
             android:title="@string/managePermissions" />
 
-        <Preference
+        <de.firebirdberlin.preference.NotificationListenerServicePreference
             android:key="openNotificationListenerSettings"
-            android:title="@string/notification_listeners">
-            <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
-        </Preference>
+            android:title="@string/notification_listeners"
+            />
 
         <Preference
             android:selectable="false"

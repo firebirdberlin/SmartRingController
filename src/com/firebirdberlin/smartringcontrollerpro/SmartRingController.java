@@ -1,12 +1,23 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
-import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -14,7 +25,8 @@ import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 
-public class SmartRingController extends BillingHelperActivity {
+public class SmartRingController extends BillingHelperActivity
+                                implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     public static final String TAG = "SmartRingController";
     public static final String PREFS_KEY = "SmartRingController preferences";
     public static final String TTS_MODE_HEADPHONES = "headphones";
@@ -33,7 +45,11 @@ public class SmartRingController extends BillingHelperActivity {
         super.onCreate(savedInstanceState);
         mContext = this;
         Utility.createNotificationChannels(this);
-        ActionBar actionbar = getActionBar();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
+
+        ActionBar actionbar = getSupportActionBar();
         if (actionbar != null) {
             actionbar.setDisplayShowTitleEnabled(true);
             actionbar.setDisplayShowHomeEnabled(true);
@@ -58,32 +74,35 @@ public class SmartRingController extends BillingHelperActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actions, menu);
 
-        final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
-        boolean enabled = settings.getBoolean("enabled", true);
-        final CompoundButton switchEnabled = (CompoundButton) menu.findItem(R.id.sw_enabled).getActionView();
-        switchEnabled.setChecked(enabled);
+        MenuItem btn = menu.findItem(R.id.sw_enabled);
+        final SwitchCompat switchEnabled = (SwitchCompat) btn.getActionView();
+        if (switchEnabled != null) {
+            final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+            boolean enabled = settings.getBoolean("enabled", true);
+            switchEnabled.setChecked(enabled);
 
-        switchEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-                SharedPreferences.Editor prefEditor = settings.edit();
-                prefEditor.putBoolean("enabled", isChecked);
-                prefEditor.apply();
+            switchEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                    SharedPreferences.Editor prefEditor = settings.edit();
+                    prefEditor.putBoolean("enabled", isChecked);
+                    prefEditor.apply();
 
-                toggleComponentState(mContext, RingerModeStateChangeReceiver.class, isChecked);
-                toggleComponentState(mContext, TTSService.class, isChecked);
-                toggleComponentState(mContext, SetRingerService.class, isChecked);
-                toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
-                toggleComponentState(mContext, EnjoyTheSilenceService.class, isChecked);
+                    toggleComponentState(mContext, RingerModeStateChangeReceiver.class, isChecked);
+                    toggleComponentState(mContext, TTSService.class, isChecked);
+                    toggleComponentState(mContext, SetRingerService.class, isChecked);
+                    toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
+                    toggleComponentState(mContext, EnjoyTheSilenceService.class, isChecked);
 
-                if (isChecked) {
-                    setupMainPage();
-                } else {
-                    setupWelcomePage();
+                    if (isChecked) {
+                        setupMainPage();
+                    } else {
+                        setupWelcomePage();
+                    }
                 }
-            }
-        });
+            });
 
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -94,16 +113,39 @@ public class SmartRingController extends BillingHelperActivity {
 
     private void setupWelcomePage() {
         preferencesFragment = null;
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
             .replace(android.R.id.content, new WelcomeFragment())
             .commit();
     }
 
     private void setupMainPage() {
         preferencesFragment = new PreferencesFragment();
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
             .replace(android.R.id.content, preferencesFragment)
             .commit();
+    }
+
+    @Override
+    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
+        Log.i(TAG, "onPreferenceStartFragment(): " + pref.getKey());
+        // Instantiate the new Fragment
+        final Fragment fragment =
+                Fragment.instantiate(this, pref.getFragment(), pref.getExtras());
+        fragment.setTargetFragment(caller, 0);
+        Bundle args = new Bundle();
+        args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .replace(android.R.id.content, fragment)
+                .addToBackStack(null)
+                .commit();
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(pref.getTitle());
+        }
+
+        return true;
     }
 
     @Override
@@ -124,18 +166,6 @@ public class SmartRingController extends BillingHelperActivity {
                 prefEditor.putBoolean("SilentWhilePebbleConnected", false);
                 prefEditor.apply();
                 setupMainPage();
-            }
-        }
-    }
-
-    @Override
-    protected void updateAllPurchases() {
-        super.updateAllPurchases();
-        if (preferencesFragment != null) {
-            if (isPurchased(BillingHelper.ITEM_DONATION)) {
-                preferencesFragment.onItemPurchased(BillingHelper.ITEM_DONATION);
-            } else if ( isPurchased(BillingHelper.ITEM_PRO) ) {
-                preferencesFragment.onItemPurchased(BillingHelper.ITEM_PRO);
             }
         }
     }

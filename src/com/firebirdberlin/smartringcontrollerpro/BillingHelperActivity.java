@@ -1,7 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +11,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BillingHelperActivity extends Activity {
+public abstract class BillingHelperActivity extends AppCompatActivity {
     static final String TAG = "BillingActivity";
 
     public interface ItemPurchaseListener {

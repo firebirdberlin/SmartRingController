@@ -23,6 +23,7 @@
     <string name="notificationChannelNameRingerService">Volume service</string>
     <string name="notificationChannelDescRingerService">This notification indicates when the automatic volume controller is active.</string>
     <string name="notificationSoundUri">Notification sound</string>
+    <string name="preferences">Preferences</string>
     <string name="product_name_donation">Donation</string>
     <string name="product_name_pro">Full version</string>
     <string name="product_name_trial">Trial version</string>

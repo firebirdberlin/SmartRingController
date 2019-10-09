@@ -15,6 +15,7 @@
     <string name="notification_listeners">Benachrichtigungszugriff</string>
     <string name="notification_listener_message">Bitte erlauben Sie den Zugriff auf Benachrichtigungen.</string>
     <string name="notificationSoundUri">Benachrichtigungston</string>
+    <string name="preferences">Einstellungen</string>
     <string name="product_name_donation">Spende</string>
     <string name="product_name_pro">Vollversion</string>
     <string name="product_name_trial">Testversion</string>

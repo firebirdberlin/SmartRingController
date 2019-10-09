@@ -1,7 +1,6 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -13,16 +12,19 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.SwitchPreference;
+
 import android.util.Log;
 import android.view.View;
 
@@ -38,7 +40,9 @@ import de.firebirdberlin.preference.InlineProgressPreference;
 import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
-public class PreferencesFragment extends PreferenceFragment implements BillingHelperActivity.ItemPurchaseListener {
+public class PreferencesFragment
+        extends PreferenceFragmentCompat
+        implements BillingHelperActivity.ItemPurchaseListener {
     private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
 
     public static final String TAG = "PreferencesFragment";
@@ -52,149 +56,198 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
     private InlineSeekBarPreference seekBarMaxAmplitude = null;
     private InlineProgressPreference progressBarRingerVolume = null;
     private Snackbar snackBar;
+    private String rootKey;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getActivity().setTheme(R.style.PreferencesTheme);
-        context = getActivity().getApplicationContext();
-        Settings settings = new Settings(context);
+    }
 
-        // Define the settings file to use by this settings fragment
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        Log.d(TAG, "rootKey " + rootKey);
         getPreferenceManager().setSharedPreferencesName(SmartRingController.PREFS_KEY);
 
-        addPreferencesFromResource(R.xml.preferences);
+        this.rootKey = rootKey;
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+        init();
+    }
 
-        SwitchPreference ctrlRingerVolume = (SwitchPreference) findPreference("Ctrl.RingerVolume");
-        SwitchPreference ctrlNotification = (SwitchPreference) findPreference("handleNotification");
-        SwitchPreference ctrlTTS = (SwitchPreference) findPreference("TTS.enabled");
-        InlineSeekBarPreference seekBarMinRingerVolume = (InlineSeekBarPreference) findPreference("minRingerVolume");
-        InlineSeekBarPreference seekBarAddPocketVolume = (InlineSeekBarPreference) findPreference("Ctrl.PocketVolume");
-        seekBarMinAmplitude = (InlineSeekBarPreference) findPreference("minAmplitude");
-        seekBarMaxAmplitude = (InlineSeekBarPreference) findPreference("maxAmplitude");
-        progressBarRingerVolume = (InlineProgressPreference) findPreference("currentRingerVolumeValue");
-        Preference buyDonation = findPreference("buyDonation");
+    private void init() {
+        context = getContext();
+
+        final SmartRingController activity = (SmartRingController) getActivity();
+
+
+        Settings settings = new Settings(context);
+        if (rootKey == null) {
+
+            if ( activity.isPurchased(BillingHelper.ITEM_DONATION)
+                    || activity.isPurchased(BillingHelper.ITEM_PRO) ) {
+                disablePreference("preferenceScreenNotifications");
+                disablePreference("preferenceScreenVibration");
+                disablePreference("preferenceScreenActions");
+            } else {
+                removePreference("buyPro");
+            }
+        }
+        volumePreferencesDisplayed = (PREFERENCE_SCREEN_RINGER_VOLUME.equals(rootKey));
+        handleAmbientNoiseMeasurement();
+
+
         final PreferencesFragment listener = this;
-        buyDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ((SmartRingController) getActivity()).showPurchaseDialog(listener);
-                return true;
-            }
-        });
+        Preference buyDonation = findPreference("buyDonation");
+        if (buyDonation != null) {
+            buyDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (activity != null) {
+                        activity.showPurchaseDialog(listener);
+                    }
+                    return activity != null;
+                }
+            });
+        }
         Preference buyPro = findPreference("buyPro");
-        buyPro.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ((SmartRingController) getActivity()).showPurchaseDialog(listener);
-                return true;
-            }
-        });
-
-        ctrlRingerVolume.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                boolean ischecked = ((SwitchPreference) preference).isChecked();
-                if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{
-                                    Manifest.permission.RECORD_AUDIO,
-                                    Manifest.permission.READ_PHONE_STATE
-                            }, PERMISSION_REQUEST_RECORD_AUDIO);
+        if (buyPro != null) {
+            buyPro.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (activity != null) {
+                        activity.showPurchaseDialog(listener);
+                    }
+                    return activity != null;
                 }
+            });
+        }
 
-                return true;
-            }
-        });
+        SwitchPreference ctrlRingerVolume = findPreference("Ctrl.RingerVolume");
+        if (ctrlRingerVolume != null) {
+            ctrlRingerVolume.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    boolean ischecked = ((SwitchPreference) preference).isChecked();
+                    if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
+                        ActivityCompat.requestPermissions(
+                                activity,
+                                new String[]{
+                                        Manifest.permission.RECORD_AUDIO,
+                                        Manifest.permission.READ_PHONE_STATE
+                                }, PERMISSION_REQUEST_RECORD_AUDIO
+                        );
+                    }
 
-        ctrlNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                boolean ischecked = ((SwitchPreference) preference).isChecked();
-                if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{Manifest.permission.RECORD_AUDIO},
-                            PERMISSION_REQUEST_RECORD_AUDIO);
-                }
-
-
-                if (!ischecked && !isNotificationListenerServiceRunning()) {
-                    requestNotificationListenerGrants();
-                }
-
-                return true;
-            }
-        });
-
-        ctrlTTS.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                boolean ischecked = ((SwitchPreference) preference).isChecked();
-                if (!ischecked && !isNotificationListenerServiceRunning()) {
-                    requestNotificationListenerGrants();
-                }
-
-                return true;
-            }
-        });
-        seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
-        seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
-
-        Preference prefPermissions = findPreference("prefPermissions");
-        prefPermissions.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                openPermssionSettings();
-                return true;
-            }
-        });
-        Preference prefSendTestNotification = findPreference("sendTestNotification");
-        prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                sendTestNotification();
-                return true;
-            }
-        });
-        Preference prefSendTestNotification2 = findPreference("sendTestNotification2");
-        prefSendTestNotification2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                sendTestNotification();
-                return true;
-            }
-        });
-
-        Preference prefSystemSounds = findPreference("systemSoundPreferences");
-        prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
-                return true;
-            }
-        });
-
-        Preference prefSilentWhilePebbleConnected = findPreference("SilentWhilePebbleConnected");
-        boolean installed = Utility.isPackageInstalled(getActivity(), "com.getpebble.android") ||
-                            Utility.isPackageInstalled(getActivity(), "com.getpebble.android.basalt");
-
-        if ( ! installed ) {
-            PreferenceCategory cat = (PreferenceCategory) findPreference("CategoryMuteActions");
-            cat.removePreference(prefSilentWhilePebbleConnected);
-            toggleComponentState(PebbleConnectionReceiver.class, false);
-            toggleComponentState(PebbleDisconnectionReceiver.class, false);
-            toggleComponentState(PebbleMessageReceiver.class, false);
-        } else {
-            prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object new_value) {
-                    boolean on = Boolean.parseBoolean(new_value.toString());
-                    toggleComponentState(PebbleConnectionReceiver.class, on);
-                    toggleComponentState(PebbleDisconnectionReceiver.class, on);
-                    toggleComponentState(PebbleMessageReceiver.class, on);
                     return true;
                 }
             });
         }
 
-        ((SmartRingController) getActivity()).updateAllPurchases();
+        SwitchPreference ctrlNotification = findPreference("handleNotification");
+        if (ctrlNotification != null) {
+            ctrlNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    boolean ischecked = ((SwitchPreference) preference).isChecked();
+                    if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
+                        ActivityCompat.requestPermissions(
+                                activity,
+                                new String[]{Manifest.permission.RECORD_AUDIO},
+                                PERMISSION_REQUEST_RECORD_AUDIO
+                        );
+                    }
 
+
+                    if (!ischecked && !isNotificationListenerServiceRunning()) {
+                        requestNotificationListenerGrants();
+                    }
+
+                    return true;
+                }
+            });
+        }
+
+        SwitchPreference ctrlTTS = findPreference("TTS.enabled");
+        if (ctrlTTS != null) {
+            ctrlTTS.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    boolean ischecked = ((SwitchPreference) preference).isChecked();
+                    if (!ischecked && !isNotificationListenerServiceRunning()) {
+                        requestNotificationListenerGrants();
+                    }
+
+                    return true;
+                }
+            });
+        }
+        InlineSeekBarPreference seekBarMinRingerVolume = findPreference("minRingerVolume");
+        InlineSeekBarPreference seekBarAddPocketVolume = findPreference("Ctrl.PocketVolume");
+        if (seekBarMinRingerVolume != null && seekBarAddPocketVolume != null) {
+            seekBarMinRingerVolume.setMax(settings.maxRingerVolume);
+            seekBarAddPocketVolume.setMax(settings.maxRingerVolume);
+        }
+
+        Preference prefSendTestNotification = findPreference("sendTestNotification");
+        if (prefSendTestNotification != null) {
+            prefSendTestNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    sendTestNotification();
+                    return true;
+                }
+            });
+        }
+
+        Preference prefSendTestNotification2 = findPreference("sendTestNotification2");
+        if (prefSendTestNotification2 != null) {
+            prefSendTestNotification2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    sendTestNotification();
+                    return true;
+                }
+            });
+        }
+
+        Preference prefSystemSounds = findPreference("systemSoundPreferences");
+        if (prefSystemSounds != null) {
+            prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
+                    return true;
+                }
+            });
+        }
+
+        Preference prefSilentWhilePebbleConnected = findPreference("SilentWhilePebbleConnected");
+        boolean installed = Utility.isPackageInstalled(context, "com.getpebble.android") ||
+                            Utility.isPackageInstalled(context, "com.getpebble.android.basalt");
+
+        if ( ! installed ) {
+            PreferenceCategory cat = findPreference("CategoryMuteActions");
+            if (cat != null) {
+                cat.removePreference(prefSilentWhilePebbleConnected);
+            }
+            toggleComponentState(PebbleConnectionReceiver.class, false);
+            toggleComponentState(PebbleDisconnectionReceiver.class, false);
+            toggleComponentState(PebbleMessageReceiver.class, false);
+        } else {
+            if (prefSilentWhilePebbleConnected != null) {
+                prefSilentWhilePebbleConnected.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object new_value) {
+                        boolean on = Boolean.parseBoolean(new_value.toString());
+                        toggleComponentState(PebbleConnectionReceiver.class, on);
+                        toggleComponentState(PebbleDisconnectionReceiver.class, on);
+                        toggleComponentState(PebbleMessageReceiver.class, on);
+                        return true;
+                    }
+                });
+            }
+        }
+        activity.updateAllPurchases();
+
+        seekBarMinAmplitude = findPreference("minAmplitude");
+        seekBarMaxAmplitude = findPreference("maxAmplitude");
+        progressBarRingerVolume = findPreference("currentRingerVolumeValue");
     }
 
     @Override
@@ -228,11 +281,19 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
 
     @Override
     public void onResume(){
-        Log.d(TAG, "onResume");
+        Log.d(TAG, "onResume " + rootKey);
         super.onResume();
         EventBus.getDefault().register(this);
         handleAmbientNoiseMeasurement();
         showSnackBar();
+        if (rootKey == null) {
+            SmartRingController activity = (SmartRingController) getActivity();
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.app_name);
+                actionBar.setSubtitle(R.string.preferences);
+            }
+        }
     }
 
 
@@ -241,19 +302,6 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
         super.onPause();
         EventBus.getDefault().unregister(this);
         soundMeter.stopMeasurement();
-    }
-
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        String key = "";
-        volumePreferencesDisplayed = false;
-        if( preference != null && preference.getKey() != null ) {
-            key = preference.getKey();
-            Log.d(TAG, "onPreferenceTreeClick: " + key);
-            volumePreferencesDisplayed = key.equals(PREFERENCE_SCREEN_RINGER_VOLUME);
-        }
-        handleAmbientNoiseMeasurement();
-        return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
     private void handleAmbientNoiseMeasurement() {
@@ -266,15 +314,23 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
 
     @Subscribe
     public void onEvent(OnNewAmbientNoiseValue event) {
-        seekBarMinAmplitude.setSecondaryProgress((int) event.value);
-        seekBarMaxAmplitude.setSecondaryProgress((int) event.value);
+        if (seekBarMinAmplitude != null) {
+            seekBarMinAmplitude.setSecondaryProgress((int) event.value);
+        }
+        if (seekBarMaxAmplitude != null) {
+            seekBarMaxAmplitude.setSecondaryProgress((int) event.value);
+        }
 
-        Context context = getActivity().getApplicationContext();
-        Settings settings = new Settings(context);
-        int volume = settings.getRingerVolume(event.value, false, false);
+        try {
+            Context context = getActivity().getApplicationContext();
+            Settings settings = new Settings(context);
+            int volume = settings.getRingerVolume(event.value, false, false);
 
-        progressBarRingerVolume.setMax(settings.maxRingerVolume);
-        progressBarRingerVolume.setProgress(volume);
+            if (progressBarRingerVolume != null) {
+                progressBarRingerVolume.setMax(settings.maxRingerVolume);
+                progressBarRingerVolume.setProgress(volume);
+            }
+        } catch (NullPointerException ignored) {}
     }
 
     private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
@@ -314,14 +370,6 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
         pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 
-    private void openPermssionSettings() {
-        Intent intent = new Intent();
-        intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
-        intent.setData(uri);
-        startActivity(intent);
-    }
-
     public void onItemPurchased(String sku) {
         // no matter which item was purchased, we enable everything
         enablePreference("preferenceScreenNotifications");
@@ -352,6 +400,11 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
             preference.setEnabled(true);
         }
     }
+    private void disablePreference(String key) {
+        Preference preference = findPreference(key);
+
+        preference.setEnabled(false);
+    }
     private PreferenceGroup getParent(PreferenceGroup root, Preference preference) {
         for (int i = 0; i < root.getPreferenceCount(); i++) {
             Preference p = root.getPreference(i);
@@ -369,7 +422,7 @@ public class PreferencesFragment extends PreferenceFragment implements BillingHe
     }
 
     public void showSnackBar(){
-        final SharedPreferences settings = context.getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        final SharedPreferences settings = getContext().getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", true);
         boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
         boolean notification_volume_enabled = settings.getBoolean("handleNotification", false);
