@@ -25,6 +25,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.android.billingclient:billing:2.0.3'
     implementation project(':android-preferences')
     implementation fileTree(include: '*.jar', dir: 'libs')
 }

@@ -38,9 +38,7 @@ import de.firebirdberlin.preference.InlineProgressPreference;
 import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
-public class PreferencesFragment
-        extends PreferenceFragmentCompat
-        implements BillingHelperActivity.ItemPurchaseListener {
+public class PreferencesFragment extends PreferenceFragmentCompat {
     private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
 
     public static final String TAG = "PreferencesFragment";
@@ -75,9 +73,15 @@ public class PreferencesFragment
     void initPurchases() {
         Log.i(TAG, "initPurchases()");
         final SmartRingController activity = (SmartRingController) getActivity();
-        boolean isPurchased = (activity.isPurchased(BillingHelper.ITEM_DONATION)
-                || activity.isPurchased(BillingHelper.ITEM_PRO));
-        if (rootKey == null) {
+        if (activity != null) {
+            if (activity.isPurchased(SmartRingController.ITEM_DONATION)) {
+                removePreference("buyDonation");
+            }
+
+            boolean isPurchased = (
+                    activity.isPurchased(SmartRingController.ITEM_DONATION)
+                            || activity.isPurchased(SmartRingController.ITEM_PRO)
+            );
             if (isPurchased) {
                 removePreference("buyPro");
                 enablePreference("preferenceScreenNotifications");
@@ -100,14 +104,13 @@ public class PreferencesFragment
         volumePreferencesDisplayed = (PREFERENCE_SCREEN_RINGER_VOLUME.equals(rootKey));
         handleAmbientNoiseMeasurement();
 
-        final PreferencesFragment listener = this;
         Preference buyDonation = findPreference("buyDonation");
         if (buyDonation != null) {
             buyDonation.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (activity != null) {
-                        activity.showPurchaseDialog(listener);
+                        activity.showPurchaseDialog();
                     }
                     return activity != null;
                 }
@@ -119,7 +122,7 @@ public class PreferencesFragment
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (activity != null) {
-                        activity.showPurchaseDialog(listener);
+                        activity.showPurchaseDialog();
                     }
                     return activity != null;
                 }
@@ -247,7 +250,6 @@ public class PreferencesFragment
                 });
             }
         }
-        activity.updateAllPurchases();
 
         seekBarMinAmplitude = findPreference("minAmplitude");
         seekBarMaxAmplitude = findPreference("maxAmplitude");
@@ -375,14 +377,6 @@ public class PreferencesFragment
         pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 
-    public void onItemPurchased(String sku) {
-        // no matter which item was purchased, we enable everything
-        enablePreference("preferenceScreenNotifications");
-        enablePreference("preferenceScreenVibration");
-        enablePreference("preferenceScreenActions");
-        removePreference("buyPro");
-    }
-
     private void removePreference(String key) {
         Preference preference = findPreference(key);
         removePreference(preference);
@@ -400,16 +394,17 @@ public class PreferencesFragment
 
     private void enablePreference(String key) {
         Preference preference = findPreference(key);
-
         if (preference != null) {
             preference.setEnabled(true);
         }
     }
     private void disablePreference(String key) {
         Preference preference = findPreference(key);
-
-        preference.setEnabled(false);
+        if (preference != null) {
+            preference.setEnabled(false);
+        }
     }
+
     private PreferenceGroup getParent(PreferenceGroup root, Preference preference) {
         for (int i = 0; i < root.getPreferenceCount(); i++) {
             Preference p = root.getPreference(i);

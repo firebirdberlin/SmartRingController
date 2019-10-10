@@ -8,6 +8,8 @@
     <string name="buyPro">Buy full version</string>
     <string name="categoryBehaviour">Behaviour</string>
     <string name="dialog_message_thank_you">Thank you very much!</string>
+    <string name="dialog_message_pending_purchase">Your purchase was not yet confirmed by Google Play.</string>
+    <string name="dialog_message_already_owned">This item was already bought.</string>
     <string name="dialog_title_thank_you">Thanks</string>
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="edit">edit</string>

@@ -52,8 +52,7 @@ public class SmartRingController extends BillingHelperActivity
             actionbar.setDisplayShowHomeEnabled(true);
             actionbar.setHomeButtonEnabled(true);
             actionbar.setDisplayHomeAsUpEnabled(false);
-
-            //actionBar.setTitle("");
+            actionbar.setIcon(R.drawable.ic_launcher);
         }
 
         final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
@@ -150,8 +149,8 @@ public class SmartRingController extends BillingHelperActivity
         super.onPurchasesInitialized();
 
         if (preferencesFragment != null) {
-            if (! isPurchased(BillingHelper.ITEM_PRO) &&
-                    ! isPurchased(BillingHelper.ITEM_DONATION)) {
+            if (! isPurchased(ITEM_PRO) &&
+                    ! isPurchased(ITEM_DONATION)) {
                 // disable pro features
                 SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
                 SharedPreferences.Editor prefEditor = settings.edit();
@@ -166,6 +165,12 @@ public class SmartRingController extends BillingHelperActivity
             }
             preferencesFragment.initPurchases();
         }
+    }
+
+    @Override
+    protected void onItemPurchased(String sku) {
+        super.onItemPurchased(sku);
+        preferencesFragment.initPurchases();
     }
 
     public void toggleComponentState(Context context, Class component, boolean on){
