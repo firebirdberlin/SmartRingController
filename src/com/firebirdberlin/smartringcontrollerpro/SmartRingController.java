@@ -122,9 +122,16 @@ public class SmartRingController extends BillingHelperActivity
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (preferencesFragment != null) {
+            preferencesFragment.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
         Log.i(TAG, "onPreferenceStartFragment(): " + pref.getKey());
-        // Instantiate the new Fragment
         final Fragment fragment =
                 Fragment.instantiate(this, pref.getFragment(), pref.getExtras());
         fragment.setTargetFragment(caller, 0);

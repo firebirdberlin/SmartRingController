@@ -9,18 +9,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 import androidx.annotation.RequiresApi;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import android.telephony.TelephonyManager;
-import android.view.View;
 
 public class Utility {
 
@@ -56,38 +53,6 @@ public class Utility {
             return false;
         }
         return true;
-    }
-
-    public int getStatusBarHeight(Context context) {
-      int result = 0;
-      int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-      if (resourceId > 0) {
-          result = context.getResources().getDimensionPixelSize(resourceId);
-      }
-      return result;
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
     }
 
     public static int getCallState(Context context) {
@@ -152,12 +117,12 @@ public class Utility {
         }
     }
 
-    public static boolean hasPermission(Context context, String permission) {
+    static boolean hasPermission(Context context, String permission) {
         return (ContextCompat.checkSelfPermission(context, permission)
                 == PackageManager.PERMISSION_GRANTED);
     }
 
-    public static String getContactNameFromNumber(Context context, String number, ContentResolver contentResolver) {
+    static String getContactNameFromNumber(Context context, String number, ContentResolver contentResolver) {
         if (!Utility.hasPermission(context, Manifest.permission.READ_CONTACTS)) {
             return number;
         }
@@ -181,11 +146,6 @@ public class Utility {
         } finally {
             cursor.close();
         }
-    }
-
-    public static void showSnackBar(View view, String message){
-        Snackbar snackBar = Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE);
-        snackBar.show();
     }
 }
 

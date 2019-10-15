@@ -14,6 +14,7 @@
     <string name="disconnectWhenFaceDown">Disable data connections.</string>
     <string name="edit">edit</string>
     <string name="managePermissions">Manage permissions</string>
+    <string name="missingPermissions">Missing permissions detected.</string>
     <string name="msgTestNotification">This is a test notification.</string>
     <string name="notification_listener">Notification listener</string>
     <string name="notification_listeners">Notification access</string>
@@ -72,11 +73,8 @@
     <string name="screenVibrationSummary">Turn on vibration when appropriate.</string>
     <string name="screenVolume">Automatic volume control</string>
     <string name="screenVolumeSummary">Control how the ringer volume is determined.</string>
-    <string name="systemSoundSummary">
-        For best results you should disable the default notification sound.
-    </string>
     <string name="systemVibrationSummary">
-        You should disable vibrations for incoming calls and notificatiosn.
+        You should disable vibrations for incoming calls and notifications.
     </string>
     <string name="titleSilenceMode">Silence mode.</string>
     <string name="msgRestoreRingerMode">Click to restore normal mode.</string>

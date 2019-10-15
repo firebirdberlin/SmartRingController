@@ -56,6 +56,9 @@ public abstract class BillingHelperActivity
     }
 
     public boolean isPurchased(String sku) {
+        if (Utility.isDebuggable(this)) {
+            return true;
+        }
         boolean result = (purchases != null) ? purchases.get(sku) : false;
         Log.i(TAG, "Checking purchase " + sku + " => " + result);
         return result;

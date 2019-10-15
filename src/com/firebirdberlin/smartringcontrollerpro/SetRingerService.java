@@ -381,7 +381,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             audiomanager.setRingerVolume(targetVolume);
             if ( shouldRing() && ! TTSService.shouldRead(false, this) ) {
                 // the service is stopped on NotificationCompleted
-                playNotification(soundUri);
+                playNotification(soundUri, false);
             } else {
                 // otherwise stop service after 600ms (wait for vibrator)
                 handler.postDelayed(stopService, 600);
@@ -531,11 +531,10 @@ public class SetRingerService extends Service implements SensorEventListener {
      *
      * @param uri: Uri of the sound to be played
      */
-    private void playNotification(Uri uri){
+    private void playNotification(Uri uri, boolean retry){
 
-        if (uri == null || uri.equals(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI) ) {
-            Logger.w(TAG, "default sound uri detected ! Falling back to own setting");
-            uri = Uri.parse(settings.defaultNotificationUri);
+        if (uri == null ) {
+            uri = android.provider.Settings.System.DEFAULT_NOTIFICATION_URI;
         }
 
         Logger.i(TAG, "Playing notification " + uri.toString());
@@ -544,15 +543,6 @@ public class SetRingerService extends Service implements SensorEventListener {
         MediaPlayer mp = new MediaPlayer();
         try {
             mp.setDataSource(this, uri);
-        } catch (SecurityException| IOException e){
-            try {
-                mp.setDataSource(this, android.provider.Settings.System.DEFAULT_NOTIFICATION_URI);
-            } catch (IOException ignored) {
-                return;
-            }
-        }
-
-       try {
             if (audiomanager.isWiredHeadsetOn() || audiomanager.isBluetoothA2dpOn()) {
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             } else {
@@ -563,18 +553,29 @@ public class SetRingerService extends Service implements SensorEventListener {
             mp.setOnCompletionListener(NotificationCompleted);
         } catch(Exception e) {
             e.printStackTrace();
+            if (retry) {
+                postStopService();
+            }
+            else {
+                mp.release();
+                playNotification(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI, true);
+            }
         }
     }
 
     private final OnCompletionListener NotificationCompleted = new OnCompletionListener() {
         public void onCompletion(MediaPlayer mp) {
             Logger.i(TAG,"notification sound completed");
-            long now = System.currentTimeMillis();
-            if (now >= vibrationEndTime){
-                handler.post(stopService);
-            } else {
-                handler.postDelayed(stopService, vibrationEndTime - now);
-            }
+            postStopService();
         }
     };
+
+    void postStopService() {
+        long now = System.currentTimeMillis();
+        if (now >= vibrationEndTime){
+            handler.post(stopService);
+        } else {
+            handler.postDelayed(stopService, vibrationEndTime - now);
+        }
+    }
 }

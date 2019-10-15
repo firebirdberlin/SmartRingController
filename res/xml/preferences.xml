@@ -1,6 +1,6 @@
-<PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:prefs="prefs"
     android:key="main_screen">
 
     <PreferenceScreen
@@ -27,11 +27,9 @@
             android:key="TTSmode"
             android:title="@string/tvTTSmode" />
 
-        <Preference
-            android:key="tts_settings"
-            android:title="@string/tts_settings">
-            <intent android:action="com.android.settings.TTS_SETTINGS" />
-        </Preference>
+        <de.firebirdberlin.preference.AndroidPreferencesPreference
+            android:title="@string/tts_settings"
+            prefs:which="TTS"/>
 
         <Preference
             android:key="sendTestNotification2"
@@ -148,22 +146,9 @@
             android:key="handleNotification"
             android:title="@string/switch_handle_notification" />
 
-<!--
-        TODO
-        this needs to be replaced by
-        RingtoneManager.ACTION_RINGTONE_PICKER
-        <RingtonePreference
-            android:key="defaultNotificationUri"
-            android:ringtoneType="notification"
-            android:showDefault="false"
-            android:showSilent="false"
-            android:title="@string/notificationSoundUri" />
--->
-
-        <Preference
+        <de.firebirdberlin.preference.AndroidPreferencesPreference
             app:iconSpaceReserved="false"
-            android:key="systemSoundPreferences"
-            android:summary="@string/systemSoundSummary"
+            prefs:which="Sound"
             android:title="@string/soundSettings" />
 
         <Preference
@@ -268,30 +253,27 @@
         android:title="@string/tabAbout">
 
         <de.firebirdberlin.preference.VersionPreference
-            android:key="version"
             android:title="SmartRingController"
-            android:summary="@string/summaryAboutCredits">
+            android:summary="@string/summaryAboutCredits"
+            app:enableCopying="true">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://play.google.com/store/apps/details?id=com.firebirdberlin.smartringcontrollerpro"/>
 
         </de.firebirdberlin.preference.VersionPreference>
 
-        <de.firebirdberlin.preference.AppDetailsPreference
-            android:key="prefPermissions"
-            android:title="@string/managePermissions" />
-
-        <de.firebirdberlin.preference.NotificationListenerServicePreference
-            android:key="openNotificationListenerSettings"
-            android:title="@string/notification_listeners"
-            />
-
         <Preference
             android:selectable="false"
             android:enabled="true"
-            android:key="example_key"
             android:title="@string/tabAbout"
             android:summary="@string/tvAbout" />
 
+        <de.firebirdberlin.preference.AppDetailsPreference
+            android:title="@string/managePermissions" />
+
+        <de.firebirdberlin.preference.AndroidPreferencesPreference
+            android:title="@string/notification_listeners"
+            prefs:which="NotificationListener"
+            />
         <Preference
             android:title="@string/titlePrivacyPolicy">
             <intent android:action="android.intent.action.VIEW"
@@ -317,7 +299,6 @@
             android:title="@string/titleContribute">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/firebirdberlin/SmartRingController"/>
-
         </Preference>
 
         <Preference

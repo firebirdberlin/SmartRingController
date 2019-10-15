@@ -1,6 +1,7 @@
 package com.firebirdberlin.smartringcontrollerpro;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -11,8 +12,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.webkit.PermissionRequest;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -95,6 +98,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         }
     }
 
+    void onBackPressed() {
+        Log.i(TAG, "onBackPressed");
+        showSnackBar();
+        showSnackBarMissingPermissions();
+    }
+
     private void init() {
         context = getContext();
 
@@ -134,17 +143,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             ctrlRingerVolume.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    boolean ischecked = ((SwitchPreference) preference).isChecked();
-                    if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-                        ActivityCompat.requestPermissions(
-                                activity,
-                                new String[]{
-                                        Manifest.permission.RECORD_AUDIO,
-                                        Manifest.permission.READ_PHONE_STATE
-                                }, PERMISSION_REQUEST_RECORD_AUDIO
-                        );
-                    }
-
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showSnackBarMissingPermissions();
+                        }
+                    },300);
                     return true;
                 }
             });
@@ -155,20 +159,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             ctrlNotification.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    boolean ischecked = ((SwitchPreference) preference).isChecked();
-                    if (!ischecked && !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO)) {
-                        ActivityCompat.requestPermissions(
-                                activity,
-                                new String[]{Manifest.permission.RECORD_AUDIO},
-                                PERMISSION_REQUEST_RECORD_AUDIO
-                        );
-                    }
-
-
-                    if (!ischecked && !isNotificationListenerServiceRunning()) {
-                        requestNotificationListenerGrants();
-                    }
-
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showSnackBar();
+                            showSnackBarMissingPermissions();
+                        }
+                    },300);
                     return true;
                 }
             });
@@ -179,11 +176,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             ctrlTTS.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    boolean ischecked = ((SwitchPreference) preference).isChecked();
-                    if (!ischecked && !isNotificationListenerServiceRunning()) {
-                        requestNotificationListenerGrants();
-                    }
-
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showSnackBar();
+                        }
+                    },300);
                     return true;
                 }
             });
@@ -210,16 +208,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             prefSendTestNotification2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     sendTestNotification();
-                    return true;
-                }
-            });
-        }
-
-        Preference prefSystemSounds = findPreference("systemSoundPreferences");
-        if (prefSystemSounds != null) {
-            prefSystemSounds.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivityForResult(new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS), 0);
                     return true;
                 }
             });
@@ -262,25 +250,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         dismissSnackBar();
     }
 
-    private void requestNotificationListenerGrants() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.notification_listener) //
-                .setMessage(R.string.notification_listener_message) //
-                .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
-                        dialog.dismiss();
-                    }
-                }) //
-                .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // TODO
-                        dialog.dismiss();
-                    }
-                });
-        builder.show();
-    }
-
     private boolean isNotificationListenerServiceRunning() {
         return mNotificationListener.isRunning;
     }
@@ -292,7 +261,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         initPurchases();
         EventBus.getDefault().register(this);
         handleAmbientNoiseMeasurement();
-        showSnackBar();
         if (rootKey == null) {
             SmartRingController activity = (SmartRingController) getActivity();
             ActionBar actionBar = activity.getSupportActionBar();
@@ -301,6 +269,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 actionBar.setSubtitle(R.string.preferences);
             }
         }
+        showSnackBar();
+        showSnackBarMissingPermissions();
     }
 
 
@@ -361,7 +331,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         Notification n = builder.build();
 
-        n.defaults |= Notification.DEFAULT_SOUND;
+        n./**/defaults |= Notification.DEFAULT_SOUND;
         //n.defaults |= Notification.DEFAULT_ALL;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 //            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -421,7 +391,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         return null;
     }
 
-    public void showSnackBar(){
+    private void showSnackBar() {
+        if (snackBar != null) {
+            return;
+        }
         final SharedPreferences settings = getContext().getSharedPreferences(SmartRingController.PREFS_KEY, 0);
         boolean enabled = settings.getBoolean("enabled", true);
         boolean tts_enabled = settings.getBoolean("TTS.enabled", false);
@@ -438,11 +411,48 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         }
     }
 
-    void dismissSnackBar() {
+    private void showSnackBarMissingPermissions() {
+        if (snackBar != null) {
+            return;
+        }
+        final SharedPreferences settings = getContext().getSharedPreferences(SmartRingController.PREFS_KEY, 0);
+        boolean enabled = settings.getBoolean("enabled", true);
+        boolean ringerVolumeEnabled = settings.getBoolean("Ctrl.RingerVolume", false);
+        boolean notificationVolumeEnabled = settings.getBoolean("handleNotification", false);
+        boolean missingReadPhoneState = !Utility.hasPermission(context, Manifest.permission.READ_PHONE_STATE);
+        boolean missingRecordAudio = !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO);
+        boolean missingReadExternal = !Utility.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if ( enabled &&
+                (ringerVolumeEnabled || notificationVolumeEnabled) &&
+                (missingRecordAudio || missingReadExternal || missingReadPhoneState)
+        ) {
+            Activity activity = getActivity();
+            if (activity == null) {
+                return;
+            }
+            View view = activity.findViewById(android.R.id.content);
+            snackBar = Snackbar.make(view, R.string.missingPermissions, Snackbar.LENGTH_INDEFINITE);
+            snackBar.setAction(R.string.edit,
+                    new RequestPermissionListener(
+                            new String[]{
+                                    Manifest.permission.RECORD_AUDIO,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_PHONE_STATE
+                            }
+                    )
+            );
+            snackBar.show();
+        } else {
+            dismissSnackBar();
+        }
+
+    }
+
+    private void dismissSnackBar() {
         if (snackBar != null && snackBar.isShown()) {
             snackBar.dismiss();
-            snackBar = null;
         }
+        snackBar = null;
     }
 
     public class StartNotificationServiceListener implements View.OnClickListener {
@@ -454,6 +464,27 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
             Log.d(TAG, "StartNotificationServiceListener");
             startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        }
+    }
+
+    public class RequestPermissionListener implements View.OnClickListener {
+
+        String[] desiredPermissions;
+
+        RequestPermissionListener(String[] desiredPermissions) {
+            this.desiredPermissions = desiredPermissions;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (!isAdded()) {
+                return;
+            }
+            ActivityCompat.requestPermissions(
+                    getActivity(),
+                    desiredPermissions,
+                    PERMISSION_REQUEST_RECORD_AUDIO
+            );
         }
     }
 }

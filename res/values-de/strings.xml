@@ -62,7 +62,6 @@
     <string name="screenVibrationSummary">Vibrationsalarm automatisch steuern</string>
     <string name="screenVolume">automatische Lautstärkeregelung</string>
     <string name="screenVolumeSummary">Einstellungen, die die Lautstärke des Klingeltons bestimmen</string>
-    <string name="systemSoundSummary">Hinweis: Deaktivieren Sie den Standardtonfür Benachrichtigungen</string>
     <string name="systemVibrationSummary">Hinweis: Um ein optimales Ergebnis zu erzielen, sollten Sie die Vibration für Anrufe und Benachrichtigungen deaktivieren.</string>
     <string name="titleSilenceMode">Lautlos Modus.</string>
     <string name="msgRestoreRingerMode">Klicken zum Wiederherstellen.</string>
@@ -97,4 +96,7 @@
     <string name="notificationChannelDescRingerService">Diese Benachrichtigung wird angezeigt, wenn die automatische Lautstärkeregelung aktiv ist</string>
     <string name="notificationChannelNameStatus">Statusmeldungen</string>
     <string name="notificationChannelDescStatus">Benachrichtigungen zum Status, z.B. wenn Nicht stören aktiviert ist.</string>
+    <string name="dialog_message_already_owned">Sie besitzen dieses Produkt bereits.</string>
+    <string name="dialog_message_pending_purchase">Vielen Dank. Ihre Bestellung wurde von Google Play noch nicht bestätigt.</string>
+    <string name="missingPermissions">"Bitte erteilen Sie die benötigten Berechtigungen. "</string>
 </resources>
