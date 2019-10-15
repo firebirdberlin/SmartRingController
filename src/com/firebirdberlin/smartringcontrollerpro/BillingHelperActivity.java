@@ -24,6 +24,7 @@ import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +42,16 @@ public abstract class BillingHelperActivity
     public static final String ITEM_DONATION = "donation";
     public static final String ITEM_PRO = "pro";
 
+    static List<String> fullSkuList = new ArrayList<>(Arrays.asList(ITEM_DONATION, ITEM_PRO));
     Map<String, Boolean> purchases = getDefaultPurchaseMap();
     HashMap<String, String> prices = new HashMap<>();
     List<SkuDetails> skuDetails;
 
     static HashMap<String, Boolean> getDefaultPurchaseMap() {
         HashMap<String, Boolean> def = new HashMap<>();
-        def.put(ITEM_PRO, false);
-        def.put(ITEM_DONATION, false);
+        for (String sku: fullSkuList) {
+            def.put(sku, false);
+        }
         return def;
     }
 
@@ -247,16 +250,13 @@ public abstract class BillingHelperActivity
     }
 
     void queryPurchases() {
-        List<String> skuList = new ArrayList<> ();
-        skuList.add(ITEM_DONATION);
-        skuList.add(ITEM_PRO);
         Purchase.PurchasesResult result = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);
         int responseCode = result.getResponseCode();
         if (responseCode != BillingClient.BillingResponseCode.OK) {
             return;
         }
 
-        for(String sku: skuList) {
+        for(String sku: fullSkuList) {
             purchases.put(sku, false);
         }
         for(Purchase purchase: result.getPurchasesList()) {
@@ -272,12 +272,8 @@ public abstract class BillingHelperActivity
     }
 
     void querySkuDetails() {
-        List<String> skuList = new ArrayList<> ();
-        skuList.add(ITEM_DONATION);
-        skuList.add(ITEM_PRO);
-
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+        params.setSkusList(fullSkuList).setType(BillingClient.SkuType.INAPP);
         mBillingClient.querySkuDetailsAsync(params.build(),
                 new SkuDetailsResponseListener() {
                     @Override
