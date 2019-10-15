@@ -6,7 +6,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,10 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.webkit.PermissionRequest;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -42,10 +39,9 @@ import de.firebirdberlin.preference.InlineSeekBarPreference;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
-    private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
-
     public static final String TAG = "PreferencesFragment";
     private static final String PREFERENCE_SCREEN_RINGER_VOLUME = "Ctrl.RingerVolumePreferenceScreen";
+    private static int PERMISSION_REQUEST_RECORD_AUDIO = 1;
     private final SoundMeter soundMeter = new SoundMeter();
 
     private Context context = null;
@@ -148,7 +144,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         public void run() {
                             showSnackBarMissingPermissions();
                         }
-                    },300);
+                    }, 300);
                     return true;
                 }
             });
@@ -165,7 +161,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                             showSnackBar();
                             showSnackBarMissingPermissions();
                         }
-                    },300);
+                    }, 300);
                     return true;
                 }
             });
@@ -181,7 +177,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         public void run() {
                             showSnackBar();
                         }
-                    },300);
+                    }, 300);
                     return true;
                 }
             });
@@ -217,7 +213,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         boolean installed = Utility.isPackageInstalled(context, "com.getpebble.android") ||
                 Utility.isPackageInstalled(context, "com.getpebble.android.basalt");
 
-        if ( ! installed ) {
+        if (!installed) {
             PreferenceCategory cat = findPreference("CategoryMuteActions");
             if (cat != null) {
                 cat.removePreference(prefSilentWhilePebbleConnected);
@@ -255,7 +251,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         Log.d(TAG, "onResume " + rootKey);
         super.onResume();
         initPurchases();
@@ -275,7 +271,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
         soundMeter.stopMeasurement();
@@ -307,13 +303,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 progressBarRingerVolume.setMax(settings.maxRingerVolume);
                 progressBarRingerVolume.setProgress(volume);
             }
-        } catch (NullPointerException ignored) {}
-    }
-
-    private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void...params) {
-            soundMeter.startMeasurement(500);
-            return null;
+        } catch (NullPointerException ignored) {
         }
     }
 
@@ -339,11 +329,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         notificationManager.notify(0, n);
     }
 
-    private void toggleComponentState(Class component, boolean on){
+    private void toggleComponentState(Class component, boolean on) {
         ComponentName receiver = new ComponentName(getActivity(), component);
         PackageManager pm = getActivity().getPackageManager();
         int new_state = (on) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                            : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         pm.setComponentEnabledSetting(receiver, new_state, PackageManager.DONT_KILL_APP);
     }
 
@@ -357,7 +347,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             return;
         }
         PreferenceGroup parent = getParent(getPreferenceScreen(), preference);
-        if ( parent != null ) {
+        if (parent != null) {
             parent.removePreference(preference);
         }
     }
@@ -368,6 +358,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             preference.setEnabled(true);
         }
     }
+
     private void disablePreference(String key) {
         Preference preference = findPreference(key);
         if (preference != null) {
@@ -382,7 +373,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return root;
             }
             if (p instanceof PreferenceGroup) {
-                PreferenceGroup parent = getParent((PreferenceGroup)p, preference);
+                PreferenceGroup parent = getParent((PreferenceGroup) p, preference);
                 if (parent != null) {
                     return parent;
                 }
@@ -422,7 +413,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         boolean missingReadPhoneState = !Utility.hasPermission(context, Manifest.permission.READ_PHONE_STATE);
         boolean missingRecordAudio = !Utility.hasPermission(context, Manifest.permission.RECORD_AUDIO);
         boolean missingReadExternal = !Utility.hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if ( enabled &&
+        if (enabled &&
                 (ringerVolumeEnabled || notificationVolumeEnabled) &&
                 (missingRecordAudio || missingReadExternal || missingReadPhoneState)
         ) {
@@ -453,6 +444,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             snackBar.dismiss();
         }
         snackBar = null;
+    }
+
+    private class measureAmbientNoiseTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... params) {
+            soundMeter.startMeasurement(500);
+            return null;
+        }
     }
 
     public class StartNotificationServiceListener implements View.OnClickListener {
