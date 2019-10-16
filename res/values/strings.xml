@@ -19,6 +19,8 @@
     <string name="notification_listener">Notification listener</string>
     <string name="notification_listeners">Notification access</string>
     <string name="notification_listener_message">Please grant access to notifications.</string>
+    <string name="notificationChannelNameStatus">Status messages</string>
+    <string name="notificationChannelDescStatus">Notification channel for status messages</string>
     <string name="notificationChannelNameTTS">Text-to-speech service</string>
     <string name="notificationChannelDescTTS">This notification indicates when text-to-speech is active.</string>
     <string name="notificationChannelNameRingerService">Volume service</string>

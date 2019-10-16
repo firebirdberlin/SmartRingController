@@ -69,12 +69,21 @@ public class Utility {
         NotificationManager notificationManager =
                 context.getSystemService(NotificationManager.class);
 
+        NotificationChannel channel = prepareNotificationChannel(
+                context,
+                SmartRingController.NOTIFICATION_CHANNEL_ID_STATUS,
+                R.string.notificationChannelNameStatus,
+                R.string.notificationChannelDescStatus,
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        notificationManager.createNotificationChannel(channel);
+
         NotificationChannel channelTTS = prepareNotificationChannel(
                 context,
                 SmartRingController.NOTIFICATION_CHANNEL_ID_TTS,
                 R.string.notificationChannelNameTTS,
                 R.string.notificationChannelDescTTS,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_MIN
         );
         notificationManager.createNotificationChannel(channelTTS);
         NotificationChannel channelRingerService = prepareNotificationChannel(

@@ -110,8 +110,8 @@ public class SetRingerService extends Service implements SensorEventListener {
                 handler.postDelayed(handleIncreasingRingerVolume, INCREASING_RINGER_VOLUME_STEP_DELAY);
             }
             currentVolume = audiomanager.getRingerVolume(); // current value
-            Logger.i(TAG, "current ringer volume: " + String.valueOf(currentVolume) +
-                    " / " + String.valueOf(targetVolume));
+            Logger.i(TAG, "current ringer volume: " + currentVolume +
+                    " / " + targetVolume);
         }
     };
     private Runnable stopListening = new Runnable() {
@@ -240,7 +240,7 @@ public class SetRingerService extends Service implements SensorEventListener {
     void callStartForeground() {
         Utility.createNotificationChannels(getApplicationContext());
         Notification note = buildNotification(getString(R.string.notificationChannelNameRingerService));
-        startForeground(SmartRingController.NOTIFICATION_ID_TTS, note);
+        startForeground(SmartRingController.NOTIFICATION_ID_RINGER_SERVICE, note);
     }
 
     private Notification buildNotification(String message) {
@@ -326,10 +326,10 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     private boolean shouldRing() {
         Log.i(TAG, "shouldRing()");
-        Log.i(TAG, " settings.FlipAction = " + String.valueOf(settings.FlipAction));
-        Log.i(TAG, " isOnTable = " + String.valueOf(isOnTable));
-        Log.i(TAG, " ambientLight = " + String.valueOf(ambientLight));
-        Log.i(TAG, " DeviceIsCovered = " + String.valueOf(DeviceIsCovered));
+        Log.i(TAG, " settings.FlipAction = " + settings.FlipAction);
+        Log.i(TAG, " isOnTable = " + isOnTable);
+        Log.i(TAG, " ambientLight = " + ambientLight);
+        Log.i(TAG, " DeviceIsCovered = " + DeviceIsCovered);
         return (!(settings.FlipAction == true
                 && isOnTable == DISPLAY_FACE_DOWN
                 && isCovered()));
@@ -337,14 +337,14 @@ public class SetRingerService extends Service implements SensorEventListener {
     }
 
     private void vibrateForNotification() {
-        long data[] = {100, 100, 100, 100};
+        long[] data = {100, 100, 100, 100};
         vibrator.vibrate(data, -1);
         vibrationEndTime = System.currentTimeMillis() + 600;
     }
 
     private boolean handleVibration() {
         if (shouldVibrate()) {
-            long data[] = {100, 600, 100, 100, 100, 100, 100, 600, 600};
+            long[] data = {100, 600, 100, 100, 100, 100, 100, 600, 600};
             if (telephone.getCallState() == TelephonyManager.CALL_STATE_RINGING) { // phone call
                 vibrator.vibrate(data, 0);
             } else { // notification or test
@@ -460,7 +460,7 @@ public class SetRingerService extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() ( running = " + String.valueOf(running) + " )");
+        Log.d(TAG, "onStartCommand() ( running = " + running + " )");
         callStartForeground();
         // no action needed
         if (audiomanager.isSilent() || audiomanager.isVibration() || (settings.enabled == false)) {

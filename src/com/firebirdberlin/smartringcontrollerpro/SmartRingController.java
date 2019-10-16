@@ -27,9 +27,11 @@ public class SmartRingController extends BillingHelperActivity
     public static final String PREFS_KEY = "SmartRingController preferences";
     public static final String TTS_MODE_HEADPHONES = "headphones";
     public static final String TTS_MODE_ALWAYS = "always";
+    public static final String NOTIFICATION_CHANNEL_ID_STATUS = "notification channel id status";
     public static final String NOTIFICATION_CHANNEL_ID_TTS = "notification channel id tts";
     public static final String NOTIFICATION_CHANNEL_ID_RINGER_SERVICE = "notification channel id ringer service";
 
+    public static final int NOTIFICATION_ID_STATUS = 10;
     public static final int NOTIFICATION_ID_TTS = 11;
     public static final int NOTIFICATION_ID_RINGER_SERVICE = 12;
     private Context mContext = null;
@@ -73,6 +75,7 @@ public class SmartRingController extends BillingHelperActivity
             final SharedPreferences settings = getSharedPreferences(SmartRingController.PREFS_KEY, 0);
             boolean enabled = settings.getBoolean("enabled", true);
             switchEnabled.setChecked(enabled);
+            toggleComponents(enabled);
 
             switchEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
@@ -81,10 +84,7 @@ public class SmartRingController extends BillingHelperActivity
                     prefEditor.putBoolean("enabled", isChecked);
                     prefEditor.apply();
 
-                    toggleComponentState(mContext, TTSService.class, isChecked);
-                    toggleComponentState(mContext, SetRingerService.class, isChecked);
-                    toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
-                    toggleComponentState(mContext, EnjoyTheSilenceService.class, isChecked);
+                    toggleComponents(isChecked);
 
                     if (isChecked) {
                         setupMainPage();
@@ -96,6 +96,13 @@ public class SmartRingController extends BillingHelperActivity
 
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    void toggleComponents(boolean on) {
+        toggleComponentState(mContext, TTSService.class, on);
+        toggleComponentState(mContext, SetRingerService.class, on);
+        toggleComponentState(mContext, IncomingCallReceiver.class, on);
+        toggleComponentState(mContext, EnjoyTheSilenceService.class, on);
     }
 
     @Override

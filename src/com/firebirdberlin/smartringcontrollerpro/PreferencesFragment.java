@@ -312,8 +312,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         // build notification
-        NotificationCompat.Builder builder = Utility.buildNotification(context, SmartRingController.NOTIFICATION_CHANNEL_ID_TTS)
-                .setContentTitle("SmartRingController")
+        NotificationCompat.Builder builder = Utility.buildNotification(
+                context, SmartRingController.NOTIFICATION_CHANNEL_ID_STATUS
+        ).setContentTitle("SmartRingController")
                 .setContentText(getString(R.string.msgTestNotification))
                 .setSmallIcon(R.drawable.ic_logo_bw)
                 .setContentIntent(pIntent)
@@ -321,7 +322,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         Notification n = builder.build();
 
-        n./**/defaults |= Notification.DEFAULT_SOUND;
+        n.defaults |= Notification.DEFAULT_SOUND;
         //n.defaults |= Notification.DEFAULT_ALL;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 //            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
