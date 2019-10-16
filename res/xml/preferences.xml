@@ -231,19 +231,6 @@
                 android:summary="@string/disconnectWhenFaceDown" />
 
         </PreferenceCategory>
-        <PreferenceCategory
-            app:iconSpaceReserved="false"
-            android:key="CategoryDnD"
-            android:title="@string/categoryBehaviour">
-
-            <CheckBoxPreference
-                app:iconSpaceReserved="false"
-                android:defaultValue="false"
-                android:key="showDnDNotification"
-                android:title="@string/showDnDNotification"
-                android:summary="@string/showDnDNotificationSummary" />
-
-        </PreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceScreen

@@ -21,8 +21,6 @@
     <string name="product_name_trial">Testversion</string>
     <string name="radio_TTS_always"> … immer über Lautsprecher.</string>
     <string name="radio_TTS_headphones"> … über Kopfhörer.</string>
-    <string name="showDnDNotification">Benachrichtigung</string>
-    <string name="showDnDNotificationSummary">Eine permanante Benachrichtigung anzeigen, solange der Nicht stören Modus aktiviert ist.</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_min_ringer_volume">Minimale Klingeltonlautstärke</string>
@@ -94,8 +92,6 @@
     <string name="notificationChannelDescTTS">Diese Benachrichtigung wird angezeigt, wenn der Text-to-speech Service aktiv ist.</string>
     <string name="notificationChannelNameRingerService">Lautstärkeregelung</string>
     <string name="notificationChannelDescRingerService">Diese Benachrichtigung wird angezeigt, wenn die automatische Lautstärkeregelung aktiv ist</string>
-    <string name="notificationChannelNameStatus">Statusmeldungen</string>
-    <string name="notificationChannelDescStatus">Benachrichtigungen zum Status, z.B. wenn Nicht stören aktiviert ist.</string>
     <string name="dialog_message_already_owned">Sie besitzen dieses Produkt bereits.</string>
     <string name="dialog_message_pending_purchase">Vielen Dank. Ihre Bestellung wurde von Google Play noch nicht bestätigt.</string>
     <string name="missingPermissions">"Bitte erteilen Sie die benötigten Berechtigungen. "</string>

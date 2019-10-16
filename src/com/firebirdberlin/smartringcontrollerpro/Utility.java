@@ -14,10 +14,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.telephony.TelephonyManager;
+
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import android.telephony.TelephonyManager;
 
 public class Utility {
 
@@ -67,15 +68,6 @@ public class Utility {
 
         NotificationManager notificationManager =
                 context.getSystemService(NotificationManager.class);
-
-        NotificationChannel channelAlarms = prepareNotificationChannel(
-                context,
-                SmartRingController.NOTIFICATION_CHANNEL_ID_STATUS,
-                R.string.notificationChannelNameStatus,
-                R.string.notificationChannelDescStatus,
-                NotificationManager.IMPORTANCE_DEFAULT
-        );
-        notificationManager.createNotificationChannel(channelAlarms);
 
         NotificationChannel channelTTS = prepareNotificationChannel(
                 context,

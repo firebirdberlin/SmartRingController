@@ -20,7 +20,6 @@ import android.text.format.DateFormat;
 import com.firebirdberlin.smartringcontrollerpro.receivers.BluetoothScoReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.HeadsetPlugReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
-import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +30,6 @@ public class mNotificationListener extends NotificationListenerService {
     private long last_notification_posted = 0;
     private final int min_notification_interval = 3000; // ms to be silent between notifications
     private SharedPreferences settings;
-    private RingerModeStateChangeReceiver ringerModeStateChangeReceiver;
     private BluetoothScoReceiver bluetoothScoReceiver;
     private HeadsetPlugReceiver headsetPlugReceiver;
     public static boolean isRunning = false;
@@ -60,11 +58,9 @@ public class mNotificationListener extends NotificationListenerService {
     @Override
     public void onListenerConnected() {
         isRunning = true;
-        ringerModeStateChangeReceiver = new RingerModeStateChangeReceiver();
-        registerReceiver(ringerModeStateChangeReceiver, new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION));
 
         bluetoothScoReceiver = new BluetoothScoReceiver();
-        registerReceiver(ringerModeStateChangeReceiver, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
+        registerReceiver(bluetoothScoReceiver, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
 
         headsetPlugReceiver = new HeadsetPlugReceiver();
         registerReceiver(headsetPlugReceiver, new IntentFilter(AudioManager.ACTION_HEADSET_PLUG));
@@ -75,10 +71,8 @@ public class mNotificationListener extends NotificationListenerService {
         isRunning = false;
         unregisterReceiver(bluetoothScoReceiver);
         unregisterReceiver(headsetPlugReceiver);
-        unregisterReceiver(ringerModeStateChangeReceiver);
         bluetoothScoReceiver = null;
         headsetPlugReceiver = null;
-        ringerModeStateChangeReceiver = null;
     }
 
     @Override

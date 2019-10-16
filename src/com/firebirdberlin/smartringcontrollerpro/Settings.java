@@ -20,7 +20,6 @@ public class Settings {
     public boolean handleNotification = false;
     public boolean handleVibration = false;
     public boolean increasingRingerVolume = false;
-    public boolean showDnDNotification = false;
     public double maxAmplitude = 10000.;
     public double minAmplitude = 1000.;
     public int addPocketVolume = 0; // increase in pocket
@@ -52,7 +51,6 @@ public class Settings {
         maxRingerVolume = audiomanager.getMaxRingerVolume();
         minAmplitude = (double) settings.getInt("minAmplitude", 500);
         minRingerVolume = settings.getInt("minRingerVolume", 1);
-        showDnDNotification = settings.getBoolean("showDnDNotification", false);
     }
 
     int getRingerVolume(double currentAmplitude, boolean deviceIsCovered,

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.firebirdberlin.smartringcontrollerpro"
-    android:versionCode="45"
-    android:versionName="2.5.7">
+    android:versionCode="47"
+    android:versionName="2.5.10">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -57,7 +57,6 @@
 
         <service android:enabled="false" android:name=".EnjoyTheSilenceService" />
 
-        <receiver android:name=".receivers.RingerModeStateChangeReceiver" android:enabled="true"/>
         <receiver android:name=".receivers.BluetoothScoReceiver" android:enabled="true"/>
         <receiver android:name=".receivers.HeadsetPlugReceiver" android:enabled="true"/>
         <receiver android:name=".receivers.IncomingCallReceiver" android:enabled="false">

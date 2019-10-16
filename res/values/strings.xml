@@ -19,8 +19,6 @@
     <string name="notification_listener">Notification listener</string>
     <string name="notification_listeners">Notification access</string>
     <string name="notification_listener_message">Please grant access to notifications.</string>
-    <string name="notificationChannelNameStatus">Status messages</string>
-    <string name="notificationChannelDescStatus">Notification channel for status messages</string>
     <string name="notificationChannelNameTTS">Text-to-speech service</string>
     <string name="notificationChannelDescTTS">This notification indicates when text-to-speech is active.</string>
     <string name="notificationChannelNameRingerService">Volume service</string>
@@ -32,8 +30,6 @@
     <string name="product_name_trial">Trial version</string>
     <string name="radio_TTS_always"> … always via speakerphone.</string>
     <string name="radio_TTS_headphones"> … with headphones.</string>
-    <string name="showDnDNotification">Notification</string>
-    <string name="showDnDNotificationSummary">Show a persistent notification while "Do not disturb" is activated.</string>
     <string name="setting_max_amplitude">Maximum</string>
     <string name="setting_min_amplitude">Minimum</string>
     <string name="setting_min_ringer_volume">Minimum ringer volume</string>

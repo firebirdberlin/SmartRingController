@@ -19,7 +19,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
-import com.firebirdberlin.smartringcontrollerpro.receivers.RingerModeStateChangeReceiver;
 
 
 public class SmartRingController extends BillingHelperActivity
@@ -28,11 +27,9 @@ public class SmartRingController extends BillingHelperActivity
     public static final String PREFS_KEY = "SmartRingController preferences";
     public static final String TTS_MODE_HEADPHONES = "headphones";
     public static final String TTS_MODE_ALWAYS = "always";
-    public static final String NOTIFICATION_CHANNEL_ID_STATUS = "notification channel id status";
     public static final String NOTIFICATION_CHANNEL_ID_TTS = "notification channel id tts";
     public static final String NOTIFICATION_CHANNEL_ID_RINGER_SERVICE = "notification channel id ringer service";
 
-    public static final int NOTIFICATION_ID_STATUS = 10;
     public static final int NOTIFICATION_ID_TTS = 11;
     public static final int NOTIFICATION_ID_RINGER_SERVICE = 12;
     private Context mContext = null;
@@ -84,7 +81,6 @@ public class SmartRingController extends BillingHelperActivity
                     prefEditor.putBoolean("enabled", isChecked);
                     prefEditor.apply();
 
-                    toggleComponentState(mContext, RingerModeStateChangeReceiver.class, isChecked);
                     toggleComponentState(mContext, TTSService.class, isChecked);
                     toggleComponentState(mContext, SetRingerService.class, isChecked);
                     toggleComponentState(mContext, IncomingCallReceiver.class, isChecked);
