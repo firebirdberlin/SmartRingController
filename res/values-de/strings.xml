@@ -95,4 +95,6 @@
     <string name="dialog_message_already_owned">Sie besitzen dieses Produkt bereits.</string>
     <string name="dialog_message_pending_purchase">Vielen Dank. Ihre Bestellung wurde von Google Play noch nicht bestätigt.</string>
     <string name="missingPermissions">"Bitte erteilen Sie die benötigten Berechtigungen. "</string>
+    <string name="text_TTS_allowed_bluetooth_devices">Erlaubte Bluetooth Geräte</string>
+    <string name="text_bluetooth_off">Bitte Bluetooth aktivieren, um diese Einstellung zu ändern.</string>
 </resources>

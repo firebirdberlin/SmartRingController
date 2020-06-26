@@ -74,6 +74,8 @@
     <string name="systemVibrationSummary">
         You should disable vibrations for incoming calls and notifications.
     </string>
+    <string name="text_TTS_allowed_bluetooth_devices">Allowed bluetooth devices</string>
+    <string name="text_bluetooth_off">Turn ON bluetooth to edit this preference.</string>
     <string name="titleSilenceMode">Silence mode.</string>
     <string name="msgRestoreRingerMode">Click to restore normal mode.</string>
     <string name="tvWelcome">

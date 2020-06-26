@@ -24,14 +24,15 @@ public class Utility {
 
     private static final String TAG = "Utility";
 
-    public static void playNotification(Context context){
+    public static void playNotification(Context context) {
         try {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(context, notification);
             r.play();
             //Thread.sleep(300);
             //r.stop();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     public void PlayAlarmSound(Context context) {
@@ -39,14 +40,15 @@ public class Utility {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
             Ringtone r = RingtoneManager.getRingtone(context, notification);
             r.play();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
-    public static boolean isDebuggable(Context context){
-        return ( 0 != ( context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE ) );
+    public static boolean isDebuggable(Context context) {
+        return (0 != (context.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
     }
 
-    public static boolean isPackageInstalled(Context context, String targetPackage){
+    public static boolean isPackageInstalled(Context context, String targetPackage) {
         PackageManager pm = context.getPackageManager();
         try {
             PackageInfo info = pm.getPackageInfo(targetPackage, PackageManager.GET_META_DATA);
@@ -131,7 +133,7 @@ public class Utility {
 
         Cursor cursor = null;
         try {
-            cursor = contentResolver.query(uri, new String[]{ ContactsContract.PhoneLookup.DISPLAY_NAME }, null, null, null);
+            cursor = contentResolver.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
 
             if (cursor.isAfterLast()) {
                 // If nothing was found, return the number....

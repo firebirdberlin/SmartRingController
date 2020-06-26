@@ -23,9 +23,11 @@ import androidx.core.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -116,12 +118,22 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
             }
 
             AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            if (audioManager != null && mAudioManager.isWiredHeadsetOn(context)) {
+                return true;
+            }
             if (canUseSco && audioManager != null && audioManager.isBluetoothScoAvailableOffCall()) {
                 return true;
             }
 
-            return (audioManager != null && audioManager.isBluetoothA2dpOn())
-                    || mAudioManager.isWiredHeadsetOn(context);
+
+            if (audioManager != null && audioManager.isBluetoothA2dpOn()) {
+                Set<String> TTSBluetoothDevices = settings.getStringSet("TTSBluetoothDevices", new HashSet<String>());
+                for (String address : TTSBluetoothDevices) {
+                    if (mNotificationListener.connectedBluetoothDevices.contains(address)) {
+                        return true;
+                    }
+                }
+            };
         }
 
         return false;

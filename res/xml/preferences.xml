@@ -27,6 +27,13 @@
             android:key="TTSmode"
             android:title="@string/tvTTSmode" />
 
+        <de.firebirdberlin.preference.BluetoothDevicePreference
+            xmlns:pref="pref"
+            android:dependency="TTS.enabled"
+            android:key="TTSBluetoothDevices"
+            android:title="@string/text_TTS_allowed_bluetooth_devices"
+            pref:text_bluetooth_off="@string/text_bluetooth_off"/>
+
         <de.firebirdberlin.preference.AndroidPreferencesPreference
             android:title="@string/tts_settings"
             prefs:which="TTS"/>

@@ -2,6 +2,9 @@ package com.firebirdberlin.smartringcontrollerpro;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +19,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.telephony.TelephonyManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.firebirdberlin.smartringcontrollerpro.receivers.BluetoothScoReceiver;
 import com.firebirdberlin.smartringcontrollerpro.receivers.HeadsetPlugReceiver;
@@ -23,6 +27,8 @@ import com.firebirdberlin.smartringcontrollerpro.receivers.IncomingCallReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class mNotificationListener extends NotificationListenerService {
 
@@ -33,6 +39,7 @@ public class mNotificationListener extends NotificationListenerService {
     private BluetoothScoReceiver bluetoothScoReceiver;
     private HeadsetPlugReceiver headsetPlugReceiver;
     public static boolean isRunning = false;
+    public static Set<String> connectedBluetoothDevices = new HashSet<>();
 
     String lastText;
     Runnable dropLastMessage = new Runnable() {
@@ -64,6 +71,12 @@ public class mNotificationListener extends NotificationListenerService {
 
         headsetPlugReceiver = new HeadsetPlugReceiver();
         registerReceiver(headsetPlugReceiver, new IntentFilter(AudioManager.ACTION_HEADSET_PLUG));
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(bluetoothDeviceReceiver, intentFilter);
+        checkConnectedBluetoothDevices();
     }
 
     @Override
@@ -71,6 +84,7 @@ public class mNotificationListener extends NotificationListenerService {
         isRunning = false;
         unregisterReceiver(bluetoothScoReceiver);
         unregisterReceiver(headsetPlugReceiver);
+        unregisterReceiver(bluetoothDeviceReceiver);
         bluetoothScoReceiver = null;
         headsetPlugReceiver = null;
     }
@@ -288,4 +302,49 @@ public class mNotificationListener extends NotificationListenerService {
 
         return dateFormat.format(new Date(value));
     }
+
+
+    public void checkConnectedBluetoothDevices() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        adapter.getProfileProxy(this, serviceListener, BluetoothProfile.HEADSET);
+    }
+
+    private BluetoothProfile.ServiceListener serviceListener = new BluetoothProfile.ServiceListener()
+    {
+        @Override
+        public void onServiceDisconnected(int profile) {
+            Log.d(TAG, "bluetooth: onServiceDisconnected");
+        }
+
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy) {
+
+            for (BluetoothDevice device : proxy.getConnectedDevices()) {
+                Log.i(TAG, "device: |" + device.getName() + " | " + device.getAddress() + " | " + proxy.getConnectionState(device) + "(connected = "
+                        + BluetoothProfile.STATE_CONNECTED + ")");
+                connectedBluetoothDevices.add(device.getAddress());
+            }
+
+            BluetoothAdapter.getDefaultAdapter().closeProfileProxy(profile, proxy);
+        }
+    };
+
+    private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                connectedBluetoothDevices.add(device.getAddress());
+
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                connectedBluetoothDevices.remove(device.getAddress());
+
+            }
+        }
+    };
 }

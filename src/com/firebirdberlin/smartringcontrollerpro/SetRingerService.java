@@ -438,7 +438,7 @@ public class SetRingerService extends Service implements SensorEventListener {
             DeviceIsCovered = (event.values[0] == 0);
         } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             count_light_sensor++;
-            ambientLight += event.values[0]; // simply log the value
+            ambientLight = event.values[0]; // simply log the value
         } else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             count_acceleration_sensor++;
             isOnTable = NOT_ON_TABLE;
