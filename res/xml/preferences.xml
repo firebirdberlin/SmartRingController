@@ -271,7 +271,7 @@
         <Preference
             android:title="@string/titlePrivacyPolicy">
             <intent android:action="android.intent.action.VIEW"
-                android:data="http://nightclock.duckdns.org/apps/SmartRingController/privacy.html"/>
+                android:data="https://firebirdberlin.github.io/SmartRingController/privacy.html"/>
         </Preference>
 
         <Preference
@@ -285,7 +285,7 @@
             android:summary="Please add or update the translation for your language."
             android:title="Translations wanted !">
             <intent android:action="android.intent.action.VIEW"
-                android:data="https://nightclock.duckdns.org/apps/SmartRingController/translation/"/>
+                android:data="https://firebirdberlin.github.io/SmartRingController/translation.html"/>
         </Preference>
 
         <Preference
