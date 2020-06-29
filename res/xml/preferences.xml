@@ -24,6 +24,7 @@
             android:dependency="TTS.enabled"
             android:entries="@array/tts_modes"
             android:entryValues="@array/tts_modes_data"
+            app:useSimpleSummaryProvider="true"
             android:key="TTSmode"
             android:title="@string/tvTTSmode" />
 
